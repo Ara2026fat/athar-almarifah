@@ -626,12 +626,12 @@ window.ATHAR = {
  "app": {
   "name": "أثر المعرفة",
   "nameEn": "ATHAR AL MARIFA",
-  "kicker": "أعلام العلماء المسلمين",
+  "kicker": "العلماء المسلمون",
   "title": "علماء بنوا علومًا… وأضاءوا العالم",
   "subtitle": "رحلة مع أبرز العلماء المسلمين الذين برعوا في العلوم أو أسهموا في تأسيسها، وكيف وصل علمهم إلى العالم.",
   "pills": [
    "عرض نحو 10 دقائق",
-   "أعلام ومؤلفاتهم",
+   "العلماء ومؤلفاتهم",
    "مراجع بروابط"
   ],
   "idea": "الفكرة: في القرون الأولى بنى علماء المسلمين علومًا ومؤلفات خلّدت أسماءهم، وانتقلت كتبهم إلى أوروبا وبيزنطة والهند والصين وإفريقيا."
@@ -3367,14 +3367,32 @@ window.ATHAR = {
     });
     return runs;
   }
+  /* تسجيلات جاهزة اختيارية: مجلد audio بجانب الصفحة (ملف لكل شاشة باسم بصمة نصها)؛ وإن غابت يُستعمل صوت الجهاز */
+  var AUD = { man: null, el: null };
+  function hash(s) { var h = 2166136261, i; for (i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return ('00000000' + (h >>> 0).toString(16)).slice(-8); }
+  if (location.protocol !== 'file:' && window.fetch) {
+    try { fetch('audio/manifest.json', { cache: 'no-cache' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { if (j && j.length) AUD.man = j; }).catch(function () {}); } catch (e) {}
+  }
   function stopTTS() {
     TTS.tok++; TTS.on = false;
+    if (AUD.el) { try { AUD.el.pause(); } catch (e) {} }
     if (HAS_TTS) { try { speechSynthesis.cancel(); } catch (e) {} }
     updateAud();
   }
   function speakParts(parts, onDone) {
+    var key = hash(parts.join('|'));
+    if (HAS_TTS) { try { speechSynthesis.cancel(); } catch (e) {} }
+    if (AUD.man && AUD.man.indexOf(key) > -1) {
+      var tk = ++TTS.tok, a = AUD.el || (AUD.el = new Audio());
+      a.onended = function () { if (tk === TTS.tok && onDone) onDone(); };
+      a.onerror = function () { if (tk === TTS.tok) viaVoice(); };
+      a.src = 'audio/' + key + '.mp3'; a.playbackRate = TTS.rate;
+      var pr = a.play(); if (pr && pr.catch) pr.catch(function () { if (tk === TTS.tok) viaVoice(); });
+      return;
+    }
+    viaVoice();
+    function viaVoice() {
     if (!HAS_TTS) return;
-    try { speechSynthesis.cancel(); } catch (e) {}
     var tok = ++TTS.tok, q = [];
     parts.forEach(function (p) { chunks(p).forEach(function (c) { langRuns(c).forEach(function (r) { q.push(r); }); }); });
     if (!TTS.warned && TTS.voices.length && !pickVoice('ar')) { TTS.warned = true; toast('لم أجد صوتًا عربيًا في جهازك؛ أضِف صوتًا عربيًا من إعدادات النظام ليكتمل الاستماع'); }
@@ -3389,6 +3407,7 @@ window.ATHAR = {
       u.onerror = function () { if (tok === TTS.tok) next(i + 1); };
       speechSynthesis.speak(u);
     })(0);
+    }
   }
   /* قراءة صوتية من النص المشكّل (حقل v) لتصحيح الإعراب؛ وإن لم يوجد فمن النص الظاهر */
   function plainT(h) { return String(h || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(); }
@@ -3551,7 +3570,7 @@ window.ATHAR = {
     }
     var api;
     go(0);
-    api = { go: go, next: function () { if (idx === n - 1) { if (full) closeStage(); } else go(idx + 1, true); }, prev: function () { go(idx - 1, true); }, index: function () { return idx; }, count: n };
+    api = { slides: slides, speech: function (i) { return slides[i].type === 'step' ? stepSpeech(slides[i]) : slideSpeech(slideEls[i]); }, go: go, next: function () { if (idx === n - 1) { if (full) closeStage(); } else go(idx + 1, true); }, prev: function () { go(idx - 1, true); }, index: function () { return idx; }, count: n };
     return api;
   }
 
@@ -3593,7 +3612,7 @@ window.ATHAR = {
   }
 
   /* ---------- التبويبات: شاشة واحدة ---------- */
-  var SECS = [['home', 'الرئيسية'], ['present', 'العرض'], ['atlas', 'الأعلام'], ['stories', 'القصص'], ['quiz', 'أسئلة'], ['sources', 'المراجع']];
+  var SECS = [['home', 'الرئيسية'], ['present', 'العرض'], ['atlas', 'العلماء'], ['stories', 'القصص'], ['quiz', 'أسئلة'], ['sources', 'المراجع']];
   var inline = null, cur = 'home';
   var st = { ag: 0, ai: 0, story: 0, q: 0, qopen: false, sp: 0 };
   var PER = 7;
@@ -3647,7 +3666,7 @@ window.ATHAR = {
     var a = D.app;
     var tiles = [
       ['present', 'نص العرض', D.steps.length + ' محطات'],
-      ['atlas', 'أعلام العلماء', D.atlas.length + ' علوم'],
+      ['atlas', 'العلماء المسلمون', D.atlas.length + ' علوم'],
       ['stories', 'القصص الإضافية', D.stories.length + ' قصص'],
       ['quiz', 'أسئلة تفاعلية', D.quiz.length + ' أسئلة'],
       ['sources', 'المراجع', D.sources.length + ' مصادر']
@@ -3663,7 +3682,7 @@ window.ATHAR = {
 
       '<section class="sec" id="present"><div id="inlineDeck"></div></section>' +
 
-      '<section class="sec" id="atlas">' + sectionHead('atlas', 'أعلام العلماء', '', 2) + '<p class="small datenote">' + esc(D.atlasIntro) + '</p><div id="atlasBody"></div></section>' +
+      '<section class="sec" id="atlas">' + sectionHead('atlas', 'العلماء المسلمون', '', 2) + '<p class="small datenote">' + esc(D.atlasIntro) + '</p><div id="atlasBody"></div></section>' +
       '<section class="sec" id="stories">' + sectionHead('stories', 'قصص ومعلومات إضافية', '', 2) + '<div id="storyBody"></div></section>' +
       '<section class="sec" id="quiz">' + sectionHead('quiz', 'أسئلة تفاعلية قصيرة', 'اطرح السؤال على الحضور ثم اكشف الإجابة', 3) + '<div id="quizBody"></div></section>' +
       '<section class="sec" id="sources">' + sectionHead('sources', 'المراجع والمصادر', '', 5) + '<div id="srcBody"></div></section>';
@@ -3941,6 +3960,17 @@ window.ATHAR = {
   showTab('home');
   var first = hashTarget();
   if (first) goTo(first);
+  /* أداة التصدير لتوليد التسجيلات (تُستعمل عبر make_audio) */
+  window.ATHAR_AUDIO_EXPORT = function () {
+    var host = document.createElement('div');
+    host.style.cssText = 'position:fixed;left:-9999px;top:0;width:1100px;height:700px';
+    document.body.appendChild(host);
+    var o = { stories: D.stories.map(function (x) { return x.id; }), quiz: true, mods: D.modules.map(function (m) { return m.id; }), hi: D.hadithImams.map(function (x) { return x.id; }) };
+    var dk = new Deck(host, buildSlides(o), false), out = [], seen = {}, i;
+    for (i = 0; i < dk.count; i++) { var p = dk.speech(i); if (!p.length) continue; var k = hash(p.join('|')); if (!seen[k]) { seen[k] = 1; out.push({ h: k, text: p.join('\n') }); } }
+    host.remove();
+    return out;
+  };
 })();
 
 </script>
