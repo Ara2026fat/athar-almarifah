@@ -397,6 +397,19 @@ button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 .stbook p{line-height:2;margin:10px 4px;padding:6px 10px;border-radius:10px;font-size:1.02rem;transition:background .2s}.stbook p.stnow{background:rgba(214,178,94,.16)}
 .stfic{background:rgba(143,188,212,.12);border:1px solid #8fbcd4;border-radius:10px;padding:6px 10px;font-size:.85rem;margin:6px 0}
 .stq{width:100%;box-sizing:border-box;background:#101a2a;color:inherit;border:1px solid var(--line);border-radius:12px;padding:10px;margin:6px 0}
+/*ST2*/
+.sthero{background:linear-gradient(135deg,rgba(214,178,94,.18),rgba(143,188,212,.12));border:1px solid var(--gold);border-radius:16px;padding:14px 16px;margin:10px 0;display:flex;flex-direction:column;gap:6px}
+.sthero small{color:var(--gold);font-size:.8rem}.sthero b{font-size:1.15rem}.sthero span{font-size:.82rem;opacity:.8}.sthero .sm{align-self:flex-start;margin-top:4px}
+.stworlds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.stworld{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 6px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:inherit;text-align:center}
+.stworld i{font-style:normal;font-size:1.8rem}.stworld b{font-size:.85rem}.stworld small{font-size:.7rem;opacity:.75}
+.stworld.k-history{border-color:#d6b25e}.stworld.k-islamic{border-color:#7fc8a9}.stworld.k-scifi{border-color:#8fbcd4}
+.stbar{display:block;width:100%;height:5px;border-radius:5px;background:rgba(255,255,255,.1);overflow:hidden}.stbar em{display:block;height:100%;background:var(--gold)}
+.libitem.k-history{border-right:4px solid #d6b25e}.libitem.k-islamic{border-right:4px solid #7fc8a9}.libitem.k-scifi{border-right:4px solid #8fbcd4}
+.chips .chip{color:var(--tx)}.chips .chip.on{color:#111}
+.sthero .sm.pri,.stctl .sm.pri{background:var(--gold);color:#111;border:0;border-radius:12px;padding:9px 18px;font-weight:700}
+.arena-wrap>.sm,.ar-wrap>.sm{margin:6px 0;background:rgba(255,255,255,.06);color:inherit;border:1px solid var(--line);border-radius:12px;padding:9px 14px}
+/*ST2END*/
 </style>
 </head>
 <body>
@@ -2926,6 +2939,18 @@ var STKIND={all:"الكل",history:"تاريخ موثّق",islamic:"إسلامي
 var stSpeaking=null;
 function stStop(){try{if(window.speechSynthesis)window.speechSynthesis.cancel();}catch(e){}stSpeaking=null;}
 function stVoice(){try{var v=window.speechSynthesis.getVoices();for(var i=0;i<v.length;i++)if(/^ar/i.test(v[i].lang))return v[i];}catch(e){}return null;}
+
+function stRead(){try{return JSON.parse(localStorage.getItem("athar-stread")||"{}");}catch(e){return {};}}
+function stMark(id){try{var r=stRead();r[id]=1;localStorage.setItem("athar-stread",JSON.stringify(r));}catch(e){}}
+function stMin(e){var w=0;e.text.forEach(function(t){w+=t.split(/\s+/).length;});return Math.max(1,Math.round(w/120));}
+var STGUIDE={history:["📜","مع الراوي"],islamic:["🌙","مع الراوي"],scifi:["🚀","مع الرائد"]};
+var STICON={history:"📜",islamic:"🌙",scifi:"🪐"};
+function stToday(){var d=new Date(),n=Math.floor((d.getTime()-d.getTimezoneOffset()*60000)/86400000);return STORIES[n%STORIES.length];}
+function stCard(e,kind,inp,rd,cls){
+  var b=h("button",{type:"button",class:"libitem k-"+e.kind+(cls?" "+cls:"")},[h("b",{text:(rd[e.id]?"✓ ":"")+e.title}),h("span",{text:STICON[e.kind]+" "+(e.kind==="scifi"?"متخيَّلة":e.kind==="islamic"?"إسلامية":"تاريخ")+" · "+stMin(e)+" د · "+e.subtitle})]);
+  b.addEventListener("click",function(){ASND.nav();stStory(e,kind,inp?inp.value:"");});
+  return b;
+}
 function stOpen(){arenaOpen();stMenu("all","");}
 stLoadPacks();
 function stClose(){stStop();arenaClose();}
@@ -2942,6 +2967,23 @@ function stMenu(kind,q){
   var chips=h("div",{class:"chips"});
   Object.keys(STKIND).forEach(function(k){var b=h("button",{type:"button",class:"chip"+(k===kind?" on":""),text:STKIND[k]});b.addEventListener("click",function(){ASND.tap();stMenu(k,q);});chips.appendChild(b);});
   wrap.appendChild(chips);
+  var rd=stRead();
+  if(kind==="all"&&!q){
+    var td=stToday();
+    var hero=h("div",{class:"sthero k-"+td.kind},[h("small",{text:"✨ قصة اليوم"}),h("b",{text:td.title}),h("span",{text:td.subtitle+" · "+stMin(td)+" د"})]);
+    var hb=h("button",{type:"button",class:"sm pri",text:"ابدأ الرحلة"});hb.addEventListener("click",function(){ASND.nav();stStory(td,kind,"");});hero.appendChild(hb);
+    wrap.appendChild(hero);
+    var worlds=h("div",{class:"stworlds"});
+    STKINDS.forEach(function(k){
+      var tot=0,dn=0;STORIES.forEach(function(e){if(e.kind===k){tot++;if(rd[e.id])dn++;}});
+      var w=h("button",{type:"button",class:"stworld k-"+k},[h("i",{text:STGUIDE[k][0]}),h("b",{text:STPK[k].replace(/^\S+\s/,"")}),h("small",{text:STGUIDE[k][1]}),h("span",{class:"stbar"},[h("em",{style:"width:"+(tot?Math.round(dn/tot*100):0)+"%"})]),h("small",{text:"قرأتَ "+dn+" من "+tot})]);
+      w.addEventListener("click",function(){ASND.tap();stMenu(k,"");});worlds.appendChild(w);
+    });
+    wrap.appendChild(worlds);
+    var sp=h("button",{type:"button",class:"sm",text:"🎲 فاجئني بقصة لم أقرأها"});
+    sp.addEventListener("click",function(){ASND.tap();var un=STORIES.filter(function(e){return !rd[e.id];});var pool=un.length?un:STORIES;stStory(pool[Math.floor(Math.random()*pool.length)],kind,"");});
+    wrap.appendChild(sp);
+  }
   var inp=h("input",{type:"search",class:"stq",placeholder:"ابحث بعنوان أو اسم…",value:q,"aria-label":"بحث"});
   wrap.appendChild(inp);
   var list=h("div",{class:"liblist"});wrap.appendChild(list);
@@ -2951,9 +2993,7 @@ function stMenu(kind,q){
       if(kind!=="all"&&e.kind!==kind)return;
       if(qq&&(e.title+" "+e.subtitle+" "+e.era_place+" "+e.tags.join(" ")).indexOf(qq)<0)return;
       n++;
-      var tag=e.kind==="scifi"?"🪐 متخيَّلة":e.kind==="islamic"?"🌙 إسلامية":"📜 تاريخ";
-      var b=h("button",{type:"button",class:"libitem"},[h("b",{text:e.title}),h("span",{text:tag+" · "+e.subtitle})]);
-      b.addEventListener("click",function(){ASND.nav();stStory(e,kind,inp.value);});list.appendChild(b);
+      list.appendChild(stCard(e,kind,inp,rd));
     });
     if(!n)list.appendChild(h("p",{class:"note",text:"لا نتائج."}));
   }
@@ -3003,7 +3043,7 @@ function stStory(e,kind,q){
   wrap.appendChild(h("p",{class:"note",text:"سؤال: "+q2.q}));
   q2.o.forEach(function(t,i){var b=h("button",{type:"button",class:"opt",text:t});b.addEventListener("click",function(){
     if(fin)return;
-    if(i===q2.a){fin=true;var pts=award("story"+(wrong?0:1),2,0,wrong,false);winFx(msg,pts,opts);msg.textContent+=" "+q2.e;}
+    if(i===q2.a){fin=true;stMark(e.id);var pts=award("story"+(wrong?0:1),2,0,wrong,false);winFx(msg,pts,opts);msg.textContent+=" "+q2.e;}
     else{wrong++;b.disabled=true;wrongFx(msg,wrap,wrong);}});opts.appendChild(b);});
   wrap.appendChild(opts);wrap.appendChild(msg);
   if(e.kind!=="scifi"){
