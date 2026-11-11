@@ -409,6 +409,30 @@ button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 .chips .chip{color:var(--tx)}.chips .chip.on{color:#111}
 .sthero .sm.pri,.stctl .sm.pri{background:var(--gold);color:#111;border:0;border-radius:12px;padding:9px 18px;font-weight:700}
 .arena-wrap>.sm,.ar-wrap>.sm{margin:6px 0;background:rgba(255,255,255,.06);color:inherit;border:1px solid var(--line);border-radius:12px;padding:9px 14px}
+
+.stbig{font-size:1.5rem;font-weight:800;margin:14px 0 4px}
+.stids{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.stidc{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--tx);text-align:center;transition:transform .15s,border-color .15s}
+.stidc i{font-style:normal;font-size:2.2rem}.stidc b{font-size:1rem}.stidc small{font-size:.72rem;opacity:.75;line-height:1.5}
+.stidc.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);transform:scale(1.03)}
+.stme{display:flex;align-items:center;gap:10px;border:1px solid var(--c);border-radius:14px;padding:10px 12px;margin:8px 0;background:color-mix(in srgb,var(--c) 10%,transparent)}
+.stme i{font-style:normal;font-size:1.7rem}.stme div{flex:1;display:flex;flex-direction:column}.stme small{font-size:.72rem;opacity:.8}
+.strit{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;color:#f3eee2;animation:stin .25s ease}
+@keyframes stin{from{opacity:0}to{opacity:1}}
+.strit b{font-size:1.4rem}.strit small{font-size:.85rem;opacity:.85}.strit .fade2{animation:stfade 1.6s ease both}
+@keyframes stfade{0%,55%{opacity:0}100%{opacity:.85}}
+.r-stamp{background:#14110d}.r-stamp .redact{background:#f3eee2;color:#f3eee2;padding:2px 10px;border-radius:3px;animation:stredact 1.5s ease forwards}
+@keyframes stredact{0%,40%{background:#f3eee2;color:#f3eee2}100%{background:transparent;color:#f3eee2}}
+.stamp{border:4px solid #e8788a;color:#e8788a;font-size:2rem;font-weight:900;padding:4px 22px;border-radius:8px;transform:rotate(-8deg);animation:ststamp .5s .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes ststamp{from{transform:scale(3) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(-8deg);opacity:1}}
+.r-signal{background:#050b18}.sigbars{display:flex;gap:6px;align-items:flex-end;height:70px}.sigbars u{width:8px;background:var(--c);border-radius:3px;animation:stbar .7s ease-in-out infinite alternate;height:12px}
+@keyframes stbar{to{height:64px}}
+.r-scroll{background:radial-gradient(circle at 50% 40%,#3a2c10,#110d05)}.scrollr{background:linear-gradient(#e8d9a8,#c9b06a);color:#3a2a0a;border-radius:14px;padding:26px 22px;min-width:200px;animation:stunroll .9s ease both;overflow:hidden;box-shadow:0 10px 40px #0008}
+.scrollr small{color:#5b4514}@keyframes stunroll{from{max-height:20px;opacity:.4}to{max-height:260px;opacity:1}}
+.r-path{background:#0d1a14}.pathline{width:70%;height:0;border-top:3px dashed var(--c);animation:stpath 1.4s ease both}
+@keyframes stpath{from{width:0}to{width:70%}}
+@media (prefers-reduced-motion:reduce){.strit,.strit *{animation:none!important}}
+.ar-wrap>.sm.pri{background:var(--gold);color:#111;border:0;border-radius:12px;padding:11px 28px;font-weight:800;margin:10px 0}.ar-wrap>.sm.pri:disabled{opacity:.4}
 /*ST2END*/
 </style>
 </head>
@@ -2951,13 +2975,73 @@ function stCard(e,kind,inp,rd,cls){
   b.addEventListener("click",function(){ASND.nav();stStory(e,kind,inp?inp.value:"");});
   return b;
 }
-function stOpen(){arenaOpen();stMenu("all","");}
+
+var STIDS={
+ muhaqqiq:{i:"🔍",n:"المحقق",tag:"لا تصدّق أحدًا، تحقّق بنفسك",file:"ملف",ritual:"stamp",c:"#e8788a"},
+ raid:{i:"🚀",n:"الرائد",tag:"إشارات من خارج المألوف",file:"إشارة",ritual:"signal",c:"#8fbcd4"},
+ rawi:{i:"📜",n:"الراوي",tag:"ما لم يُروَ لك كما يجب",file:"حكاية",ritual:"scroll",c:"#e8b54a"},
+ rahhala:{i:"🗺️",n:"الرحّالة",tag:"لا تعرف الطريق حتى تمشيه",file:"درب",ritual:"path",c:"#5fcf8a"}
+};
+var STW1=["ظلّ","نور","صدى","سرّ","فجر","غيم","رمل","شعلة","همس","أفق"],STW2=["الواحة","الفجر","السراب","المساء","الصمت","الحقيقة","الدرب","الغروب","القمر","الريح"];
+function stCodename(){return STW1[Math.floor(Math.random()*STW1.length)]+" "+STW2[Math.floor(Math.random()*STW2.length)];}
+function stId(){try{var o=JSON.parse(localStorage.getItem("athar-stid")||"null");if(o&&STIDS[o.k])return o;}catch(e){}return null;}
+function stSetId(o){try{localStorage.setItem("athar-stid",JSON.stringify(o));}catch(e){}}
+function stRank(n){return n<5?"مبتدئ":n<25?"متدرّب":n<75?"باحث":n<200?"خبير":"حكيم";}
+function stIdentity(done,cancel){
+  var wrap=aShell("من تكون؟",cancel||stClose);
+  wrap.appendChild(h("p",{class:"stbig",text:"قبل أن تدخل… من تكون؟"}));
+  wrap.appendChild(h("p",{class:"note",text:"لا أحد يختار لك. هويتك تغيّر طريقة دخولك إلى القصص، وتبدّلها متى شئت."}));
+  var cur=stId(),pick=cur?cur.k:null,name=cur?cur.name:stCodename();
+  var grid=h("div",{class:"stids"});
+  var nameIn=h("input",{type:"text",class:"stq",value:name,maxlength:"24","aria-label":"اسمك السري"});
+  var go=h("button",{type:"button",class:"sm pri",text:"ادخل"});go.disabled=!pick;
+  Object.keys(STIDS).forEach(function(k){
+    var d=STIDS[k],b=h("button",{type:"button",class:"stidc"+(k===pick?" on":""),style:"--c:"+d.c},[h("i",{text:d.i}),h("b",{text:d.n}),h("small",{text:d.tag})]);
+    b.addEventListener("click",function(){ASND.tap();pick=k;[].forEach.call(grid.children,function(x){x.classList.remove("on");});b.classList.add("on");go.disabled=false;});
+    grid.appendChild(b);
+  });
+  wrap.appendChild(grid);
+  wrap.appendChild(h("p",{class:"note",text:"اسمك السري (لا يراه أحد غيرك):"}));
+  var row=h("div",{class:"stctl"});
+  var rr=h("button",{type:"button",class:"sm",text:"🎲 اسم آخر"});rr.addEventListener("click",function(){ASND.tap();nameIn.value=stCodename();});
+  row.appendChild(nameIn);row.appendChild(rr);wrap.appendChild(row);
+  go.addEventListener("click",function(){ASND.nav();stSetId({k:pick,name:nameIn.value.trim()||stCodename()});done();});
+  wrap.appendChild(go);
+}
+function stHash(s){var x=0;for(var i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))%9973;return x;}
+function stRitual(e,after){
+  var id=stId();
+  var reduce=false;try{reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(x){}
+  if(!id||reduce){after();return;}
+  var d=STIDS[id.k],ov=h("div",{class:"strit r-"+d.ritual,style:"--c:"+d.c}),fin=false;
+  function end(){if(fin)return;fin=true;try{document.body.removeChild(ov);}catch(x){}after();}
+  var no=String(1000+stHash(e.id)).slice(1);
+  if(d.ritual==="stamp"){
+    ov.appendChild(h("small",{text:"ملف رقم "+no}));
+    ov.appendChild(h("b",{class:"redact",text:e.title}));
+    ov.appendChild(h("div",{class:"stamp",text:"سرّي"}));
+    ov.appendChild(h("small",{class:"fade2",text:"يُفتح الملف، "+id.name+"…"}));
+  }else if(d.ritual==="signal"){
+    var bars=h("div",{class:"sigbars"});for(var i=0;i<9;i++)bars.appendChild(h("u",{style:"animation-delay:"+(i*0.08)+"s"}));
+    ov.appendChild(bars);ov.appendChild(h("b",{text:"جارٍ استقبال الإشارة…"}));ov.appendChild(h("small",{class:"fade2",text:"المصدر: "+e.era_place}));
+  }else if(d.ritual==="scroll"){
+    ov.appendChild(h("div",{class:"scrollr"},[h("b",{text:"تُفتح الحكاية"}),h("small",{text:e.subtitle})]));
+  }else{
+    ov.appendChild(h("small",{text:"تبدأ رحلتك من"}));ov.appendChild(h("b",{text:e.era_place}));
+    ov.appendChild(h("div",{class:"pathline"}));ov.appendChild(h("small",{class:"fade2",text:"اتّبع الدرب يا "+id.name}));
+  }
+  ov.addEventListener("click",end);document.body.appendChild(ov);setTimeout(end,2300);
+}
+function stOpen(){arenaOpen();if(!stId())stIdentity(function(){stMenu("all","");});else stMenu("all","");}
 stLoadPacks();
 function stClose(){stStop();arenaClose();}
 function stMenu(kind,q){
   stStop();
   var wrap=aShell("مكتبة القصص",stClose);
-  wrap.appendChild(h("p",{class:"note",text:"قصص تُقرأ كالكتاب وتُسمع بصوت. "+STORIES.length+" قصة."}));
+  var sid=stId(),rd0=stRead(),nread=Object.keys(rd0).length;
+  if(sid){var D=STIDS[sid.k];var bar=h("div",{class:"stme",style:"--c:"+D.c},[h("i",{text:D.i}),h("div",{},[h("b",{text:D.n+" «"+sid.name+"»"}),h("small",{text:stRank(nread)+" · "+nread+" "+D.file+" مفتوح · "+D.tag})])]);
+    var sw=h("button",{type:"button",class:"sm",text:"تبديل"});sw.addEventListener("click",function(){ASND.tap();stIdentity(function(){stMenu(kind,q);},function(){stMenu(kind,q);});});bar.appendChild(sw);wrap.appendChild(bar);}
+  else wrap.appendChild(h("p",{class:"note",text:STORIES.length+" قصة."}));
   if(!STORIES.length){
     wrap.appendChild(h("p",{class:"note",text:stReady?"لم تُحمَّل أي قصص بعد. افتح الإعدادات لتحميل ملفات القصص.":"جارٍ التحقق من القصص المحفوظة…"}));
     var gb=h("button",{type:"button",class:"sm pri",text:"⚙️ الإعدادات: تحميل القصص"});gb.addEventListener("click",function(){ASND.tap();stSettings(function(){stMenu(kind,q);});});wrap.appendChild(gb);
@@ -3001,7 +3085,8 @@ function stMenu(kind,q){
   var gs=h("button",{type:"button",class:"sm",text:"⚙️ ملفات القصص"});gs.addEventListener("click",function(){ASND.tap();stSettings(function(){stMenu(kind,q);});});wrap.appendChild(gs);
   wrap.appendChild(h("p",{class:"note",style:"font-size:.75rem;opacity:.7",text:"محتوى تعليمي يُراجع تاريخيًا وشرعيًا قبل النشر العام."}));
 }
-function stStory(e,kind,q){
+function stStory(e,kind,q){stRitual(e,function(){stStory0(e,kind,q);});}
+function stStory0(e,kind,q){
   stStop();
   var wrap=aShell(e.title,function(){stMenu(kind,q);});
   wrap.appendChild(h("p",{class:"note",style:"color:var(--gold)",text:e.subtitle}));
