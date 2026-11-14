@@ -433,9 +433,42 @@ button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 @keyframes stpath{from{width:0}to{width:70%}}
 @media (prefers-reduced-motion:reduce){.strit,.strit *{animation:none!important}}
 .ar-wrap>.sm.pri{background:var(--gold);color:#111;border:0;border-radius:12px;padding:11px 28px;font-weight:800;margin:10px 0}.ar-wrap>.sm.pri:disabled{opacity:.4}
+.det{--dc:#ff6b8a}
+.detlab{display:block;font-size:.72rem;letter-spacing:.06em;color:var(--dc);margin:8px 0 2px}
+.detbar{display:flex;justify-content:space-between;font-size:.78rem;color:var(--mu);border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin:6px 0 12px}
+.detbar span:first-child{color:var(--dc)}
+.detlens{margin:22px 0 12px}
+.detlensb{position:relative;overflow:hidden;width:100%;display:flex;align-items:center;gap:12px;padding:20px 18px;border:1px solid var(--dc);background:color-mix(in srgb,var(--dc) 10%,transparent);color:var(--tx);border-radius:16px;touch-action:none;-webkit-user-select:none;user-select:none;font:inherit}
+.detlensb span{font-size:1.8rem}.detlensb b{font-size:1rem}
+.detlensb i{position:absolute;right:0;bottom:0;height:4px;width:0;background:var(--dc);box-shadow:0 0 12px var(--dc)}
+.detfile{display:flex;flex-direction:column;gap:7px;width:100%;text-align:right;padding:16px;margin-bottom:12px;background:linear-gradient(135deg,rgba(255,107,138,.1),rgba(120,200,255,.05));border:1px solid var(--line);border-right:4px solid var(--dc);color:var(--tx);border-radius:14px;font:inherit;cursor:pointer;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%)}
+.detfile small{font-size:.7rem;color:var(--dc);letter-spacing:.05em}.detfile span{font-size:.82rem;color:var(--mu)}
+.detfile:active{transform:scale(.985)}
+.detredact{display:block;height:20px;border-radius:3px;background:#e8e2d4;opacity:.9}
+.detredact.big{height:26px;margin:8px 0}
+.dettitle{display:block;font-size:1.25rem;font-weight:800;margin:8px 0;animation:detrev .6s ease both}
+@keyframes detrev{from{opacity:0;filter:blur(6px);letter-spacing:.3em}to{opacity:1;filter:none;letter-spacing:0}}
+.detcard{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;background:rgba(255,255,255,.03)}
+.detcard small{color:var(--dc);font-size:.75rem}
+.detev{margin:10px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.detev.on{border-color:var(--dc);padding:12px 14px;background:rgba(255,107,138,.05)}
+.detev.on small{color:var(--dc);font-size:.72rem}.detev p{margin:6px 0;line-height:1.9;font-size:.92rem}
+.detsrc{font-size:.82rem!important;color:var(--mu)}
+.detlock{display:flex;justify-content:space-between;align-items:center;width:100%;padding:14px;background:none;border:0;color:var(--tx);font:inherit;cursor:pointer}
+.detlock small{color:var(--mu);font-size:.72rem}
+.detq{font-weight:700;margin:16px 0 8px}
+.detrule{border:1px solid var(--dc);border-radius:14px;padding:12px 14px;margin:14px 0;background:rgba(255,107,138,.07);animation:detrev .6s ease both}
+.detrule small{color:var(--dc);font-size:.72rem}.detshard{display:block;margin-top:6px}
+.detportal{position:fixed;inset:0;z-index:99998;background:radial-gradient(circle at 50% 40%,#1b2a52,#04060d);transition:clip-path .52s cubic-bezier(.6,0,.3,1),opacity .3s}
+.detov{position:fixed;inset:0;z-index:99999;background:#07040a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:#f3eee2;animation:stin .3s ease}
+.detov small{color:#ff6b8a;letter-spacing:.06em}.detov b{font-size:1.9rem;animation:detrev .9s .5s ease both}.detov span{font-size:.85rem;opacity:.8;animation:stfade 1.6s ease both}
+.detscan{position:fixed;inset:0;z-index:99997;pointer-events:none;background:linear-gradient(transparent,rgba(4,6,13,.92) 40%,rgba(4,6,13,.92) 60%,transparent);animation:detscan .64s ease both}
+.detscan i{position:absolute;left:0;right:0;top:50%;height:2px;background:#ff6b8a;box-shadow:0 0 18px #ff6b8a}
+@keyframes detscan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+@media (prefers-reduced-motion:reduce){.detportal,.detscan,.detov,.detov *,.dettitle,.detrule{animation:none!important;transition:none!important}}
 /*ST2END*/
 </style>
-</head>
+<link rel="icon" type="image/svg+xml" href="icon.svg"><link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0a1226"></head>
 <body>
 <main id="hub">
   <h1>أثر | آفاق</h1>
@@ -444,6 +477,7 @@ button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
   <button class="arena-door" id="storiesBtn" type="button"><b>📚 مكتبة القصص: كتب وصوت</b><span>تاريخ موثّق، قصص إسلامية، وخيال علمي</span></button>
   <button class="arena-door" id="baytBtn" type="button"><b>🏛️ بيت الحكمة: تجارب علماء العصر العباسي</b><span>أعد تمثيل تجارب الخوارزمي والكندي والرازي وجابر وغيرهم</span></button>
   <button class="arena-door" id="arenaBtn" type="button"><b>🧩 ساحة الألغاز والمسابقات</b><span>ألغاز متنوعة ومسابقات يومية تختبر صبرك وتفكيرك</span></button>
+  <button class="arena-door" id="detBtn" type="button"><b>🔍 يوم المحقق</b><span>ثلاث قضايا عالقة بين المؤرخين، والحكم لك</span></button>
   <button class="arena-door" id="setBtn" type="button"><b>⚙️ الإعدادات: ملفات القصص</b><span>حمّل مكتبة القصص مرة واحدة واحفظها على جهازك</span></button>
   <p class="note">نموذج تجريبي: القصص القصيرة مسودات متخيَّلة لتجربة الأسلوب، وتُراجع قبل النشر. ARAFAT ALRAJHI © 2026</p>
 </main>
@@ -3139,6 +3173,152 @@ function stStory0(e,kind,q){
   }
 }
 
+/* ===== يوم المحقق: تحدٍّ → تحوّل → ثلاث قضايا من خلافات المصادر → ختام ===== */
+var DETK="athar-det",DET=null;
+function detLoad(){try{return JSON.parse(localStorage.getItem(DETK)||"{}");}catch(e){return {};}}
+function detSave(o){try{localStorage.setItem(DETK,JSON.stringify(o));}catch(e){}}
+function detRM(){try{return window.matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){return false;}}
+function detRnd(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function detNo(e){return String(100+stHash(e.id)%900);}
+function detCases(){var d=detLoad().done||{};return STORIES.filter(function(e){return e.kind!=="scifi"&&e.caveat&&e.sources&&e.sources.length>=2&&e.text.length>=2&&!d[e.id];});}
+function detPortal(x,y,cb){
+  if(detRM()){cb();return;}
+  var o=h("div",{class:"detportal"});o.style.clipPath="circle(0px at "+x+"px "+y+"px)";document.body.appendChild(o);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){o.style.clipPath="circle(150% at "+x+"px "+y+"px)";});});
+  setTimeout(function(){cb();o.style.opacity="0";setTimeout(function(){try{document.body.removeChild(o);}catch(e){}},320);},540);
+}
+function detScan(cb){
+  if(detRM()){cb();return;}
+  var o=h("div",{class:"detscan"},[h("i")]);document.body.appendChild(o);
+  setTimeout(cb,300);setTimeout(function(){try{document.body.removeChild(o);}catch(e){}},640);
+}
+function detStart(ev){
+  ASND.unlock&&ASND.unlock();ASND.tap();
+  var r=ev&&ev.currentTarget&&ev.currentTarget.getBoundingClientRect?ev.currentTarget.getBoundingClientRect():{left:window.innerWidth/2,top:200,width:0,height:0};
+  detPortal(r.left+r.width/2,r.top+r.height/2,function(){arenaOpen();detIntro();});
+}
+function detIntro(){
+  DET={solved:0,doubts:0,offer:null};
+  var st=detLoad();
+  var wrap=aShell("يوم المحقق",arenaClose);wrap.classList.add("det");
+  wrap.appendChild(h("small",{class:"detlab",text:"ملف مفتوح · اليوم "+((st.days||0)+1)}));
+  wrap.appendChild(h("p",{class:"stbig",text:"لن يخبرك أحد بما حدث فعلًا."}));
+  wrap.appendChild(h("p",{class:"note",text:"ثلاث قضايا عالقة، رواها المؤرخون بصور مختلفة. افحص الأدلة بنفسك، ثم احكم. ولكل قضية دليلان مخفيان تكشفهما إن احتجت، وكل كشف يُحسب شكًّا."}));
+  if(!STORIES.length){
+    wrap.appendChild(h("p",{class:"note",text:"القضايا تأتي من مكتبة القصص، ولم تُحمَّل بعد."}));
+    var g=h("button",{type:"button",class:"sm pri",text:"⚙️ حمّل القصص من الإعدادات"});g.addEventListener("click",function(){stSettings(function(){detIntro();});});wrap.appendChild(g);return;
+  }
+  if(detCases().length<1){wrap.appendChild(h("p",{class:"note",text:"أغلقتَ كل القضايا المتاحة. ستصل ملفات جديدة مع تحديث القصص."}));return;
+  }
+  var lens=h("div",{class:"detlens"});
+  var fill=h("i"),btn=h("button",{type:"button",class:"detlensb","aria-label":"اضغط مطوّلًا لتتسلّم العدسة"},[h("span",{text:"🔍"}),h("b",{text:"اضغط مطوّلًا لتتسلّم العدسة"}),fill]);
+  var t=null,done=false;
+  function go(){if(done)return;done=true;ASND.win&&ASND.win();detTransform();}
+  function down(e){if(done)return;if(e&&e.preventDefault)e.preventDefault();if(detRM()){go();return;}fill.style.transition="width 1.1s linear";fill.style.width="100%";t=setTimeout(go,1100);}
+  function up(){if(done)return;clearTimeout(t);fill.style.transition="width .25s";fill.style.width="0";}
+  btn.addEventListener("pointerdown",down);btn.addEventListener("pointerup",up);btn.addEventListener("pointerleave",up);btn.addEventListener("pointercancel",up);
+  btn.addEventListener("contextmenu",function(e){e.preventDefault();});
+  lens.appendChild(btn);wrap.appendChild(lens);
+  var alt=h("button",{type:"button",class:"sm",text:"أو اضغط هنا للمتابعة بنقرة"});alt.addEventListener("click",function(){go();});wrap.appendChild(alt);
+}
+function detTransform(){
+  var o=h("div",{class:"detov"},[h("small",{text:"تُسلَّم لك العدسة…"}),h("b",{text:"أنت الآن المحقق"}),h("span",{text:"شكّان لكل قضية. احكم بعقلك."})]);
+  var fin=false;function end(){if(fin)return;fin=true;try{document.body.removeChild(o);}catch(e){}detBoard();}
+  o.addEventListener("click",end);document.body.appendChild(o);setTimeout(end,detRM()?600:2100);
+}
+function detBar(wrap){
+  wrap.appendChild(h("div",{class:"detbar"},[h("span",{text:"القضايا "+DET.solved+" / 3"}),h("span",{text:"شكوك "+DET.doubts})]));
+}
+function detBoard(){
+  if(DET.solved>=3){detEnd();return;}
+  var wrap=aShell("ملفات اليوم",arenaClose);wrap.classList.add("det");
+  detBar(wrap);
+  if(!DET.offer)DET.offer=detRnd(detCases()).slice(0,3);
+  if(!DET.offer.length){detEnd();return;}
+  wrap.appendChild(h("p",{class:"note",text:"اختر ملفًا. العنوان مطموس حتى تحكم."}));
+  DET.offer.forEach(function(e){
+    var b=h("button",{type:"button",class:"detfile"},[
+      h("small",{text:"ملف رقم "+detNo(e)}),
+      h("i",{class:"detredact",style:"width:"+(40+stHash(e.id)%45)+"%"}),
+      h("span",{text:e.era_place+(e.years?" · "+e.years:"")}),
+      h("small",{text:"مصادر: "+e.sources.length+" · "+stMin(e)+" د"})]);
+    b.addEventListener("click",function(){ASND.nav();detScan(function(){detCase(e);});});wrap.appendChild(b);
+  });
+}
+function detCase(e){
+  var st=detLoad(),tool=st.tool||"";
+  var wrap=aShell("ملف رقم "+detNo(e),detBoard);wrap.classList.add("det");
+  detBar(wrap);
+  var free=tool==="lens"?1:0,used=0,wrong=0,fin=false;
+  var titleEl=h("i",{class:"detredact big",style:"width:70%"});
+  wrap.appendChild(h("div",{class:"detcard"},[h("small",{text:e.era_place+(e.years?" · "+e.years:"")}),titleEl]));
+  function ev(label,lockedNote,render){
+    var box=h("div",{class:"detev"}),open=false;
+    function show(){open=true;box.innerHTML="";box.classList.add("on");box.appendChild(h("small",{text:label}));render(box);}
+    if(!lockedNote){show();}
+    else{
+      var b=h("button",{type:"button",class:"detlock"},[h("span",{text:"🔒 "+label}),h("small",{text:free>0?"مجاني بفضل العدسة":"كشفه يُحسب شكًّا"})]);
+      b.addEventListener("click",function(){if(open||fin)return;ASND.tap();if(free>0)free--;else{used++;DET.doubts++;}show();updDoubts();});
+      box.appendChild(b);
+    }
+    wrap.appendChild(box);return box;
+  }
+  var dEl=h("p",{class:"note detd"});
+  function updDoubts(){dEl.textContent="الشكوك في هذه القضية: "+used;}
+  ev("الشهادة",false,function(b){e.text.slice(0,2).forEach(function(t){b.appendChild(h("p",{text:t}));});});
+  ev("المصادر التي رجعتُ إليها",true,function(b){e.sources.forEach(function(s){b.appendChild(h("p",{class:"detsrc",text:"• "+s.title}));});});
+  ev("ما اختُلف عليه",true,function(b){b.appendChild(h("p",{text:e.caveat}));});
+  updDoubts();wrap.appendChild(dEl);
+  var q=e.quiz,msg=h("div",{class:"msg","aria-live":"polite"}),opts=h("div",{class:"opts"});
+  wrap.appendChild(h("p",{class:"detq",text:"حكمك: "+q.q}));
+  q.o.forEach(function(t,i){
+    var b=h("button",{type:"button",class:"opt",text:t});
+    b.addEventListener("click",function(){
+      if(fin)return;
+      if(i===q.a){
+        fin=true;stMark(e.id);
+        var pts=award("story"+(wrong?0:1),3,used,wrong,false);
+        if(tool==="patience"&&used===0&&!wrong)pts+=2;
+        var d=detLoad();d.done=d.done||{};d.done[e.id]=1;d.shards=(d.shards||0)+1;detSave(d);
+        DET.solved++;DET.offer=null;
+        winFx(msg,pts,opts);msg.textContent+=" "+q.e;
+        titleEl.className="dettitle";titleEl.style.width="";titleEl.textContent=e.title;
+        var rule=h("div",{class:"detrule"},[h("small",{text:"القرار"}),h("p",{text:e.takeaway}),h("small",{class:"detshard",text:"💠 شظية جديدة · مجموعك "+d.shards})]);
+        wrap.appendChild(rule);
+        var nx=h("button",{type:"button",class:"sm pri",text:DET.solved>=3?"اختم اليوم":"القضية التالية"});
+        nx.addEventListener("click",function(){ASND.nav();detScan(function(){detBoard();});});wrap.appendChild(nx);
+        try{rule.scrollIntoView({behavior:"smooth",block:"center"});}catch(x){}
+      }else{wrong++;b.disabled=true;wrongFx(msg,wrap,wrong);}
+    });opts.appendChild(b);
+  });
+  wrap.appendChild(opts);wrap.appendChild(msg);
+}
+function detEnd(){
+  var d=detLoad();d.days=(d.days||0)+1;detSave(d);
+  var wrap=aShell("ختام اليوم",arenaClose);wrap.classList.add("det");
+  wrap.appendChild(h("small",{class:"detlab",text:"أُغلق ملف اليوم"}));
+  wrap.appendChild(h("p",{class:"stbig",text:"حكمتَ في "+DET.solved+" قضايا."}));
+  var line=DET.doubts===0?"لم تحتج إلى كشف أي دليل مخفي.":("كشفتَ "+DET.doubts+" "+(DET.doubts===1?"دليلًا":"أدلة")+" إضافية في طريقك.");
+  wrap.appendChild(h("div",{class:"rcard"},[h("b",{text:"المرآة"}),h("p",{text:line}),h("p",{class:"note",text:"مجموع شظاياك: "+(d.shards||0)})]));
+  if(!d.tool){
+    wrap.appendChild(h("p",{class:"note",text:"خذ معك أداة من هذه الرحلة. تبقى معك في الأيام القادمة:"}));
+    [["lens","🔍 العدسة","أول دليل مخفي في كل قضية يُكشف مجانًا."],["patience","⏳ الصبر","تنال نقطتين إضافيتين إذا حكمتَ دون كشف أي دليل."]].forEach(function(t){
+      var b=h("button",{type:"button",class:"detfile"},[h("b",{text:t[1]}),h("span",{text:t[2]})]);
+      b.addEventListener("click",function(){ASND.win&&ASND.win();var x=detLoad();x.tool=t[0];detSave(x);detEnd2();});
+      wrap.appendChild(b);
+    });
+    return;
+  }
+  detEnd2(wrap);
+}
+function detEnd2(wrap){
+  if(!wrap){var w=aShell("ختام اليوم",arenaClose);w.classList.add("det");wrap=w;wrap.appendChild(h("p",{class:"stbig",text:"أخذتَ أداتك."}));}
+  var nx=detCases();var tz=nx.length?nx[Math.floor(Math.random()*nx.length)]:null;
+  wrap.appendChild(h("div",{class:"detcard"},[h("small",{text:"للغد"}),h("p",{text:tz?"وصل ملف جديد من «"+tz.era_place+"». لا أحد يعرف ما فيه بعد.":"لا ملفات عالقة الآن. ستصل ملفات جديدة مع القصص."})]));
+  wrap.appendChild(h("p",{class:"note",text:"لا ضغط: عد متى شئت."}));
+  var b=h("button",{type:"button",class:"sm pri",text:"العودة للرئيسية"});b.addEventListener("click",arenaClose);wrap.appendChild(b);
+}
+
 function close(){SFX.amb(false);stopVideo();stopNarr();stage.classList.remove("on");clear();document.body.style.overflow="";buildHub();S.j=null;}
 function open(j){
   if(j.module==="dt"){dtOpen();return;}
@@ -4346,6 +4526,7 @@ document.getElementById("arenaBtn").addEventListener("click",arenaOpen);
 document.getElementById("baytBtn").addEventListener("click",bhOpen);
 document.getElementById("storiesBtn").addEventListener("click",stOpen);
 document.getElementById("setBtn").addEventListener("click",stOpenSettings);
+document.getElementById("detBtn").addEventListener("click",detStart);
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){if(arena.classList.contains("on"))arenaClose();else if(S.j)close();}});
 buildHub();
 })();
