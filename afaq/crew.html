@@ -1,0 +1,222 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="ar" dir="rtl">
+<title>طاقم المحطة</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600&family=Reem+Kufi:wght@500;700&display=swap">
+<style>
+/* التخطيط: شريط الطاقم الأفقي ثم ملف الشخصية المختارة ثم القيم ثم الأدوات. تلوّن الصفحة كلها بلون الشخصية المختارة. */
+:root{
+  --bg:#07090f;--panel:#0d1322;--ink:#f3eee2;--mute:#9aa3bd;--line:#1c2540;
+  --ac:#ecb982;--ac2:#ffd9ad;--ac3:#6f4521;
+  --kufi:"Reem Kufi","Noto Kufi Arabic","Segoe UI",Tahoma,sans-serif;
+  --sans:"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);direction:rtl;line-height:1.65;
+  padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background-image:radial-gradient(120% 50% at 50% 0%,color-mix(in srgb,var(--ac) 14%,transparent),transparent 70%)}
+.wrap{max-width:520px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--ac2);outline-offset:3px}
+.eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--kufi);color:var(--ac2);font-size:.95rem}
+.eyebrow::before{content:"";width:8px;height:8px;background:var(--ac);transform:rotate(45deg);box-shadow:0 0 8px var(--ac)}
+.eyebrow::after{content:"";flex:1;height:1px;background:linear-gradient(to left,var(--ac3),transparent)}
+h1{font-family:var(--kufi);font-size:1.9rem;margin:10px 0 2px;line-height:1.25;text-wrap:balance}
+.sub{margin:0 0 18px;color:var(--mute);font-size:.9rem}
+
+/* شريط الطاقم */
+.strip{display:flex;gap:10px;overflow-x:auto;padding:8px 2px 14px;margin:0 -2px;scroll-snap-type:x proximity;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.mem{flex:none;width:68px;scroll-snap-align:center;background:none;border:0;padding:0;text-align:center}
+.face{position:relative;display:block;width:68px;height:84px;background:linear-gradient(135deg,var(--c2),var(--c3) 40%,var(--c1));
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);opacity:.62;transition:opacity .25s,transform .25s}
+.face i{position:absolute;inset:2px;display:grid;place-items:center;overflow:hidden;background:#0b1020;
+  clip-path:polygon(13px 0,100% 0,100% calc(100% - 13px),calc(100% - 13px) 100%,0 100%,0 13px);font:700 1.6rem var(--kufi);font-style:normal;color:var(--c1)}
+.face img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.mem[aria-selected="true"] .face{opacity:1;transform:translateY(-3px);filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c1) 60%,transparent))}
+.mem b{display:block;margin-top:5px;font:600 .74rem var(--sans);color:var(--mute)}
+.mem[aria-selected="true"] b{color:var(--ink)}
+.dot{position:absolute;top:-4px;inset-inline-start:-4px;width:12px;height:12px;background:var(--bg);border:1.5px solid var(--c1);transform:rotate(45deg);z-index:2}
+.dot.on{background:var(--c1)}
+
+/* ملف الشخصية */
+.dos{position:relative;padding:1px;background:linear-gradient(135deg,var(--ac2),var(--ac3) 38%,var(--ac) 66%,var(--ac2));
+  clip-path:polygon(28px 0,100% 0,100% calc(100% - 28px),calc(100% - 28px) 100%,0 100%,0 28px);transition:background .3s}
+.dos-in{background:linear-gradient(170deg,#0e1526,#080b13);padding:18px 16px 16px;
+  clip-path:polygon(27px 0,100% 0,100% calc(100% - 27px),calc(100% - 27px) 100%,0 100%,0 27px)}
+.head{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:end}
+.big{position:relative;width:96px;height:124px;background:#0b1020;overflow:hidden;display:grid;place-items:center;font:700 2.4rem var(--kufi);color:var(--ac);
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);box-shadow:inset 0 0 0 1px var(--ac3)}
+.big img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.nm{font-family:var(--kufi);font-size:1.7rem;line-height:1.2;margin:0}
+.axis{color:var(--ac2);font-size:.9rem;margin:2px 0 8px}
+.quote{margin:0;color:var(--mute);font-size:.86rem;line-height:1.7;border-inline-start:2px solid var(--ac3);padding-inline-start:10px}
+.rows{display:grid;gap:10px;margin:16px 0}
+.row{display:grid;grid-template-columns:70px 1fr;gap:10px;align-items:start;font-size:.88rem}
+.row small{font:600 .7rem var(--sans);letter-spacing:.04em;color:var(--ac);padding-top:3px}
+.row span{color:var(--ink)}
+.row em{font-style:normal;color:var(--mute);font-size:.78rem;display:block}
+.st{display:grid;gap:6px}
+.st li{list-style:none;display:flex;gap:9px;align-items:baseline}
+.st{margin:0;padding:0}
+.st li::before{content:"";flex:none;width:7px;height:7px;background:var(--ac);transform:rotate(45deg) translateY(-1px);opacity:.8}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.btn{padding:12px 10px;border:1px solid var(--ac3);background:color-mix(in srgb,var(--ac) 8%,transparent);color:var(--ink);font-weight:600;font-size:.88rem;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px);min-height:46px}
+.btn.main{background:var(--ac);color:#07090f;border-color:var(--ac)}
+.btn small{display:block;font-weight:400;font-size:.7rem;opacity:.8}
+.rank{margin-top:14px;display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--mute)}
+.pips{display:flex;gap:5px}.pips i{width:12px;height:12px;border:1.5px solid var(--ac3);transform:rotate(45deg)}.pips i.on{background:var(--ac);border-color:var(--ac)}
+
+/* مقياس العدسات */
+h2{font-family:var(--kufi);font-size:1.2rem;margin:30px 0 4px}
+.note{margin:0 0 12px;color:var(--mute);font-size:.8rem}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:74px 1fr 46px;gap:10px;align-items:center;font-size:.8rem;border:0;background:none;padding:0;text-align:start}
+.bar .t{height:10px;background:var(--line);position:relative;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)}
+.bar .t i{position:absolute;inset-block:0;inset-inline-start:0;background:linear-gradient(to left,var(--c2),var(--c1));width:var(--w)}
+.bar b{font-variant-numeric:tabular-nums;color:var(--mute);font-weight:600;text-align:end}
+.bar[aria-current="true"] span{color:var(--ink);font-weight:600}
+
+/* القيم */
+.vals{display:flex;flex-wrap:wrap;gap:8px}
+.val{padding:7px 12px;border:1px solid var(--line);background:#0b1120;font-size:.82rem;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.val b{color:var(--ac2);font-variant-numeric:tabular-nums;margin-inline-start:6px;font-weight:600}
+
+/* الأدوات */
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{padding:12px;border:1px solid var(--line);background:#0b1120;text-align:start;min-height:70px;
+  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+.tool b{display:block;font-family:var(--kufi);font-size:1rem}.tool span{font-size:.76rem;color:var(--mute)}
+.foot{margin-top:28px;font-size:.74rem;color:var(--mute);text-align:center}
+.toast{position:fixed;inset-inline:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:420px;margin:0 auto;background:#11182b;border:1px solid var(--ac);padding:10px 14px;font-size:.82rem;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;z-index:20}
+.toast.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">الصفحة الرئيسية</div>
+  <h1>طاقم المحطة</h1>
+  <p class="sub">سبع شخصيات، وكل واحدة عدسة مختلفة على الحكاية نفسها. المس واحدة لترى ملفها.</p>
+
+  <div class="strip" id="strip" role="tablist" aria-label="الشخصيات"></div>
+  <section class="dos" id="dos" aria-live="polite"><div class="dos-in" id="dosIn"></div></section>
+
+  <h2>حجم كل عدسة في المكتبة</h2>
+  <p class="note">عدد القصص التي ستفتحها كل شخصية. العدسات تتقاطع، فالقصة الواحدة قد تظهر في أكثر من شخصية. الأرقام تقديرية من الوسوم الحالية، وتصير دقيقة بعد توحيدها.</p>
+  <div class="bars" id="bars"></div>
+
+  <h2>قيم تمرّ عبر الجميع</h2>
+  <p class="note">بعد توحيد الوسوم تصير كل قيمة خيطًا يتبعه الشاب من شخصية إلى أخرى. هذه أعداد القصص الموسومة بها اليوم، وهي أقل من الحقيقة لأن الوسوم متفرقة.</p>
+  <div class="vals" id="vals"></div>
+
+  <h2>الأدوات المشتركة</h2>
+  <div class="tools" id="tools"></div>
+
+  <p class="foot">نموذج للمعاينة فقط، لم يُطبَّق على التطبيق. ARAFAT ALRAJHI © 2026</p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+var CDN="https://d8j0ntlcm91z4.cloudfront.net/user_3Isqcp1WNeQb3wtRQJqKCNlsa5T/";
+var F={youth:"hf_20261028_095307_39f1906b-c60c-48c0-a00f-26eaa535618c",astro:"hf_20261028_100024_29bc38ce-df70-48ec-a9b0-a3707f6c7281",detective:"hf_20261028_101215_15dba4c1-9b7f-4e60-90fa-b253ece4e9dc",explorer:"hf_20261028_102313_c32a5adb-0c1d-4737-b2dd-fc7b77101198",doctor:"hf_20261028_103447_0f439eff-111b-4c27-9e71-2f4344275063",engineer:"hf_20261028_103847_2907a199-ec89-4759-b9c7-f1f007fdb1ae",coach:"hf_20261028_103850_1ebb8a76-2eae-4811-9ae1-3056047917b0"};
+/* قيود وأدوات مقترحة للمعاينة؛ المحطات والأسطر من التطبيق الحالي؛ الأعداد تقديرية من الوسوم */
+var CREW=[
+ {id:"narr",name:"الراوي",axis:"التاريخ والبطولات",face:"youth",c:["#ecb982","#ffd9ad","#6f4521"],
+  line:"للتاريخ بوابة… اسحب الباب وادخل معي.",
+  lens:{n:690,t:"قصة تاريخية وإسلامية"},
+  rule:"النهاية تبقى مغلقة حتى تختار موقفك",tool:"الخيط: يربط القصة بقصة أخرى من القيمة نفسها",
+  st:["البيروني وقياس الأرض","ابن الهيثم والضوء","عين جالوت"]},
+ {id:"pilot",name:"الرائد",axis:"الخيال العلمي",face:"astro",c:["#8fd0e8","#d5f1fb","#245a70"],
+  line:"السفينة تنتظرنا في آخر الممر. هل أنت مستعد؟",
+  lens:{n:316,t:"قصة خيال علمي"},
+  rule:"قرار واحد لا رجعة فيه في كل مهمة",tool:"سجلّ الرحلة: يحفظ قراراتك ونتائجها",
+  st:["الصعود إلى السفينة","أربعون دقيقة","مهمة ثالثة قادمة"]},
+ {id:"detective",name:"المحقق",axis:"الألغاز",face:"detective",c:["#8f7be0","#d3c9ff","#40337a"],
+  line:"كل قضية تبدأ بتفصيلة صغيرة… تعال نكتشفها.",
+  lens:{n:688,t:"قضية فيها خلاف بين المصادر"},
+  rule:"ثلاثة شكوك فقط في اليوم",tool:"العدسة: أول دليل مجاني",
+  st:["قضية المكتبة","قضية الصندوق","قضية المعرض"]},
+ {id:"explorer",name:"الرحّالة",axis:"المغامرات الذهنية",face:"explorer",c:["#7ad6a3","#c9f5dc","#1f6a45"],
+  line:"الخريطة ناقصة، والطريق يتفرّع. سنقرر معًا.",
+  lens:{n:86,t:"قصة رحلة وخريطة"},
+  rule:"ترى جزءًا من الخريطة فقط",tool:"الدفتر: تدوّن ما اكتشفته في الطريق",
+  st:["الإدريسي وخريطته","ابن بطوطة ورحلاته","واحة القرار"]},
+ {id:"doctor",name:"الطبيب",axis:"أعاجيب الجسم",face:"doctor",c:["#ff8fa3","#ffd0d8","#8a2c40"],
+  line:"سنُصغَّر في كبسولة… وجسمك هو الكون الذي سنستكشفه.",
+  lens:{n:50,t:"قصة طب وعلاج"},
+  rule:"تشخّص قبل أن ترى النتيجة",tool:"الملف السريري: يجمع الأعراض والأدلة",
+  st:["القلب","الرئتان","العين"]},
+ {id:"engineer",name:"المهندس",axis:"المخترعون وبناء الأمم",face:"engineer",c:["#e0803f","#ffc597","#7a3a14"],
+  line:"كل مدينة عظيمة كانت يومًا خطًّا على ورقة.",
+  lens:{n:121,t:"قصة اختراع وعمارة"},
+  rule:"ميزانية محدودة لكل محطة",tool:"المخطط: ترسم الحل قبل أن تبنيه",
+  st:["الرافعة والعزم","الماء والأنابيب","خط الإنتاج"]},
+ {id:"coach",name:"المدرّب",axis:"المسابقات",face:"coach",c:["#2fb7a8","#9ff2e4","#145a50"],
+  line:"جاهز؟ الجولة تبدأ بعد ثلاث ثوانٍ!",
+  lens:{n:16,t:"تحدٍّ بين مسابقة ولغز"},
+  rule:"تنافس نفسك أمس، لا غيرك",tool:"العدّاد: يقيس تقدمك عبر الأيام",
+  st:["سباق الدقيقة","الماراثون","تحدي اليوم"]}
+];
+var VALS=[["الأمانة",84],["الصدق",51],["الصبر",38],["التواضع",23],["العدل",18],["الكرم",16],["الشجاعة",8],["المسؤولية",8]];
+var TOOLS=[["مكتبة القصص","1006 قصص بين الأيدي"],["بيت الحكمة","مختبر العلماء العباسيين"],["يوم المحقق","ثلاث قضايا كل يوم"],["ساحة الألغاز","مسابقات وألغاز"]];
+var cur=0,maxN=690;
+function $(id){return document.getElementById(id);}
+function el(t,a,k){var e=document.createElement(t);if(a)for(var n in a){if(n==="text")e.textContent=a[n];else e.setAttribute(n,a[n]);}(k||[]).forEach(function(c){e.appendChild(c);});return e;}
+function img(key){var i=document.createElement("img");i.alt="";i.decoding="async";i.src=CDN+F[key]+"_min.webp";i.addEventListener("error",function(){if(!i.dataset.f){i.dataset.f=1;i.src=CDN+F[key]+".png";}else i.remove();});return i;}
+function toast(t){var x=$("toast");x.textContent=t;x.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(function(){x.classList.remove("on");},2200);}
+function paint(c){var r=document.documentElement.style;r.setProperty("--ac",c[0]);r.setProperty("--ac2",c[1]);r.setProperty("--ac3",c[2]);}
+var STATE=[1,0,2,0,0,0,0];/* مجرد مثال: 0 لم تبدأ، 1 جارية، 2 أتممتها */
+function strip(){
+  var s=$("strip");s.textContent="";
+  CREW.forEach(function(m,i){
+    var b=el("button",{class:"mem",type:"button",role:"tab","aria-selected":i===cur?"true":"false","aria-label":m.name+" — "+m.axis});
+    b.style.cssText="--c1:"+m.c[0]+";--c2:"+m.c[1]+";--c3:"+m.c[2];
+    var f=el("span",{class:"face"},[el("i",{text:"◆"})]);f.firstChild.appendChild(img(m.face));
+    if(STATE[i])f.appendChild(el("span",{class:"dot"+(STATE[i]===2?" on":"")}));
+    b.appendChild(f);b.appendChild(el("b",{text:m.name}));
+    b.addEventListener("click",function(){cur=i;render();b.scrollIntoView({inline:"center",block:"nearest",behavior:"smooth"});});
+    s.appendChild(b);
+  });
+}
+function dossier(){
+  var m=CREW[cur],d=$("dosIn");d.textContent="";
+  var big=el("div",{class:"big","aria-hidden":"true"},[el("span",{text:"◆"})]);big.appendChild(img(m.face));
+  d.appendChild(el("div",{class:"head"},[big,el("div",{},[el("h3",{class:"nm",text:m.name}),el("p",{class:"axis",text:m.axis}),el("p",{class:"quote",text:"«"+m.line+"»"})])]));
+  var st=el("ul",{class:"st"});m.st.forEach(function(x){st.appendChild(el("li",{text:x}));});
+  d.appendChild(el("div",{class:"rows"},[
+    el("div",{class:"row"},[el("small",{text:"عدستي"}),el("span",{text:m.lens.n+" "+m.lens.t})]),
+    el("div",{class:"row"},[el("small",{text:"قيدي"}),el("span",{text:m.rule})]),
+    el("div",{class:"row"},[el("small",{text:"أداتي"}),el("span",{text:m.tool})]),
+    el("div",{class:"row"},[el("small",{text:"محطاتي"}),st])
+  ]));
+  var b1=el("button",{class:"btn main",type:"button"},[document.createTextNode("ادخل محطاتي")]);
+  var b2=el("button",{class:"btn",type:"button"},[document.createTextNode("افتح عدستي"),el("small",{text:m.lens.n+" "+m.lens.t})]);
+  b1.addEventListener("click",function(){toast("في التطبيق: تفتح محطات "+m.name+" الثلاث");});
+  b2.addEventListener("click",function(){toast("في التطبيق: تُرشَّح المكتبة على عدسة "+m.name);});
+  d.appendChild(el("div",{class:"btns"},[b1,b2]));
+  var pips=el("span",{class:"pips","aria-hidden":"true"});for(var i=0;i<5;i++)pips.appendChild(el("i",{class:i<(STATE[cur]===2?3:STATE[cur]===1?1:0)?"on":""}));
+  d.appendChild(el("div",{class:"rank"},[pips,el("span",{text:"رتبتك مع "+m.name+" (مثال)"})]));
+}
+function bars(){
+  var b=$("bars");b.textContent="";
+  CREW.forEach(function(m,i){
+    var r=el("button",{class:"bar",type:"button","aria-current":i===cur?"true":"false"});
+    r.style.cssText="--c1:"+m.c[0]+";--c2:"+m.c[2]+";--w:"+Math.max(3,Math.round(m.lens.n/maxN*100))+"%";
+    r.appendChild(el("span",{text:m.name}));r.appendChild(el("span",{class:"t"},[el("i")]));r.appendChild(el("b",{text:String(m.lens.n)}));
+    r.addEventListener("click",function(){cur=i;render();window.scrollTo({top:0,behavior:"smooth"});});
+    b.appendChild(r);
+  });
+}
+function render(){paint(CREW[cur].c);strip();dossier();bars();}
+VALS.forEach(function(v){$("vals").appendChild(el("span",{class:"val"},[document.createTextNode(v[0]),el("b",{text:String(v[1])})]));});
+TOOLS.forEach(function(t){$("tools").appendChild(el("button",{class:"tool",type:"button"},[el("b",{text:t[0]}),el("span",{text:t[1]})]));});
+render();
+})();
+</script>
