@@ -8,11 +8,13 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="محمد الراجحي">
+<meta name="apple-mobile-web-app-title" content="كيمياء">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="محمد الراجحي: تطبيق كيمياء تفاعلي: الضوء والذرة، الجدول الدوري، الأيونات والروابط.">
+<meta name="description" content="كيمياء: الضوء والذرة، الجدول الدوري، الأيونات والروابط، مع أدوات تفاعلية واختبارات جاهزة.">
 <meta name="theme-color" content="#f6f4fb">
-<title>محمد الراجحي</title>
+<title>كيمياء</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap">
 <style>
 @property --c{syntax:'<color>';inherits:true;initial-value:#4f46e5}
 :root{
@@ -46,8 +48,8 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0;overflow:hidden}
-body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Sans Arabic","Noto Naskh Arabic","Geeza Pro",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.85;transition:background .3s,color .3s}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
+body{position:fixed;inset:0;width:100%;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,"Noto Sans Arabic","Noto Naskh Arabic","Geeza Pro",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.75;transition:background .3s,color .3s}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:3px solid var(--c);outline-offset:2px}
 [hidden]{display:none!important}
@@ -57,69 +59,89 @@ button{font:inherit;color:inherit;cursor:pointer}
 .bgfx span{position:absolute;color:var(--c);opacity:.07;font-weight:800;direction:ltr;white-space:nowrap;animation:drift var(--d,24s) ease-in-out var(--dl,0s) infinite alternate}
 @keyframes drift{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(-34px) rotate(8deg)}}
 
-/* ---------- layout ---------- */
-#app{position:relative;z-index:1;height:100vh;height:100dvh;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto}
-.top{display:flex;align-items:center;gap:6px;padding:max(8px,env(safe-area-inset-top)) 16px 4px}
-.logo{display:flex;align-items:center;gap:6px;min-height:44px;min-width:0;flex:1;background:none;border:0;padding:0;font-weight:800;font-size:15px;text-align:start}
+/* ---------- layout (no scrolling anywhere) ---------- */
+#app{position:absolute;inset:0;z-index:1;height:100%;overflow:hidden;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto}
+.top{display:flex;align-items:center;gap:5px;padding:4px clamp(8px,3vw,16px) 0}
+.logo{display:flex;align-items:center;gap:6px;min-height:44px;min-width:0;flex:1;background:none;border:0;padding:0;font-weight:800;font-size:clamp(18px,5.4vw,22px);text-align:start}
 .logo .lg{font-size:24px;line-height:1;flex:none}
-.logo .lt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(90deg,var(--ct),var(--ink));-webkit-background-clip:text;background-clip:text;color:transparent}
-.stats{display:flex;align-items:center;gap:8px;height:38px;padding:0 10px;border-radius:19px;background:var(--card);border:1.5px solid var(--line);font-weight:800;font-size:14px;box-shadow:var(--shadow);white-space:nowrap;flex:none}
+.logo .lt{white-space:nowrap;background:linear-gradient(90deg,var(--ct),var(--ink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stats{display:flex;align-items:center;gap:6px;height:36px;padding:0 9px;border-radius:18px;background:var(--card);border:1.5px solid var(--line);font-weight:800;font-size:13px;box-shadow:var(--shadow);white-space:nowrap;flex:none}
 .stats b{font-variant-numeric:tabular-nums}
 .stats.pop{animation:pop .45s ease}
 @keyframes pop{40%{transform:scale(1.18)}}
-.ib{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:20px;padding:0 10px;font-weight:700}
+.ib{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;min-height:44px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);box-shadow:var(--shadow);font-size:20px;padding:0 8px;font-weight:700}
 .ib small{font-size:13px;display:none}
 .ib .bdg{position:absolute;top:-5px;inset-inline-start:-5px;min-width:20px;height:20px;border-radius:10px;background:var(--bad);color:#fff;font-size:11px;font-weight:800;line-height:20px;text-align:center;padding:0 5px}
 .ib .bdg:empty{display:none}
 @media(min-width:560px){.ib.wide small{display:inline}}
 
-.tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:6px 16px 8px}
-.tab{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;padding:6px 4px 9px;border-radius:16px;border:2px solid color-mix(in srgb,var(--tc) 38%,transparent);background:color-mix(in srgb,var(--tc) 11%,var(--card));font-weight:800;font-size:12.5px;line-height:1.35;text-align:center;transition:background .3s,color .3s,transform .2s,box-shadow .3s}
-.tab .ti{font-size:21px;line-height:1}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(4px,1.4vw,8px);padding:4px clamp(8px,3vw,16px) 6px}
+.tab{position:relative;overflow:hidden;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:clamp(50px,8vh,60px);padding:4px 2px 8px;border-radius:14px;border:2px solid color-mix(in srgb,var(--tc) 38%,transparent);background:color-mix(in srgb,var(--tc) 11%,var(--card));font-weight:800;font-size:clamp(10.5px,3.1vw,13px);line-height:1.25;text-align:center;transition:background .3s,color .3s,transform .2s,box-shadow .3s}
+.tab .ti{font-size:clamp(17px,5vw,21px);line-height:1.1}
+.tab .tl{display:block;min-width:0;max-width:100%;overflow-wrap:anywhere}
+.tab .tl .ts{display:none}
+@media(max-width:399px){.tab .tl .ts{display:inline}.tab .tl .tf{display:none}}
 .tab .tp{position:absolute;inset-inline:0;bottom:0;height:4px;background:color-mix(in srgb,var(--tc) 20%,transparent)}
 .tab .tp u{display:block;height:100%;width:0;background:var(--tc);transition:width .5s;text-decoration:none;border-radius:0 4px 4px 0}
-.tab.on{background:linear-gradient(145deg,var(--tc),color-mix(in srgb,var(--tc) 70%,#12002e));border-color:transparent;color:#fff;box-shadow:0 8px 20px color-mix(in srgb,var(--tc) 45%,transparent);transform:translateY(-1px)}
+.tab.on{background:linear-gradient(145deg,var(--tc),color-mix(in srgb,var(--tc) 70%,#12002e));border-color:transparent;color:#fff;box-shadow:0 6px 14px color-mix(in srgb,var(--tc) 45%,transparent)}
 .tab.on .tp{background:rgba(255,255,255,.3)}.tab.on .tp u{background:#fff}
-@media(min-width:700px){.tab{flex-direction:row;gap:10px;font-size:16px;min-height:56px;padding:6px 12px 9px}.tab .ti{font-size:24px}}
+@media(min-width:700px){.tab{flex-direction:row;gap:10px;font-size:16px;min-height:54px;padding:6px 12px 9px}.tab .ti{font-size:24px}}
 
-main{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;touch-action:pan-y}
-.wrap{max-width:920px;margin:0 auto;padding:10px 16px 28px}
+main{position:relative;min-height:0;min-width:0;overflow:hidden;overflow:clip;touch-action:manipulation}
+#view{height:100%}
+.wrap{height:100%;max-width:920px;margin:0 auto;padding:4px clamp(8px,3vw,14px) 2px;display:flex;flex-direction:column;min-height:0}
+.fitbox{flex:1;min-height:0;overflow:hidden;overflow:clip;position:relative}
+.fitbox.pgscroll,.pg.pgscroll{overflow-y:auto;overflow-x:hidden}
+.fitin{min-width:0}
+.fitbox>.fitin:has(>.xcards),.fitbox>.fitin:has(>.home){height:100%}
 
-.bar{display:flex;align-items:center;gap:8px;padding:8px 16px max(10px,env(safe-area-inset-bottom));background:var(--card);border-top:1.5px solid var(--line);box-shadow:0 -6px 18px rgba(30,10,70,.06)}
-.nb{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:52px;min-height:52px;padding:0 14px;border-radius:16px;border:2px solid var(--c);font-weight:800;font-size:15px;transition:transform .15s,background .3s,box-shadow .3s}
+#pager{display:flex;align-items:center;justify-content:center;gap:5px;height:16px;font-size:11px;font-weight:800;color:var(--muted);line-height:1}
+#pager i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s}
+#pager i.on{background:var(--c);transform:scale(1.3)}
+#pager span{margin-inline-start:4px}
+.bar{display:flex;align-items:center;gap:6px;padding:6px clamp(8px,3vw,16px) 8px;background:var(--card);border-top:1.5px solid var(--line);box-shadow:0 -6px 18px rgba(30,10,70,.06)}
+.nb{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:50px;min-height:50px;padding:0 12px;border-radius:15px;border:2px solid var(--c);font-weight:800;font-size:15px;transition:transform .15s,background .3s,box-shadow .3s}
 .nb:active{transform:scale(.95)}
 .nb.next{background:var(--c);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 40%,transparent)}
 .nb.prev{background:var(--card);color:var(--ct)}
 .nb em{font-style:normal;display:none}
 .nb.next.wide em,.nb.next.wide{display:inline-flex}
-.nb.next.wide{padding:0 12px;font-size:13.5px}
+.nb.next.wide{padding:0 10px;font-size:13px}
 @media(min-width:560px){.nb em{display:inline}}
 .mid{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px}
 .cnt{font-size:12px;font-weight:700;color:var(--muted);line-height:1.2}
-.segs{display:flex;align-items:center;gap:1.5px;width:100%;height:30px;cursor:pointer}
-.segs i{flex:1;height:7px;border-radius:3px;background:var(--line);transition:background .25s,height .25s}
+.segs{display:flex;align-items:center;gap:1.5px;width:100%;height:26px;cursor:pointer}
+.segs i{flex:1;height:6px;border-radius:3px;background:var(--line);transition:background .25s,height .25s}
 .segs i.d{background:color-mix(in srgb,var(--c) 55%,transparent)}
-.segs i.cu{background:var(--c);height:15px}
+.segs i.cu{background:var(--c);height:14px}
 
-/* ---------- hero ---------- */
-.hero-top{text-align:center;padding:8px 0 14px}
-.mol{font-size:56px;line-height:1.1;display:inline-block;animation:floaty 4s ease-in-out infinite}
-@keyframes floaty{50%{transform:translateY(-8px) rotate(6deg)}}
-.hero h1{margin:2px 0 0;font-size:clamp(28px,7vw,44px);line-height:1.3;background:linear-gradient(90deg,#8B3DFF,#00A896,#FF7A00);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .sub{margin:4px auto 14px;max-width:34em;color:var(--muted)}
-.go{min-height:54px;padding:0 34px;border-radius:18px;border:0;background:linear-gradient(135deg,var(--c),var(--cd));color:#fff;font-weight:800;font-size:19px;box-shadow:0 10px 24px color-mix(in srgb,var(--c) 40%,transparent);transition:transform .15s}
+/* ---------- copyright (Amiri) ---------- */
+.copy{font-family:'Amiri','Noto Naskh Arabic','Traditional Arabic',serif;font-size:clamp(13.5px,3.9vw,18px);font-weight:400;line-height:1.5;text-align:center;color:var(--muted);letter-spacing:0;padding-top:6px}
+.copy::before{content:"";display:block;width:min(240px,64%);height:1px;margin:0 auto 5px;background:linear-gradient(90deg,transparent,var(--c),transparent)}
+.copy .orn{color:var(--c);margin:0 6px;font-size:.8em;vertical-align:.08em}
+.copy bdi{unicode-bidi:isolate}
+.copy .nw{white-space:nowrap}
+
+/* ---------- home ---------- */
+.home{min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:clamp(5px,1.6vh,14px);padding:2px 0}
+.hero-top{text-align:center}
+.mol{font-size:clamp(30px,6.5vh,52px);line-height:1.1;display:inline-block;animation:floaty 4s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-6px) rotate(6deg)}}
+.home h1{margin:0;font-size:clamp(26px,5.6vh,42px);line-height:1.25;background:linear-gradient(90deg,#8B3DFF,#00A896,#FF7A00,#E11D74);-webkit-background-clip:text;background-clip:text;color:transparent}
+.home .sub{margin:2px auto 8px;max-width:30em;color:var(--muted);font-size:clamp(12.5px,3.4vw,15px);line-height:1.6}
+@media(max-height:620px){.home .sub{display:none}}
+.go{min-height:46px;padding:0 30px;border-radius:16px;border:0;background:linear-gradient(135deg,var(--c),var(--cd));color:#fff;font-weight:800;font-size:17px;box-shadow:0 8px 20px color-mix(in srgb,var(--c) 40%,transparent);transition:transform .15s}
 .go:active{transform:scale(.96)}
-.hcards{display:grid;gap:12px;margin-top:6px}
-@media(min-width:760px){.hcards{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.hcard{position:relative;overflow:hidden;text-align:start;border:0;border-radius:24px;padding:18px;min-height:150px;color:#fff;background:linear-gradient(145deg,var(--tc),color-mix(in srgb,var(--tc) 62%,#12002e));box-shadow:0 12px 26px color-mix(in srgb,var(--tc) 35%,transparent);transition:transform .2s}
+.hcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(6px,1.6vw,12px)}
+@media(min-width:900px){.hcards{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.hcard{position:relative;overflow:hidden;min-width:0;text-align:start;border:0;border-radius:20px;padding:10px 12px;min-height:clamp(84px,15vh,128px);color:#fff;background:linear-gradient(145deg,var(--tc),color-mix(in srgb,var(--tc) 62%,#12002e));box-shadow:0 8px 18px color-mix(in srgb,var(--tc) 35%,transparent);transition:transform .2s;display:flex;flex-direction:column;justify-content:center}
 .hcard:hover{transform:translateY(-3px)}.hcard:active{transform:scale(.98)}
-.hcard .hi{position:absolute;inset-inline-end:10px;top:-6px;font-size:84px;line-height:1;opacity:.28}
-.hcard .hn1{font-size:13px;font-weight:700;opacity:.9}
-.hcard .ht{font-size:21px;font-weight:800;line-height:1.4;margin:2px 0 4px}
-.hcard .hs{font-size:14px;opacity:.95}
-.hcard .hb{height:8px;border-radius:4px;background:rgba(255,255,255,.28);margin:10px 0 4px;overflow:hidden}
-.hcard .hb u{display:block;height:100%;background:#fff;border-radius:4px;text-decoration:none}
-.sign{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.5px;margin:20px 0 0;direction:ltr}
+.hcard .hi{position:absolute;inset-inline-end:6px;top:-4px;font-size:clamp(46px,9vh,72px);line-height:1;opacity:.28}
+.hcard .hn1{font-size:11.5px;font-weight:700;opacity:.9;line-height:1.4}
+.hcard .ht{font-size:clamp(14px,4vw,19px);font-weight:800;line-height:1.3;margin:1px 0 2px;position:relative}
+.hcard .hs{font-size:11.5px;opacity:.95;line-height:1.4}
+.hcard .hb{height:6px;border-radius:3px;background:rgba(255,255,255,.28);margin:5px 0 3px;overflow:hidden}
+.hcard .hb u{display:block;height:100%;background:#fff;border-radius:3px;text-decoration:none}
 
 /* ---------- slide ---------- */
 .slide.in-next{animation:inN .38s cubic-bezier(.2,.8,.3,1) both}
@@ -128,23 +150,28 @@ main{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
 @keyframes inN{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
 @keyframes inP{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
 @keyframes inF{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.kbadge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--ct);background:var(--c2);padding:2px 12px;border-radius:20px;margin-bottom:2px}
-.s-head{display:flex;align-items:center;gap:10px;margin:2px 0 10px}
-.s-no{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 6px;border-radius:12px;background:var(--c);color:#fff;font-weight:800;font-size:15px}
-.s-head h2{margin:0;font-size:clamp(20px,5vw,28px);line-height:1.4}
+.slide{flex:1;min-height:0;display:flex;flex-direction:column}
+.kbadge{display:inline-flex;align-items:center;font-size:11px;font-weight:800;color:var(--ct);background:var(--c2);padding:0 9px;border-radius:20px;line-height:1.9;flex:none;margin-inline-start:auto}
+.s-head{flex:none;display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.s-no{flex:none;display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;padding:0 5px;border-radius:10px;background:var(--c);color:#fff;font-weight:800;font-size:14px}
+.s-head h2{margin:0;font-size:clamp(16px,4.6vw,24px);line-height:1.3;min-width:0}
+.pg{flex:1;min-height:0;overflow:hidden;overflow:clip;position:relative;font-size:15px;line-height:1.7}
+@media(min-width:700px) and (min-height:700px){.pg{font-size:16.5px;line-height:1.8}}
+@media(max-height:640px){.pg{font-size:14.5px;line-height:1.6}}
 .s-body{min-width:0;overflow-wrap:anywhere}
 .s-body img,.s-body svg,.s-body canvas,.s-body video{max-width:100%;height:auto}
-.s-body p{margin:.5em 0}
-.s-body h3{margin:.9em 0 .3em;color:var(--ct);font-size:1.15em}
-.s-body ul,.s-body ol{padding-inline-start:24px;margin:.4em 0}
-.s-body li{margin:.2em 0}
+.s-body p{margin:.4em 0}
+.s-body h3{margin:.5em 0 .2em;color:var(--ct);font-size:1.12em}
+.s-body ul,.s-body ol{padding-inline-start:24px;margin:.3em 0}
+.s-body li{margin:.15em 0}
 .s-body input[type=range]{accent-color:var(--c);max-width:100%}
 .s-body sup,.s-body sub{line-height:0}
-.s-body>*+*{margin-top:12px}
-.s-body>p+p,.s-body>.card+.card{margin-top:12px}
-.s-checks{margin-top:18px}
-.ck-h{margin:0 0 8px;font-size:17px;color:var(--ct)}
-.slide.k-summary{position:relative;padding:16px;border-radius:26px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(135deg,var(--c),#ffb703,var(--c)) border-box;border:3px solid transparent;box-shadow:var(--shadow)}
+.pg>.s-body>*+*,.pg>.s-checks>*+*{margin-top:10px}
+.pg>.s-checks{margin-top:10px}
+.pg .pf{margin-top:0!important}
+.s-checks .q{margin:0}
+.ck-h{margin:0 0 4px;font-size:16px;color:var(--ct)}
+.slide.k-summary{padding:8px 10px;border-radius:22px;background:linear-gradient(var(--card),var(--card)) padding-box,linear-gradient(135deg,var(--c),#ffb703,var(--c)) border-box;border:3px solid transparent;box-shadow:var(--shadow)}
 .slide.k-summary .kbadge{background:linear-gradient(135deg,#ffb703,#ff7a00);color:#2b1700}
 
 /* ---------- content classes ---------- */
@@ -224,34 +251,104 @@ table.t td+td,table.t th+th{border-inline-start:1px solid var(--line)}
 .res .sc{font-size:30px;font-weight:800;color:var(--ct)}
 .res .acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
 
+
+/* ---------- compact overrides (single-screen) ---------- */
+.idea{padding:12px 14px;border-radius:18px;font-size:clamp(16px,4.2vw,22px);line-height:1.6}
+.idea::after{font-size:76px;bottom:-20px}
+.card{padding:10px 12px;border-radius:16px}
+.analogy{padding:10px;gap:10px;border-radius:16px}.analogy .ico{font-size:28px}
+.steps>li{padding:3px 48px 6px 0;margin:4px 0}
+.note,.warn,.good{padding:9px 12px;border-radius:14px}
+.flip{margin:0;min-height:64px}
+.flip>.fq,.flip>.fa{padding:10px 12px}
+.eq{padding:8px 10px;overflow-x:hidden}
+.q{padding:10px;border-radius:16px}
+.q .qt{font-size:16px;line-height:1.6;margin-bottom:8px}
+.opts{gap:6px}
+.opt{min-height:44px;padding:5px 10px;font-size:15px;line-height:1.5}
+.why{margin-top:8px;padding:8px 10px;font-size:14.5px;line-height:1.6}
+.res{padding:14px 10px;border-radius:20px}
+.chip,.btn{min-height:44px}
+.btn{font-size:15px;padding:0 18px}
+
 /* ---------- overlays ---------- */
-.ov{position:fixed;inset:0;z-index:50;background:rgba(10,5,25,.5);display:flex;animation:ovin .25s both}
+.ov{position:fixed;inset:0;z-index:50;background:rgba(10,5,25,.5);display:flex;animation:ovin .25s both;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 @keyframes ovin{from{opacity:0}to{opacity:1}}
 .drawer{width:min(380px,90vw);height:100%;background:var(--card);display:flex;flex-direction:column;box-shadow:-10px 0 30px rgba(0,0,0,.3);animation:dr .3s cubic-bezier(.2,.8,.3,1) both}
 @keyframes dr{from{transform:translateX(100%)}to{transform:none}}
-.dh,.sh{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1.5px solid var(--line);background:linear-gradient(135deg,var(--c),var(--cd));color:#fff;font-weight:800;font-size:17px}
+.dh,.sh{flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1.5px solid var(--line);background:linear-gradient(135deg,var(--c),var(--cd));color:#fff;font-weight:800;font-size:16px}
 .dh b,.sh b{flex:1}
 .dh .ib,.sh .ib{background:rgba(255,255,255,.2);color:#fff;border-color:transparent;box-shadow:none}
-.dl{list-style:none;margin:0;padding:8px;overflow-y:auto;flex:1}
-.di{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:6px 10px;margin:2px 0;border-radius:14px;border:2px solid transparent;background:none;text-align:start;line-height:1.5}
+.dl{list-style:none;margin:0;padding:6px 8px;overflow:hidden;flex:1;min-height:0}
+.di{display:flex;align-items:center;gap:10px;width:100%;min-height:46px;padding:4px 10px;margin:2px 0;border-radius:14px;border:2px solid transparent;background:none;text-align:start;line-height:1.4}
 .di:hover{background:var(--c2)}
 .di.on{border-color:var(--c);background:var(--c2);font-weight:800}
-.di .dn{flex:none;width:32px;height:32px;border-radius:10px;background:var(--line);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.di .dn{flex:none;width:30px;height:30px;border-radius:10px;background:var(--line);display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
 .di.on .dn{background:var(--c);color:#fff}
-.di .dt{flex:1;min-width:0;font-size:15px}
-.di .dc{flex:none;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px}
+.di .dt{flex:1;min-width:0;font-size:14.5px}
+.di .dc{flex:none;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
 .di.done .dc{background:var(--good);color:#fff}
-.sheet{margin:auto;width:min(640px,100%);max-height:100%;display:flex;flex-direction:column;background:var(--bg);border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.4);animation:inF .3s both}
-.sb{overflow-y:auto;padding:6px 14px 16px;flex:1}
-.mq{margin-top:12px}
-.mq .ml{font-size:12.5px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dnav{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 10px;border-top:1.5px solid var(--line);font-weight:800;font-size:13px;color:var(--muted)}
+.dnav .chip{min-height:40px;padding:0 14px}
+.dnav .chip:disabled{opacity:.35;pointer-events:none}
+.dfoot{flex:none;padding:0 10px 8px}
+.sheet{margin:auto;width:min(640px,100%);height:min(100%,720px);display:flex;flex-direction:column;background:var(--bg);border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.4);animation:inF .3s both}
+.sb{flex:1;min-height:0;display:flex;flex-direction:column;padding:6px 12px 10px;overflow:hidden}
+.mnav{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;font-weight:800;font-size:13px;color:var(--muted)}
+.mnav .chip{min-height:40px;padding:0 14px}
+.mnav .chip:disabled{opacity:.35;pointer-events:none}
+.mq .ml{font-size:12.5px;font-weight:700;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
 .mq.fixed .q{border-color:var(--good)}
 .empty{text-align:center;padding:28px 10px;font-size:18px;font-weight:700}
-@media(max-width:600px){.ov.sh-ov{align-items:flex-end}.sheet{border-radius:24px 24px 0 0;max-height:90%;margin:auto 0 0}}
+@media(max-width:600px){.ov.sh-ov{align-items:flex-end}.sheet{border-radius:24px 24px 0 0;height:min(94%,720px);margin:auto 0 0}}
 
 .xpb{position:fixed;z-index:80;transform:translateX(-50%);pointer-events:none;background:linear-gradient(135deg,#ffb703,#ff7a00);color:#2b1700;font-weight:800;padding:2px 12px;border-radius:16px;box-shadow:0 6px 16px rgba(255,122,0,.4);animation:xpf 1.2s ease-out both}
 @keyframes xpf{0%{opacity:0;transform:translate(-50%,0) scale(.6)}15%{opacity:1;transform:translate(-50%,6px) scale(1.15)}100%{opacity:0;transform:translate(-50%,52px) scale(1)}}
 
+/* ---------- short screens ---------- */
+@media(max-height:660px){
+  .logo{min-height:38px}.ib{min-height:40px}.stats{height:32px}
+  .tab{min-height:46px}
+  .xw .xtag{display:none}.xlead{margin:0 0 4px}
+  .xf{min-height:48px;padding:4px 0 2px}.xf .btn{min-height:42px}
+  .opt{min-height:40px}.q{padding:8px}
+  .bar{padding:4px clamp(8px,3vw,16px) 6px}.nb{min-height:46px}.segs{height:22px}
+}
+/* ---------- exams ---------- */
+.xw{--c:#E11D74;padding-top:2px}
+.xh{flex:none;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.xw .qz-bar{flex:none}
+.xh .ib{min-width:40px;min-height:40px;font-size:17px}
+.xt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.3;font-weight:800;font-size:clamp(13px,3.6vw,16px)}
+.xt span{font-size:12px;color:var(--muted);font-weight:700}
+.xw .chip{min-height:40px;padding:0 12px;font-size:13px}
+.xf{flex:none;display:flex;gap:8px;justify-content:center;align-items:center;padding:6px 0 4px;min-height:54px}
+.xf .btn{min-height:46px;flex:1;max-width:340px}
+.xf .btn.ghost{flex:none;padding:0 16px}
+.xtag{display:inline-flex;margin-bottom:6px}
+.xlead{flex:none;text-align:center;font-weight:800;font-size:clamp(14px,3.8vw,17px);margin:2px 0 6px;color:var(--ct)}
+.xcards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(clamp(74px,13vh,110px),1fr));gap:clamp(6px,1.6vw,12px);height:100%;max-height:520px}
+@media(min-width:900px){.xcards{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(clamp(74px,13vh,110px),1fr));max-height:360px}}
+.xcard{position:relative;overflow:hidden;min-width:0;text-align:start;border:0;border-radius:18px;padding:10px 12px;color:#fff;background:linear-gradient(145deg,var(--tc),color-mix(in srgb,var(--tc) 62%,#12002e));box-shadow:0 8px 18px color-mix(in srgb,var(--tc) 32%,transparent);display:flex;flex-direction:column;justify-content:center;gap:1px;transition:transform .2s}
+.xcard:active{transform:scale(.97)}
+.xcard .xi{position:absolute;inset-inline-end:6px;top:-2px;font-size:clamp(40px,8vh,58px);line-height:1;opacity:.28}
+.xcard .xn{font-size:clamp(14px,3.9vw,18px);font-weight:800;line-height:1.3;position:relative}
+.xcard .xs{font-size:12px;opacity:.95;line-height:1.4;position:relative}
+.xcard.off{background:var(--card);color:var(--muted);box-shadow:none;border:2px dashed var(--line);pointer-events:none}
+.xcard.off .xi{opacity:.15}
+.xres .res{padding:12px 8px}
+.xres .stars{font-size:clamp(34px,10vw,50px);line-height:1.2}
+.xres .grade{font-size:clamp(18px,5vw,24px);font-weight:800;color:var(--ct)}
+.rv{background:var(--card);border:1.5px solid var(--line);border-inline-start:6px solid var(--bad);border-radius:14px;padding:8px 12px}
+.rv .rq{font-weight:800;line-height:1.55}
+.rv .ra{margin-top:4px;font-size:.95em}
+.rv .ra b{color:var(--good)}
+.rv .rw{color:var(--bad);font-size:.92em}
+.qa-q{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);font-weight:800;font-size:clamp(15px,4vw,18px);line-height:1.65}
+.qa-a{margin-top:8px;padding:10px 12px;border-radius:16px;border-inline-start:6px solid var(--good);background:color-mix(in srgb,var(--good) 13%,var(--card));animation:inF .3s both}
+.qa-a .fin{margin-top:6px;font-weight:800}
+.xchips{flex:none;display:flex;gap:6px;margin-bottom:6px}
+.xchips .chip{flex:1;min-width:0;padding:0 4px;font-size:12.5px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .bgfx span,.mol{animation:none!important}
@@ -262,17 +359,18 @@ table.t td+td,table.t th+th{border-inline-start:1px solid var(--line)}
 <div class="bgfx" id="bgfx" aria-hidden="true"></div>
 <div id="app">
   <header class="top">
-    <button class="logo" id="logo" type="button" aria-label="الرئيسية"><span class="lg">⚗️</span><span class="lt">محمد الراجحي</span></button>
+    <button class="logo" id="logo" type="button" aria-label="كيمياء - الرئيسية"><span class="lg">⚗️</span><span class="lt">كيمياء</span></button>
     <div class="stats" id="stats" aria-label="النقاط والنجوم"><span>⚡<b id="xpN">٠</b></span><span>⭐<b id="starN">٠</b></span></div>
     <button class="ib" id="themeBtn" type="button" aria-label="تبديل الوضع الفاتح والداكن">🌙</button>
     <button class="ib wide" id="misBtn" type="button" aria-label="أخطائي">📒<small>أخطائي</small><span class="bdg" id="misN"></span></button>
   </header>
-  <nav class="tabs" id="tabs" aria-label="الفصول"></nav>
+  <nav class="tabs" id="tabs" aria-label="الأقسام"></nav>
   <main id="main"><div id="view"></div></main>
+  <div id="pager" hidden aria-label="صفحات الشريحة"></div>
   <nav class="bar" id="bar" hidden>
     <button class="nb prev" id="prevB" type="button" aria-label="السابق"><span>▶</span><em>السابق</em></button>
     <div class="mid"><div class="cnt" id="cnt"></div><div class="segs" id="segs" role="group" aria-label="التقدم في الفصل"></div></div>
-    <button class="ib" id="menuB" type="button" aria-label="قائمة الشرائح" style="min-height:52px">☰</button>
+    <button class="ib" id="menuB" type="button" aria-label="قائمة الشرائح" style="min-height:50px">☰</button>
     <button class="nb next" id="nextB" type="button" aria-label="التالي"><em>التالي</em><span>◀</span></button>
   </nav>
 </div>
@@ -281,6 +379,8 @@ table.t td+td,table.t th+th{border-inline-start:1px solid var(--line)}
   <aside class="drawer" role="dialog" aria-modal="true" aria-label="قائمة الشرائح">
     <div class="dh"><b id="dTitle"></b><button class="ib" id="dClose" type="button" aria-label="إغلاق">✕</button></div>
     <ol class="dl" id="dList"></ol>
+    <div class="dnav"><button class="chip" id="dPrev" type="button">▶ السابق</button><span id="dPos"></span><button class="chip" id="dNext" type="button">التالي ◀</button></div>
+    <div class="dfoot copyhost"></div>
   </aside>
 </div>
 <div class="ov sh-ov" id="misOv" hidden>
@@ -294,21 +394,25 @@ table.t td+td,table.t th+th{border-inline-start:1px solid var(--line)}
 (function(){
 'use strict';
 var CH=[
-  {id:'ch1',n:'١',t:'الضوء والذرة',ico:'💡',c:'#8B3DFF'},
-  {id:'ch2',n:'٢',t:'الجدول الدوري',ico:'🧪',c:'#00A896'},
-  {id:'ch3',n:'٣',t:'الأيونات والروابط',ico:'🧲',c:'#FF7A00'}
+  {id:'ch1',n:'١',t:'الضوء والذرة',s:'الضوء',ico:'💡',c:'#8B3DFF'},
+  {id:'ch2',n:'٢',t:'الجدول الدوري',s:'الجدول',ico:'🧪',c:'#00A896'},
+  {id:'ch3',n:'٣',t:'الأيونات والروابط',s:'الأيونات',ico:'🧲',c:'#FF7A00'},
+  {id:'ex',n:'٤',t:'الاختبارات',s:'اختبارات',ico:'📝',c:'#E11D74'}
 ];
-var HOME_C='#4f46e5';
+var HOME_C='#4f46e5',EX_C='#E11D74';
 var chapters={ch1:[],ch2:[],ch3:[]};
-var started=false, cur={ch:null,i:0}, curColor=HOME_C;
-var KEY='chem-simple-v1', mem={};
+var EX={ch1:{mcq:[],tf:[],qa:[],calc:[]},ch2:{mcq:[],tf:[],qa:[],calc:[]},ch3:{mcq:[],tf:[],qa:[],calc:[]}};
+var started=false, cur={ch:null,i:0}, curColor=HOME_C, PG=null, navHook=null, disp=[], exView='menu';
+var KEY='chem-kimya-v2', mem={};
 var $=function(id){return document.getElementById(id)};
 var ar=function(n){return String(n).replace(/\d/g,function(d){return '٠١٢٣٤٥٦٧٨٩'[d]})};
 function h(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e}
+var COPY='<div class="copy"><span class="nw"><span class="orn">❖</span><bdi dir="ltr">© 2026</bdi></span> جميع الحقوق محفوظة لـ محمد عرفات <span class="nw">الراجحي<span class="orn">❖</span></span></div>';
+function slideCh(id){return !!chapters[id]}
 
 /* ---------- state / persistence ---------- */
 function rd(){try{var v=localStorage.getItem(KEY);if(v)return v}catch(e){}return mem[KEY]||null}
-var S={xp:0,done:{},tried:{},mistakes:{},quiz:{},flips:{},dark:null,last:null};
+var S={xp:0,done:{},tried:{},mistakes:{},quiz:{},flips:{},dark:null,last:null,exBest:{},timer:false};
 try{var raw=rd();if(raw){var p=JSON.parse(raw);if(p&&typeof p==='object'){for(var k in S){if(p[k]!==undefined)S[k]=p[k]}}}}catch(e){}
 function save(){var s;try{s=JSON.stringify(S)}catch(e){return}mem[KEY]=s;try{localStorage.setItem(KEY,s)}catch(e){}}
 
@@ -339,23 +443,175 @@ function setColor(c){curColor=c;document.documentElement.style.setProperty('--c'
 window.addSlides=function(id,arr){
   if(!chapters[id])return;
   (arr||[]).forEach(function(s){chapters[id].push(s)});
-  if(started){updateTabs();if(cur.ch===null)renderHome();else updateBar()}
+  if(started){updateTabs();if(cur.ch===null)renderHome();else if(slideCh(cur.ch))updateBar()}
+};
+window.addExam=function(id,o){
+  var e=EX[id];if(!e||!o)return;
+  ['mcq','tf','qa','calc'].forEach(function(k){(o[k]||[]).forEach(function(x){e[k].push(x)})});
+  if(started){updateTabs();if(cur.ch==='ex'&&exView==='menu')renderExamMenu();else if(cur.ch===null)renderHome()}
 };
 
 /* ---------- helpers ---------- */
 function chIndex(id){for(var i=0;i<CH.length;i++)if(CH[i].id===id)return i;return -1}
 function doneCount(id){var n=0,L=chapters[id].length;for(var i=0;i<L;i++)if(S.done[id+':'+i])n++;return n}
+function exProg(){var n=0;['c1','c2','c3','all'].forEach(function(k){if(S.exBest[k])n++});return n}
 function markDone(ch,i){var k=ch+':'+i;if(S.done[k])return;S.done[k]=1;save();updateTabs();paintSegs();if(!$('drawerOv').hidden)buildDrawer()}
-function addMis(key,ch,si,title,q){S.mistakes[key]={ch:ch,si:si,t:title,q:{q:q.q,opts:q.opts,a:q.a,why:q.why}};save();hud()}
+function addMis(key,ch,si,title,q,ex){S.mistakes[key]={ch:ch,si:si,t:title,ex:ex?1:0,q:{q:q.q,opts:q.opts,a:q.a,why:q.why}};save();hud()}
 function delMis(key){if(S.mistakes[key]){delete S.mistakes[key];save();hud()}}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+
+/* ---------- squeeze (proportional shrink, min 0.6) ---------- */
+function zset(b,v){if(b.__z0==null)b.__z0=b.style.zoom||'';b.style.zoom=v}
+function unsq(b){if(b.__z0!=null)b.style.zoom=b.__bz?b.__bz:b.__z0;if(b.__w0!=null){b.style.width=b.__w0;b.style.marginInline=b.__m0;b.__w0=null}}
+function nar(b,s){if(b.__w0==null){b.__w0=b.style.width;b.__m0=b.style.marginInline}b.style.width=(s*100)+'%';b.style.marginInline='auto'}
+function sq(b,s){zset(b,s*(b.__bz||1))}
+function wfit(b,avail){
+  b.__bz=0;unsq(b);
+  var w=Math.max(b.scrollWidth,b.offsetWidth);
+  if(w>avail+1){b.__bz=Math.max(.4,avail/w*.995);zset(b,b.__bz)}
+}
+function squeeze(list,over){
+  list.forEach(unsq);
+  if(!over())return true;
+  for(var k=19;k>=12;k--){var s=k/20;for(var j=0;j<list.length;j++)sq(list[j],s);if(!over())return true}
+  /* responsive blocks (canvas with aspect ratio): narrowing them also shortens them */
+  for(k=19;k>=9;k--){s=k/20;for(j=0;j<list.length;j++){sq(list[j],.6);nar(list[j],s)}if(!over())return true}
+  for(j=0;j<list.length;j++){unsq(list[j]);sq(list[j],.6)}
+  return false;
+}
+function fitInto(box,inner){
+  var sig='',tm=0,dead=false;
+  function run(){
+    if(dead)return;box.classList.remove('pgscroll');
+    var ok=squeeze([inner],function(){return box.scrollHeight>box.clientHeight+1});
+    if(!ok)box.classList.add('pgscroll');
+    sig=box.clientWidth+'x'+box.clientHeight+'x'+inner.offsetHeight;
+  }
+  var ro=window.ResizeObserver?new ResizeObserver(function(){
+    if(dead)return;var s=box.clientWidth+'x'+box.clientHeight+'x'+inner.offsetHeight;
+    if(s!==sig){clearTimeout(tm);tm=setTimeout(run,40)}
+  }):null;
+  run();
+  if(ro){ro.observe(box);ro.observe(inner)}
+  var d=function(){dead=true;clearTimeout(tm);if(ro)ro.disconnect()};
+  disp.push(d);return d;
+}
+
+/* ---------- auto pager ---------- */
+function isHead(e){return /^H[2-4]$/.test(e.tagName)||e.classList.contains('ck-h')}
+function makeUnits(blocks){
+  var u=[],i=0;
+  while(i<blocks.length){
+    var g=[blocks[i]];
+    while(isHead(blocks[i])&&i+1<blocks.length){i++;g.push(blocks[i])}
+    u.push(g);i++;
+  }
+  return u;
+}
+function collectSlide(pg){
+  var out=[],body=pg.querySelector('.s-body');
+  function push(e){if(e.nodeType===1&&!/^(STYLE|SCRIPT|LINK|TEMPLATE)$/.test(e.tagName)&&!e.hidden)out.push(e)}
+  if(body)Array.prototype.forEach.call(body.children,push);
+  Array.prototype.forEach.call(pg.children,function(c){
+    if(c===body)return;
+    if(c.classList.contains('s-checks')){
+      if(c.classList.contains('qz'))push(c);else Array.prototype.forEach.call(c.children,push);
+    }else push(c);
+  });
+  return out;
+}
+function collectKids(pg){var o=[];Array.prototype.forEach.call(pg.children,function(c){if(!/^(STYLE|SCRIPT)$/.test(c.tagName))o.push(c)});return o}
+function Pager(pg,collectFn,start,onChange){
+  var blocks=[],parents=[],pages=[],flags=[],idx=0,hs=[],sig='',timer=0,dead=false;
+  var ro=window.ResizeObserver?new ResizeObserver(check):null,mo=null;
+  function over(){return pg.scrollHeight>pg.clientHeight+1}
+  function setVis(set){
+    var first=null,i,b;
+    for(i=0;i<blocks.length;i++){
+      b=blocks[i];var on=set.indexOf(b)>=0;
+      b.style.display=on?'':'none';b.classList.remove('pf');
+      if(on&&!first)first=b;
+    }
+    for(i=0;i<parents.length;i++){
+      var p=parents[i],any=false;parents[i].classList.remove('pf');
+      for(var j=0;j<set.length;j++)if(set[j].parentNode===p){any=true;break}
+      p.style.display=any?'':'none';
+    }
+    if(first){first.classList.add('pf');if(parents.indexOf(first.parentNode)>=0&&first.parentNode.style.display!=='none')first.parentNode.classList.add('pf')}
+  }
+  function layout(anchor){
+    blocks=collectFn(pg);parents=[];
+    blocks.forEach(function(b){var p=b.parentNode;if(p!==pg&&!p.classList.contains('s-body')&&parents.indexOf(p)<0&&p.parentNode===pg)parents.push(p)});
+    setVis(blocks);
+    blocks.forEach(function(b){wfit(b,pg.clientWidth)});
+    pages=[];flags=[];
+    var units=makeUnits(blocks),cur=[],curFlag=false;
+    units.forEach(function(u){
+      var test=cur.concat(u);setVis(test);
+      if(!over()){cur=test;return}
+      if(cur.length){pages.push(cur);flags.push(curFlag);curFlag=false}
+      cur=u.slice();setVis(cur);
+      if(over()){if(!squeeze(cur,over))curFlag=true}
+    });
+    if(cur.length||!pages.length){pages.push(cur);flags.push(curFlag)}
+    var t=0;
+    if(anchor==='last')t=pages.length-1;
+    else if(typeof anchor==='number')t=Math.max(0,Math.min(pages.length-1,anchor));
+    else if(anchor){for(var i=0;i<pages.length;i++)if(pages[i].indexOf(anchor)>=0){t=i;break}}
+    showPage(t,true);
+    if(ro){ro.disconnect();ro.observe(pg);blocks.forEach(function(b){ro.observe(b)})}
+  }
+  function showPage(i,quiet){
+    idx=i;setVis(pages[i]);
+    pg.classList.toggle('pgscroll',!!flags[i]);
+    pg.scrollTop=0;
+    hs=pages[i].map(function(b){return b.offsetHeight});
+    sig=pg.clientWidth+'x'+pg.clientHeight;
+    if(onChange)onChange(idx,pages.length,quiet);
+  }
+  function check(){
+    if(dead)return;
+    var ch=(pg.clientWidth+'x'+pg.clientHeight)!==sig,cp=pages[idx]||[];
+    if(!ch)for(var k=0;k<cp.length;k++)if(Math.abs(cp[k].offsetHeight-hs[k])>1){ch=true;break}
+    if(ch)sched();
+  }
+  function sched(){clearTimeout(timer);timer=setTimeout(function(){if(dead)return;var a=pages[idx]&&pages[idx][0];layout(a)},50)}
+  var api={
+    next:function(){if(idx<pages.length-1){showPage(idx+1);return true}return false},
+    prev:function(){if(idx>0){showPage(idx-1);return true}return false},
+    last:function(){return idx>=pages.length-1},
+    first:function(){return idx<=0},
+    count:function(){return pages.length},
+    index:function(){return idx},
+    relayout:sched,
+    destroy:function(){dead=true;clearTimeout(timer);if(ro)ro.disconnect();if(mo)mo.disconnect()}
+  };
+  layout(start);
+  var body=pg.querySelector('.s-body');
+  if(window.MutationObserver&&body){mo=new MutationObserver(sched);mo.observe(body,{childList:true})}
+  if(ro)ro.observe(pg);
+  return api;
+}
+function setDots(i,n){
+  var p=$('pager');
+  if(n<=1){p.innerHTML='';return}
+  var s='';for(var k=0;k<n;k++)s+='<i class="'+(k===i?'on':'')+'"></i>';
+  p.innerHTML=s+'<span>'+ar(i+1)+'/'+ar(n)+'</span>';
+}
+function teardown(){
+  if(PG){PG.destroy();PG=null}
+  navHook=null;
+  while(disp.length){try{disp.pop()()}catch(e){}}
+  $('pager').hidden=true;$('pager').innerHTML='';
+}
 
 /* ---------- tabs ---------- */
 function buildTabs(){
   var box=$('tabs');box.innerHTML='';
-  CH.forEach(function(c,k){
+  CH.forEach(function(c){
     var b=h('button','tab');b.type='button';b.dataset.ch=c.id;b.style.setProperty('--tc',c.c);
-    b.setAttribute('role','tab');
-    b.innerHTML='<span class="ti">'+c.ico+'</span><span class="tl">'+c.n+' '+c.t+'</span><i class="tp"><u></u></i>';
+    b.setAttribute('role','tab');b.title=c.n+' '+c.t;b.setAttribute('aria-label',c.n+' '+c.t);
+    b.innerHTML='<span class="ti">'+c.ico+'</span><span class="tl"><span class="tf">'+c.n+' '+c.t+'</span><span class="ts">'+c.n+' '+c.s+'</span></span><i class="tp"><u></u></i>';
     b.onclick=function(){goChapter(c.id)};
     box.appendChild(b);
   });
@@ -363,21 +619,27 @@ function buildTabs(){
 function updateTabs(){
   CH.forEach(function(c){
     var b=document.querySelector('.tab[data-ch="'+c.id+'"]');if(!b)return;
-    var L=chapters[c.id].length,d=doneCount(c.id);
+    var pc=0;
+    if(c.id==='ex')pc=Math.round(exProg()/4*100);
+    else{var L=chapters[c.id].length,d=doneCount(c.id);pc=L?Math.round(d/L*100):0}
     b.classList.toggle('on',cur.ch===c.id);b.setAttribute('aria-selected',cur.ch===c.id);
-    b.querySelector('u').style.width=(L?Math.round(d/L*100):0)+'%';
+    b.querySelector('u').style.width=pc+'%';
   });
 }
 function goChapter(id){
-  if(cur.ch===id)return;
+  if(cur.ch===id&&id!=='ex')return;
+  if(id==='ex'){show('ex',0);return}
   var l=S.last&&S.last.ch===id?S.last.i:0;
   show(id,l);
 }
 
 /* ---------- navigation ---------- */
-function show(ch,i){
+function show(ch,i,sub){
   var prevKey=cur.ch?chIndex(cur.ch)*1000+cur.i:-1;
-  if(!ch||!chapters[ch]){cur={ch:null,i:0};renderHome();return}
+  teardown();
+  if(!ch){cur={ch:null,i:0};renderHome();return}
+  if(ch==='ex'){cur={ch:'ex',i:0};setColor(EX_C);renderExamMenu();updateTabs();updateBar();return}
+  if(!chapters[ch]){cur={ch:null,i:0};renderHome();return}
   var L=chapters[ch].length;
   i=Math.max(0,Math.min(L?L-1:0,i|0));
   var key=chIndex(ch)*1000+i;
@@ -385,34 +647,38 @@ function show(ch,i){
   if(cur.ch!==ch)setColor(CH[chIndex(ch)].c);
   cur={ch:ch,i:i};
   S.last={ch:ch,i:i};save();
-  renderSlide(anim);
+  renderSlide(anim,sub);
   updateTabs();updateBar();
-  $('main').scrollTop=0;
 }
 function next(){
+  if(navHook){navHook.next();return}
   if(cur.ch===null){var l=S.last||{ch:'ch1',i:0};show(l.ch,l.i);return}
+  if(!slideCh(cur.ch))return;
+  if(PG&&PG.next())return;
   var L=chapters[cur.ch].length;
   if(cur.i<L-1)show(cur.ch,cur.i+1);
-  else{var k=chIndex(cur.ch);if(k<CH.length-1)show(CH[k+1].id,0);else show(null)}
+  else{var k=chIndex(cur.ch);show(CH[k+1].id,0)}
 }
 function prev(){
-  if(cur.ch===null)return;
-  if(cur.i>0)show(cur.ch,cur.i-1);
-  else{var k=chIndex(cur.ch);if(k>0){var pid=CH[k-1].id;show(pid,Math.max(0,chapters[pid].length-1))}else show(null)}
+  if(navHook){navHook.prev();return}
+  if(cur.ch===null||!slideCh(cur.ch))return;
+  if(PG&&PG.prev())return;
+  if(cur.i>0)show(cur.ch,cur.i-1,'last');
+  else{var k=chIndex(cur.ch);if(k>0){var pid=CH[k-1].id;show(pid,Math.max(0,chapters[pid].length-1),'last')}else show(null)}
 }
 function updateBar(){
   var bar=$('bar');
-  if(cur.ch===null){bar.hidden=true;return}
+  if(cur.ch===null||!slideCh(cur.ch)){bar.hidden=true;return}
   bar.hidden=false;
   var L=chapters[cur.ch].length;
   $('cnt').textContent=L?ar(cur.i+1)+' / '+ar(L):'';
-  var last=cur.i>=L-1,k=chIndex(cur.ch),nb=$('nextB');
+  var last=cur.i>=L-1&&(!PG||PG.last()),k=chIndex(cur.ch),nb=$('nextB');
   nb.classList.toggle('wide',last);
   if(last){
-    nb.innerHTML=k<CH.length-1?'<em>الفصل التالي ⟵</em>':'<em>🏁 إنهاء</em>';
-    nb.setAttribute('aria-label',k<CH.length-1?'الفصل التالي':'إنهاء');
+    nb.innerHTML=k<2?'<em>الفصل التالي ⟵</em>':'<em>📝 الاختبارات ⟵</em>';
+    nb.setAttribute('aria-label',k<2?'الفصل التالي':'الاختبارات');
   }else{nb.innerHTML='<em>التالي</em><span>◀</span>';nb.setAttribute('aria-label','التالي')}
-  buildSegs();
+  if(!$('segs').children.length||$('segs').children.length!==L)buildSegs();else paintSegs();
 }
 function buildSegs(){
   var box=$('segs');box.innerHTML='';
@@ -421,7 +687,7 @@ function buildSegs(){
   paintSegs();
 }
 function paintSegs(){
-  if(cur.ch===null)return;
+  if(cur.ch===null||!slideCh(cur.ch))return;
   var s=$('segs').children;
   for(var i=0;i<s.length;i++){s[i].className=(i===cur.i?'cu':(S.done[cur.ch+':'+i]?'d':''))}
 }
@@ -433,22 +699,28 @@ $('segs').addEventListener('click',function(e){
 
 /* ---------- home ---------- */
 function renderHome(){
-  setColor(HOME_C);
+  teardown();setColor(HOME_C);
   var v=$('view');v.innerHTML='';
-  var w=h('div','wrap hero slide in-fade');
+  var w=h('div','wrap in-fade slide');
+  var box=h('div','fitbox'),inner=h('div','fitin');
+  var hm=h('div','home');
   var resume=!!(S.last&&S.last.ch);
-  w.innerHTML='<div class="hero-top"><div class="mol">⚗️</div><h1>كيمياء بسيطة</h1><p class="sub">تعلّم الكيمياء خطوة بخطوة، جرّب بنفسك، واجمع النقاط والنجوم ⭐</p><button class="go" id="goBtn" type="button">'+(resume?'تابع من حيث وقفت ▸':'ابدأ ▸')+'</button></div><div class="hcards"></div><p class="sign">© 2026 جميع الحقوق محفوظة لـ محمد عرفات الراجحي</p>';
-  var cards=w.querySelector('.hcards');
+  hm.innerHTML='<div class="hero-top"><div class="mol">⚗️</div><h1>كيمياء</h1><p class="sub">تعلّم الكيمياء خطوة بخطوة، جرّب بنفسك، واجمع النقاط والنجوم ⭐</p><button class="go" id="goBtn" type="button">'+(resume?'تابع من حيث وقفت ▸':'ابدأ ▸')+'</button></div><div class="hcards"></div>'+COPY;
+  var cards=hm.querySelector('.hcards');
   CH.forEach(function(c){
-    var L=chapters[c.id].length,d=doneCount(c.id),pc=L?Math.round(d/L*100):0;
+    var pc,sub;
+    if(c.id==='ex'){pc=Math.round(exProg()/4*100);sub='٤ اختبارات + بنك أسئلة'}
+    else{var L=chapters[c.id].length,d=doneCount(c.id);pc=L?Math.round(d/L*100):0;sub=ar(L)+' شريحة'}
     var b=h('button','hcard');b.type='button';b.style.setProperty('--tc',c.c);
-    b.innerHTML='<span class="hi">'+c.ico+'</span><div class="hn1">الفصل '+c.n+'</div><div class="ht">'+c.t+'</div><div class="hs">'+ar(L)+' شريحة</div><div class="hb"><u style="width:'+pc+'%"></u></div><div class="hs">'+ar(pc)+'٪ مكتمل</div>';
-    b.onclick=function(){var l=S.last&&S.last.ch===c.id?S.last.i:0;show(c.id,l)};
+    b.setAttribute('aria-label',c.n+' '+c.t);
+    b.innerHTML='<span class="hi">'+c.ico+'</span><div class="hn1">'+(c.id==='ex'?'القسم ':'الفصل ')+c.n+'</div><div class="ht">'+c.t+'</div><div class="hb"><u style="width:'+pc+'%"></u></div><div class="hs">'+sub+' • '+ar(pc)+'٪</div>';
+    b.onclick=function(){if(c.id==='ex')show('ex',0);else{var l=S.last&&S.last.ch===c.id?S.last.i:0;show(c.id,l)}};
     cards.appendChild(b);
   });
-  v.appendChild(w);
-  w.querySelector('#goBtn').onclick=function(){next()};
-  updateTabs();updateBar();$('main').scrollTop=0;
+  inner.appendChild(hm);box.appendChild(inner);w.appendChild(box);v.appendChild(w);
+  hm.querySelector('#goBtn').onclick=function(){next()};
+  fitInto(box,inner);
+  updateTabs();updateBar();
 }
 
 /* ---------- questions ---------- */
@@ -471,7 +743,7 @@ function mkQ(q,o){
     }
     var gain=0;
     if(!S.tried[o.key]){S.tried[o.key]=1;if(ok)gain=10}
-    if(ok)delMis(o.key);else addMis(o.key,o.ch,o.si,o.title,q);
+    if(ok)delMis(o.key);else addMis(o.key,o.ch,o.si,o.title,q,o.ex);
     save();
     why.hidden=false;
     why.innerHTML=(ok?'✅ <b>أحسنت!</b> ':'❌ <b>الجواب الصحيح: '+(LET[q.a]||'')+'</b> — ')+(q.why||'')+(gain?'<span class="xpchip">+'+ar(gain)+' ⚡</span>':'');
@@ -481,7 +753,7 @@ function mkQ(q,o){
       why.appendChild(rb);
     }
     if(gain)App.xp(gain);
-    if(o.onAnswer)o.onAnswer(ok,box);
+    if(o.onAnswer)o.onAnswer(ok,box,k);
   }
   return box;
 }
@@ -497,7 +769,7 @@ function buildChecks(sl,ch,si,host){
 
 function buildQuiz(sl,ch,si,host){
   var Q=sl.questions||[],N=Q.length,key=ch+':'+si;
-  var sec=h('section','s-checks');host.appendChild(sec);
+  var sec=h('section','s-checks qz');host.appendChild(sec);
   function start(){
     var idx=0,score=0,wrong=0;
     function ask(){
@@ -511,7 +783,6 @@ function buildQuiz(sl,ch,si,host){
         var b=h('button','btn',idx<N-1?'السؤال التالي ◀':'🏁 شاهد النتيجة');b.type='button';
         b.onclick=function(){idx++;if(idx<N)ask();else finish()};
         act.appendChild(b);
-        setTimeout(function(){try{b.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}},50);
       }});
       sec.appendChild(q);sec.appendChild(act);
     }
@@ -522,7 +793,7 @@ function buildQuiz(sl,ch,si,host){
       if(bonus)App.xp(bonus);
       var msg=st===3?'ممتاز! أنت متمكّن من هذا الدرس 🎉':(st===2?'جيد جداً! راجع الأخطاء وستصل للثلاث نجوم':'بداية جيدة! راجع الدرس وحاول مرة أخرى 💪');
       var sh='';for(var i=0;i<3;i++)sh+='<span class="'+(i<st?'':'off')+'" style="animation-delay:'+(i*.18)+'s">⭐</span>';
-      sec.innerHTML='<div class="res"><div class="stars">'+sh+'</div><div class="sc">'+ar(score)+' / '+ar(N)+'</div><p>'+msg+'</p>'+(bonus?'<p><span class="xpchip">+'+ar(bonus)+' ⚡ مكافأة</span></p>':'')+'<div class="acts"></div></div>';
+      sec.innerHTML='<div class="res"><div class="stars">'+sh+'</div><div class="sc"><bdi dir="ltr">'+ar(score)+' / '+ar(N)+'</bdi></div><p style="margin:4px 0">'+msg+'</p>'+(bonus?'<p style="margin:4px 0"><span class="xpchip">+'+ar(bonus)+' ⚡ مكافأة</span></p>':'')+'<div class="acts"></div></div>';
       var acts=sec.querySelector('.acts');
       var again=h('button','btn','🔁 أعد الاختبار');again.type='button';again.onclick=start;acts.appendChild(again);
       if(wrong){var mb=h('button','btn ghost','📒 راجع أخطائي');mb.type='button';mb.onclick=openMis;acts.appendChild(mb)}
@@ -534,30 +805,33 @@ function buildQuiz(sl,ch,si,host){
 }
 
 /* ---------- slide render ---------- */
-var KIND={tool:'🧰 جرّب بنفسك',quiz:'📝 اختبار نهاية الدرس',summary:'⭐ ملخص'};
-function renderSlide(anim){
+var KIND={tool:'🧰 جرّب بنفسك',quiz:'📝 اختبار',summary:'⭐ ملخص'};
+function renderSlide(anim,sub){
   var v=$('view');v.innerHTML='';
   var w=h('div','wrap');
   var list=chapters[cur.ch],sl=list[cur.i];
   if(!sl){
-    w.innerHTML='<div class="card center slide in-fade"><div class="big">🚧</div><p>محتوى هذا الفصل قيد الإعداد.</p></div>';
+    w.innerHTML='<div class="card center slide in-fade" style="margin:auto"><div class="big">🚧</div><p>محتوى هذا الفصل قيد الإعداد.</p></div>';
     v.appendChild(w);return;
   }
   var kind=sl.kind||'learn';
   var art=h('article','slide k-'+kind+' '+anim);
-  var head='';
-  if(KIND[kind])head+='<div class="kbadge">'+KIND[kind]+'</div>';
-  head+='<div class="s-head"><span class="s-no">'+ar(cur.i+1)+'</span><h2>'+(sl.title||'')+'</h2></div>';
-  art.innerHTML=head+'<div class="s-body">'+(sl.html||'')+'</div>';
+  art.innerHTML='<div class="s-head"><span class="s-no">'+ar(cur.i+1)+'</span><h2>'+(sl.title||'')+'</h2>'+(KIND[kind]?'<span class="kbadge">'+KIND[kind]+'</span>':'')+'</div><div class="pg"><div class="s-body">'+(sl.html||'')+'</div></div>';
   w.appendChild(art);v.appendChild(w);
+  var pg=art.querySelector('.pg');
   var ch=cur.ch,si=cur.i;
   if(sl.questions&&sl.questions.length&&(kind==='quiz'||!(sl.checks&&sl.checks.length))){
-    buildQuiz(sl,ch,si,art);
+    buildQuiz(sl,ch,si,pg);
   }else if(sl.checks&&sl.checks.length){
-    buildChecks(sl,ch,si,art);
+    buildChecks(sl,ch,si,pg);
   }else markDone(ch,si);
   if(typeof sl.init==='function'){try{sl.init(art)}catch(e){console.error('init error',ch,si,e)}}
   setupFlips(art,ch,si);
+  function adopt(){var ex=[];Array.prototype.forEach.call(art.children,function(c){if(c!==pg&&!c.classList.contains('s-head'))ex.push(c)});ex.forEach(function(c){pg.appendChild(c)});return ex.length}
+  adopt();
+  $('pager').hidden=false;
+  PG=Pager(pg,collectSlide,sub==='last'?'last':0,function(i,n){setDots(i,n);updateBar()});
+  if(window.MutationObserver){var amo=new MutationObserver(function(){if(adopt()&&PG)PG.relayout()});amo.observe(art,{childList:true});disp.push(function(){amo.disconnect()})}
 }
 function setupFlips(art,ch,si){
   function tab(){var f=art.querySelectorAll('.flip');for(var i=0;i<f.length;i++){if(!f[i].hasAttribute('tabindex')){f[i].tabIndex=0;f[i].setAttribute('role','button')}f[i].setAttribute('aria-pressed',f[i].classList.contains('on'))}}
@@ -572,15 +846,20 @@ function setupFlips(art,ch,si){
   setTimeout(tab,0);
 }
 
-/* ---------- drawer / mistakes ---------- */
-var lastFocus=null;
+/* ---------- drawer (paged, no scroll) / mistakes ---------- */
+var lastFocus=null,dPg=-1,misD=null;
 function openOv(ov,focusId){lastFocus=document.activeElement;ov.hidden=false;var f=$(focusId);if(f)f.focus()}
-function closeOv(ov){if(ov.hidden)return;ov.hidden=true;if(lastFocus&&lastFocus.focus){try{lastFocus.focus()}catch(e){}}}
+function closeOv(ov){if(ov.hidden)return;ov.hidden=true;if(ov.id==='misOv'&&misD){misD();misD=null}if(lastFocus&&lastFocus.focus){try{lastFocus.focus()}catch(e){}}}
 function buildDrawer(){
   var L=chapters[cur.ch]||[],c=CH[chIndex(cur.ch)];
   $('dTitle').textContent=c?c.ico+' '+c.n+' '+c.t:'';
   var ol=$('dList');ol.innerHTML='';
-  L.forEach(function(s,i){
+  var hh=ol.clientHeight-12,per=hh>100?Math.max(3,Math.floor(hh/50)):8;
+  var pages=Math.max(1,Math.ceil(L.length/per));
+  if(dPg<0)dPg=Math.floor(cur.i/per);
+  dPg=Math.max(0,Math.min(pages-1,dPg));
+  L.slice(dPg*per,dPg*per+per).forEach(function(s,k){
+    var i=dPg*per+k;
     var li=h('li'),b=h('button','di'+(i===cur.i?' on':'')+(S.done[cur.ch+':'+i]?' done':''));b.type='button';
     var kd=s.kind==='tool'?' 🧰':(s.kind==='quiz'?' 📝':(s.kind==='summary'?' ⭐':''));
     b.innerHTML='<span class="dn">'+ar(i+1)+'</span><span class="dt">'+(s.title||'')+kd+'</span><span class="dc">'+(S.done[cur.ch+':'+i]?'✓':'')+'</span>';
@@ -588,30 +867,220 @@ function buildDrawer(){
     li.appendChild(b);ol.appendChild(li);
   });
   if(!L.length)ol.innerHTML='<li class="empty">لا توجد شرائح بعد</li>';
+  $('dPos').textContent='صفحة '+ar(dPg+1)+' / '+ar(pages);
+  $('dPrev').disabled=dPg<=0;$('dNext').disabled=dPg>=pages-1;
 }
-function openMenu(){if(cur.ch===null)return;buildDrawer();openOv($('drawerOv'),'dClose');var on=$('dList').querySelector('.on');if(on)on.scrollIntoView({block:'center'})}
+function openMenu(){if(cur.ch===null||!slideCh(cur.ch))return;dPg=-1;openOv($('drawerOv'),'dClose');buildDrawer()}
 function openMis(){
   closeOv($('drawerOv'));
+  if(misD){misD();misD=null}
   var body=$('misBody');body.innerHTML='';
-  var keys=Object.keys(S.mistakes);
-  $('misT').textContent='📒 أخطائي'+(keys.length?' ('+ar(keys.length)+')':'');
-  if(!keys.length){body.innerHTML='<div class="empty">🎉<br>لا توجد أخطاء محفوظة.<br><span class="muted" style="font-size:15px">أجب عن الأسئلة وستظهر هنا الأسئلة التي تحتاج مراجعة.</span></div>'}
-  else keys.forEach(function(k){
-    var r=S.mistakes[k],c=CH[chIndex(r.ch)]||CH[0];
-    var wrap=h('div','mq');wrap.style.setProperty('--c',c.c);
-    var lab=h('div','ml','<span class="tag">'+c.ico+' '+c.t+'</span><span>'+(r.t||'')+'</span>');
-    var go=h('button','chip','↩ افتح الشريحة');go.type='button';go.style.minHeight='44px';
-    go.onclick=function(){closeOv($('misOv'));show(r.ch,r.si)};
-    lab.appendChild(go);wrap.appendChild(lab);
-    wrap.appendChild(mkQ(r.q,{key:k,ch:r.ch,si:r.si,title:r.t,retry:true,onAnswer:function(ok){
-      if(ok){wrap.classList.add('fixed');$('misT').textContent='📒 أخطائي'+(misCount()?' ('+ar(misCount())+')':'');
-        if(!misCount()){var d=h('div','empty','🎉 أصلحت كل أخطائك! عمل رائع.');body.appendChild(d);setTimeout(function(){d.scrollIntoView({block:'nearest',behavior:'smooth'})},80)}}
-    }}));
-    body.appendChild(wrap);
-  });
+  var keys=Object.keys(S.mistakes),pos=0,snap={};
   openOv($('misOv'),'misClose');
+  function title(){$('misT').textContent='📒 أخطائي'+(misCount()?' ('+ar(misCount())+')':'')}
+  title();
+  if(!keys.length){body.innerHTML='<div class="empty">🎉<br>لا توجد أخطاء محفوظة.<br><span class="muted" style="font-size:15px">أجب عن الأسئلة وستظهر هنا الأسئلة التي تحتاج مراجعة.</span></div>';return}
+  var nav=h('div','mnav','<button class="chip" id="mP" type="button">▶ السابق</button><span id="mC"></span><button class="chip" id="mN" type="button">التالي ◀</button>');
+  var box=h('div','fitbox');body.appendChild(nav);body.appendChild(box);
+  var d=null;
+  function draw(){
+    if(d){d();d=null}
+    box.innerHTML='';box.classList.remove('pgscroll');
+    var k=keys[pos];
+    if(S.mistakes[k])snap[k]=S.mistakes[k];
+    var r=snap[k];if(!r)return;
+    var c=CH[chIndex(r.ch)]||CH[0];
+    var inner=h('div','fitin'),wrap=h('div','mq');wrap.style.setProperty('--c',c.c);
+    var lab=h('div','ml','<span class="tag">'+c.ico+' '+c.t+'</span><span>'+(r.t||'')+'</span>');
+    if(!r.ex){var go=h('button','chip','↩ افتح الشريحة');go.type='button';go.onclick=function(){closeOv($('misOv'));show(r.ch,r.si)};lab.appendChild(go)}
+    wrap.appendChild(lab);
+    wrap.appendChild(mkQ(r.q,{key:k,ch:r.ch,si:r.si,title:r.t,ex:r.ex,retry:true,onAnswer:function(ok){
+      if(ok){wrap.classList.add('fixed');title()}
+    }}));
+    inner.appendChild(wrap);box.appendChild(inner);
+    d=fitInto(box,inner);
+    $('mC').textContent=ar(pos+1)+' / '+ar(keys.length);
+    $('mP').disabled=pos<=0;$('mN').disabled=pos>=keys.length-1;
+  }
+  misD=function(){if(d){d();d=null}};
+  $('mP').onclick=function(){if(pos>0){pos--;draw()}};
+  $('mN').onclick=function(){if(pos<keys.length-1){pos++;draw()}};
+  draw();
 }
 function overlayOpen(){return !$('drawerOv').hidden||!$('misOv').hidden}
+
+/* ---------- exams ---------- */
+function pool(id){
+  var e=EX[id],out=[];
+  e.mcq.forEach(function(q,k){out.push({q:q.q,opts:q.opts,a:q.a,why:q.why,key:'ex:'+id+':m'+k,ch:id,t:'mcq'})});
+  e.tf.forEach(function(q,k){out.push({q:q.q,opts:['صح ✓','خطأ ✗'],a:q.a?0:1,why:q.why,key:'ex:'+id+':t'+k,ch:id,t:'tf'})});
+  return out;
+}
+function bankItems(f){
+  var out=[];
+  ['ch1','ch2','ch3'].forEach(function(id){
+    if(f!=='all'&&f!==id)return;
+    EX[id].qa.forEach(function(q,k){out.push({kind:'qa',ch:id,q:q.q,a:q.a,key:'exb:'+id+':q'+k})});
+    EX[id].calc.forEach(function(q,k){out.push({kind:'calc',ch:id,q:q.q,steps:q.steps,a:q.a,key:'exb:'+id+':c'+k})});
+  });
+  return out;
+}
+var TESTS=[
+  {id:'c1',ch:'ch1',n:10,title:'اختبار الفصل ١',ico:'💡',c:'#8B3DFF'},
+  {id:'c2',ch:'ch2',n:10,title:'اختبار الفصل ٢',ico:'🧪',c:'#00A896'},
+  {id:'c3',ch:'ch3',n:10,title:'اختبار الفصل ٣',ico:'🧲',c:'#FF7A00'},
+  {id:'all',n:20,title:'اختبار شامل',ico:'🏆',c:'#E11D74'},
+  {id:'bank',title:'بنك الأسئلة والأجوبة',ico:'🗂️',c:'#0E8FD1'},
+  {id:'mis',title:'أخطائي',ico:'📒',c:'#7C3AED'}
+];
+function testCount(t){
+  if(t.ch)return Math.min(t.n,pool(t.ch).length);
+  if(t.id==='all'){var s=0;['ch1','ch2','ch3'].forEach(function(c){s+=pool(c).length});return Math.min(t.n,s)}
+  if(t.id==='bank')return bankItems('all').length;
+  return misCount();
+}
+function buildTest(t){
+  if(t.ch)return shuffle(pool(t.ch)).slice(0,t.n);
+  var ps=['ch1','ch2','ch3'].map(function(c){return shuffle(pool(c))}),out=[],i=0;
+  while(out.length<t.n&&(ps[0].length||ps[1].length||ps[2].length)){var a=ps[i%3];if(a.length)out.push(a.shift());i++}
+  return shuffle(out);
+}
+function renderExamMenu(){
+  teardown();exView='menu';setColor(EX_C);
+  var v=$('view');v.innerHTML='';
+  var w=h('div','wrap xw in-fade slide');
+  w.appendChild(h('div','xlead','📝 اختر اختباراً وابدأ التحدي'));
+  var box=h('div','fitbox'),inner=h('div','fitin'),g=h('div','xcards');
+  TESTS.forEach(function(t){
+    var n=testCount(t),b=h('button','xcard');b.type='button';b.style.setProperty('--tc',t.c);
+    var sub,ok=true;
+    if(t.id==='mis'){sub=n?ar(n)+' سؤال للمراجعة':'لا أخطاء 🎉';ok=true}
+    else if(!n){sub='قيد الإعداد';ok=false}
+    else if(t.id==='bank')sub=ar(n)+' سؤال وجواب';
+    else{
+      sub=ar(n)+' سؤال';var bt=S.exBest[t.id];
+      if(bt!=null)sub+=' • 🏆 '+ar(bt)+'٪';
+    }
+    b.innerHTML='<span class="xi">'+t.ico+'</span><div class="xn">'+t.title+'</div><div class="xs">'+sub+'</div>';
+    if(!ok){b.classList.add('off');b.disabled=true}
+    b.onclick=function(){if(t.id==='bank')runBank();else if(t.id==='mis')openMis();else runTest(t)};
+    g.appendChild(b);
+  });
+  inner.appendChild(g);box.appendChild(inner);w.appendChild(box);v.appendChild(w);
+  fitInto(box,inner);
+  updateTabs();updateBar();
+}
+function runTest(t){
+  var qs=buildTest(t);if(!qs.length)return;
+  teardown();exView='run';
+  var v=$('view');v.innerHTML='';
+  var w=h('div','wrap xw');
+  var N=qs.length,idx=0,res=[],secs=0,tmr=null;
+  w.innerHTML='<div class="xh"><button class="ib" id="xX" type="button" aria-label="خروج">✕</button><div class="xt"><b>'+t.title+'</b><span id="xC"></span></div><button class="chip" id="xT" type="button" aria-label="تشغيل أو إيقاف المؤقت"></button></div><div class="qz-bar"><u id="xP" style="width:0"></u></div><div class="fitbox" id="xF" style="margin-top:6px"></div><div class="xf"><button class="btn" id="xN" type="button" hidden></button></div>';
+  v.appendChild(w);
+  function tt(){var m=Math.floor(secs/60),s=secs%60;return ar((m<10?'0':'')+m+':'+(s<10?'0':'')+s)}
+  function paintT(){var b=$('xT');b.textContent=S.timer?'⏱ '+tt():'⏱ مؤقت: إيقاف';b.setAttribute('aria-pressed',!!S.timer)}
+  tmr=setInterval(function(){secs++;if(S.timer)paintT()},1000);
+  disp.push(function(){clearInterval(tmr)});
+  $('xT').onclick=function(){S.timer=!S.timer;save();paintT()};paintT();
+  $('xX').onclick=function(){renderExamMenu()};
+  var fd=null;
+  function ask(){
+    if(fd){fd();fd=null}
+    var q=qs[idx],box=$('xF'),inner=h('div','fitin');
+    box.innerHTML='';box.classList.remove('pgscroll');
+    $('xC').textContent='سؤال '+ar(idx+1)+' من '+ar(N);
+    $('xP').style.width=Math.round(idx/N*100)+'%';
+    $('xN').hidden=true;
+    var c=CH[chIndex(q.ch)];
+    inner.appendChild(h('div','tag xtag',c.ico+' '+c.t+(q.t==='tf'?' • صح أم خطأ':' • اختيار من متعدد')));
+    inner.appendChild(mkQ(q,{key:q.key,ch:q.ch,si:0,title:'اختبار: '+c.t,ex:true,onAnswer:function(ok,b,k){
+      res.push({q:q,ok:ok,k:k});
+      var nb=$('xN');nb.textContent=idx<N-1?'السؤال التالي ◀':'🏁 شاهد النتيجة';nb.hidden=false;
+    }}));
+    box.appendChild(inner);fd=fitInto(box,inner);
+  }
+  $('xN').onclick=function(){idx++;if(idx<N)ask();else{if(fd)fd();finish()}};
+  navHook={next:function(){if(!$('xN').hidden)$('xN').click()},prev:function(){}};
+  ask();
+  function finish(){
+    clearInterval(tmr);
+    var score=res.filter(function(r){return r.ok}).length,pct=Math.round(score/N*100);
+    var st=pct>=90?3:(pct>=70?2:(pct>=50?1:0));
+    var grade=pct>=90?'ممتاز 🌟':(pct>=80?'جيد جداً 👏':(pct>=65?'جيد 👍':'تحتاج مراجعة 📚'));
+    var prevBest=S.exBest[t.id],bestSt=S.quiz['ex:'+t.id]||0,bonus=Math.max(0,st-bestSt)*15;
+    S.exBest[t.id]=Math.max(prevBest||0,pct);S.quiz['ex:'+t.id]=Math.max(bestSt,st);save();hud();updateTabs();
+    if(bonus)App.xp(bonus);
+    exView='res';teardown();
+    var v=$('view');v.innerHTML='';
+    var w=h('div','wrap xw xres in-fade slide');
+    var sh='';for(var i=0;i<3;i++)sh+='<span class="'+(i<st?'':'off')+'" style="animation-delay:'+(i*.18)+'s">⭐</span>';
+    var pgc=h('div','pg');
+    var rc=h('div','res','<div class="stars">'+sh+'</div><div class="sc"><bdi dir="ltr">'+ar(score)+' / '+ar(N)+'</bdi> &nbsp;•&nbsp; <bdi dir="ltr">'+ar(pct)+'٪</bdi></div><div class="grade">'+grade+'</div><div class="muted" style="font-size:13px">⏱ '+tt()+(S.exBest[t.id]>pct?' • 🏆 أفضل نتيجة '+ar(S.exBest[t.id])+'٪':'')+(bonus?' <span class="xpchip">+'+ar(bonus)+' ⚡</span>':'')+'</div>');
+    pgc.appendChild(rc);
+    var wr=res.filter(function(r){return !r.ok});
+    if(wr.length){
+      pgc.appendChild(h('h3','ck-h','📋 مراجعة سريعة للأخطاء ('+ar(wr.length)+')'));
+      wr.forEach(function(r){
+        var q=r.q;
+        pgc.appendChild(h('div','rv','<div class="rq">'+q.q+'</div><div class="ra">✅ <b>الصحيح:</b> '+q.opts[q.a]+(r.k!=null?' <span class="rw">• إجابتك: '+q.opts[r.k]+'</span>':'')+(q.why?'<div class="muted" style="font-size:.92em;margin-top:2px">'+q.why+'</div>':'')+'</div>'));
+      });
+    }else pgc.appendChild(h('div','good center','🎉 لا توجد أخطاء! إجابات كلها صحيحة.'));
+    w.appendChild(pgc);
+    var xf=h('div','xf','<button class="btn" id="rA" type="button">🔁 إعادة الاختبار (أسئلة جديدة)</button><button class="btn ghost" id="rB" type="button">↩ العودة</button>');
+    w.appendChild(xf);v.appendChild(w);
+    $('pager').hidden=false;
+    var P=Pager(pgc,collectKids,0,function(i,n){setDots(i,n)});
+    PG=P;
+    navHook={next:function(){P.next()},prev:function(){P.prev()}};
+    $('rA').onclick=function(){runTest(t)};
+    $('rB').onclick=function(){renderExamMenu()};
+  }
+}
+function runBank(){
+  teardown();exView='bank';
+  var v=$('view');v.innerHTML='';
+  var w=h('div','wrap xw');
+  w.innerHTML='<div class="xh"><button class="ib" id="bX" type="button" aria-label="رجوع">✕</button><div class="xt"><b>🗂️ بنك الأسئلة والأجوبة</b><span id="bC"></span></div></div><div class="xchips" id="bCh"></div><div class="fitbox" id="bF"></div><div class="xf"><button class="btn ghost" id="bP" type="button" aria-label="السابق">▶</button><button class="btn" id="bR" type="button">👁️ اكشف الجواب</button><button class="btn ghost" id="bN" type="button" aria-label="التالي">◀</button></div>';
+  v.appendChild(w);
+  var f='all',i=0,shown=false,items=[],fd=null;
+  var FL=[['all','الكل'],['ch1','١'],['ch2','٢'],['ch3','٣']];
+  function chips(){
+    var box=$('bCh');box.innerHTML='';
+    FL.forEach(function(x){
+      var b=h('button','chip',x[0]==='all'?'الكل':'الفصل '+x[1]);b.type='button';b.setAttribute('aria-pressed',f===x[0]);
+      if(f===x[0])b.classList.add('on');
+      b.onclick=function(){f=x[0];i=0;shown=false;chips();draw()};box.appendChild(b);
+    });
+  }
+  function draw(){
+    items=bankItems(f);
+    if(fd){fd();fd=null}
+    var box=$('bF');box.innerHTML='';box.classList.remove('pgscroll');
+    $('bP').disabled=$('bN').disabled=$('bR').disabled=!items.length;
+    if(!items.length){box.innerHTML='<div class="empty">🚧<br>قيد الإعداد</div>';$('bC').textContent='';return}
+    i=Math.max(0,Math.min(items.length-1,i));
+    var it=items[i],c=CH[chIndex(it.ch)];
+    $('bC').textContent=ar(i+1)+' / '+ar(items.length)+' • '+c.ico+' '+c.t;
+    var inner=h('div','fitin');
+    inner.appendChild(h('div','tag xtag',it.kind==='calc'?'🧮 مسألة':'💬 سؤال'));
+    inner.appendChild(h('div','qa-q',it.q));
+    var ans=null;
+    if(shown){
+      ans=h('div','qa-a',(it.kind==='calc'&&it.steps?it.steps:'')+(it.kind==='calc'?'<div class="fin">✅ الناتج: '+it.a+'</div>':it.a));
+      inner.appendChild(ans);
+      if(!S.flips[it.key]){S.flips[it.key]=1;save();App.xp(2)}
+    }
+    $('bR').textContent=shown?'🙈 أخفِ الجواب':'👁️ اكشف الجواب';
+    box.appendChild(inner);fd=fitInto(box,inner);
+  }
+  function go(d){var n=items.length;if(!n)return;i=(i+d+n)%n;shown=false;draw()}
+  $('bP').onclick=function(){go(-1)};$('bN').onclick=function(){go(1)};
+  $('bR').onclick=function(){shown=!shown;draw()};
+  $('bX').onclick=function(){renderExamMenu()};
+  navHook={next:function(){go(1)},prev:function(){go(-1)}};
+  chips();draw();
+}
 
 /* ---------- events ---------- */
 function bind(){
@@ -619,12 +1088,16 @@ function bind(){
   $('prevB').onclick=prev;$('nextB').onclick=next;
   $('menuB').onclick=openMenu;
   $('dClose').onclick=function(){closeOv($('drawerOv'))};
+  $('dPrev').onclick=function(){dPg--;buildDrawer()};
+  $('dNext').onclick=function(){dPg++;buildDrawer()};
   $('misClose').onclick=function(){closeOv($('misOv'))};
   $('misBtn').onclick=openMis;
   $('drawerOv').addEventListener('click',function(e){if(e.target===this)closeOv(this)});
   $('misOv').addEventListener('click',function(e){if(e.target===this)closeOv(this)});
   $('themeBtn').onclick=function(){S.dark=!isDark();save();applyTheme()};
   if(mq&&mq.addEventListener)mq.addEventListener('change',applyTheme);
+  var rt=0;
+  window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(!$('drawerOv').hidden)buildDrawer()},120)});
   document.addEventListener('keydown',function(e){
     if(e.ctrlKey||e.metaKey||e.altKey)return;
     if(e.key==='Escape'){closeOv($('drawerOv'));closeOv($('misOv'));return}
@@ -633,8 +1106,15 @@ function bind(){
     if(t&&(/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||t.isContentEditable))return;
     if(e.key==='ArrowLeft'){e.preventDefault();next()}
     else if(e.key==='ArrowRight'){e.preventDefault();prev()}
-    else if(/^[1-3]$/.test(e.key)){var c=CH[+e.key-1];if(c){if(cur.ch===c.id)return;goChapter(c.id)}}
+    else if(/^[1-4]$/.test(e.key)){var c=CH[+e.key-1];if(c){if(cur.ch===c.id&&c.id!=='ex')return;goChapter(c.id)}}
   });
+  /* never let anything scroll the fixed screen */
+  document.addEventListener('scroll',function(e){
+    var t=e.target;
+    if(t===document||t===document.documentElement||t===document.body){window.scrollTo(0,0);return}
+    if(!t.classList)return;
+    if(t.id==='main'||t.id==='app'||t.id==='view'||((t.classList.contains('pg')||t.classList.contains('fitbox'))&&!t.classList.contains('pgscroll'))||t.classList.contains('wrap')||t.classList.contains('slide')){t.scrollTop=0;t.scrollLeft=0}
+  },true);
   /* swipe */
   var sx=0,sy=0,st=0,ok=false;
   var main=$('main');
@@ -667,9 +1147,11 @@ window.App={
   color:function(){return curColor},
   go:function(ch,i){show(ch,i||0)},
   next:next,prev:prev,
+  addExam:window.addExam,addSlides:window.addSlides,
   start:function(){
     if(started)return;started=true;
     bgfx();buildTabs();bind();applyTheme();hud();
+    Array.prototype.forEach.call(document.querySelectorAll('.copyhost'),function(e){e.innerHTML=COPY});
     renderHome();
   }
 };
@@ -3232,6 +3714,291 @@ try{
 })();
 
 }catch(e){console.error("ch3",e)}
+
+/* ===== exams1 ===== */
+try{
+(function () {
+  // يضع الجواب الصحيح في الموضع pos ويوزع المشتتات حوله
+  function mk(q, right, wrong, pos, why) {
+    var opts = wrong.slice(); opts.splice(pos, 0, right);
+    return { q: q, opts: opts, a: pos, why: why };
+  }
+  var L = function (s) { return '<span class="ltr">' + s + '</span>'; };
+
+  var mcq = [
+    mk('أقصر مسافة بين قمتين متتاليتين أو قاعين متتاليين في الموجة تُسمّى:', 'الطول الموجي', ['التردد', 'سعة الموجة', 'الطاقة'], 1, 'هذا تعريف الطول الموجي ويُقاس بالمتر أو النانومتر.'),
+    mk('وحدة قياس التردد هي:', 'هيرتز (Hz) أي s⁻¹', ['متر (m)', 'جول (J)', 'متر/ثانية (m/s)'], 3, 'التردد هو عدد الموجات التي تعبر نقطة محددة في الثانية، ووحدته s⁻¹ أو Hz.'),
+    mk('سرعة جميع الموجات الكهرومغناطيسية في الفراغ تساوي:', '3.00×10⁸ m/s', ['3.00×10⁶ m/s', '6.626×10⁻³⁴ m/s', '3.00×10¹⁰ m/s'], 0, 'تنتقل الموجات الكهرومغناطيسية بسرعة ثابتة هي سرعة الضوء c = 3.00×10⁸ m/s.'),
+    mk('العلاقة بين الطول الموجي والتردد لموجة كهرومغناطيسية:', 'عكسية: كلما زاد الطول الموجي قلّ التردد', ['طردية: كلما زاد الطول الموجي زاد التردد', 'لا توجد علاقة بينهما', 'متساويان دائماً'], 2, 'من العلاقة c = λν وc ثابتة، فالعلاقة عكسية.'),
+    mk('أي الإشعاعات التالية لها أقصر طول موجي؟', 'الأشعة السينية', ['الراديو', 'الميكروويف', 'الأشعة تحت الحمراء'], 1, 'الأشعة السينية أعلى ترددًا فأقصر طولًا موجيًا من بقية الخيارات.'),
+    mk('أي ألوان الطيف المرئي التالية طاقة فوتوناته أكبر؟', 'البنفسجي', ['الأحمر', 'الأصفر', 'الأخضر'], 2, 'الطاقة تزداد بزيادة التردد، والبنفسجي أعلى ترددًا من الأحمر والأصفر والأخضر.'),
+    mk('يسمّى الطيف المرئي للضوء الأبيض بالطيف المستمر لأن:', 'كل نقطة فيه تقابل طولًا موجيًا وترددًا مميزين', ['يتكون من خطوط ملونة منفصلة', 'يحتوي لونًا واحدًا فقط', 'تردده ثابت لا يتغير'], 3, 'الضوء الأبيض عند مروره في منشور ينفصل إلى ألوان متصلة دون فواصل.'),
+    mk('الفوتون هو:', 'جسيم عديم الكتلة يحمل كمًّا من الطاقة', ['جسيم سالب الشحنة كتلته صغيرة جدًا', 'موجة ميكانيكية تحتاج وسطًا', 'نواة ذرة الهيدروجين'], 0, 'الفوتون جسيم عديم الكتلة يحمل كمًّا من الطاقة.'),
+    mk('انبعاث الإلكترونات من سطح فلز عند سقوط ضوء بتردد معين عليه (التأثير الكهروضوئي) يدل على:', 'الطبيعة المادية للضوء', ['أن الضوء موجي فقط', 'أن طيف الضوء مستمر', 'أن الإلكترون ساكن في الذرة'], 2, 'فوتونات الضوء تصطدم بسطح الفلز وتحرر الإلكترونات، فهذا يثبت الخاصية المادية للضوء.'),
+    mk('إذا تضاعف تردد فوتون مرتين فإن طاقته:', 'تتضاعف مرتين', ['تقل إلى النصف', 'تبقى ثابتة', 'تتضاعف أربع مرات'], 1, 'E = hν، فالطاقة تتناسب طرديًا مع التردد.'),
+    mk('تردد ضوء طوله الموجي 2.00×10⁻⁷ m يساوي:', '1.50×10¹⁵ Hz', ['6.67×10⁻¹⁶ Hz', '60.0 Hz', '1.50×10⁻¹⁵ Hz'], 3, 'ν = c/λ = 3.00×10⁸ ÷ 2.00×10⁻⁷ = 1.50×10¹⁵ Hz.'),
+    mk('طاقة فوتون تردده 1.00×10¹⁵ Hz تساوي (h = 6.626×10⁻³⁴ J.s):', '6.63×10⁻¹⁹ J', ['6.63×10⁻⁴⁹ J', '1.51×10⁴⁸ J', '1.00×10⁻¹⁹ J'], 0, 'E = hν = 6.626×10⁻³⁴ × 1.00×10¹⁵ = 6.63×10⁻¹⁹ J.'),
+    mk('تصبح الذرة في حالة الإثارة عندما:', 'ينتقل إلكترون من مستوى طاقة أقل إلى أعلى باكتسابه طاقة', ['ينتقل إلكترون من مستوى أعلى إلى أقل', 'يبقى الإلكترون في مداره', 'تفقد الذرة نواتها'], 1, 'الانتقال إلى مستوى أعلى بامتصاص طاقة يجعل الذرة مثارة، ويسمى طيفها طيف الامتصاص.'),
+    mk('ينتج الضوء المنبعث من ذرة الهيدروجين المثارة عندما:', 'يعود الإلكترون إلى مستوى أقل فيفقد فوتونًا طاقته تساوي الفرق بين المستويين', ['ينتقل الإلكترون إلى مستوى أعلى', 'تكتسب الذرة إلكترونًا جديدًا', 'يتوقف الإلكترون عن الحركة'], 3, 'عودة الإلكترون إلى مستوى أقل تُطلق طاقة الفرق بين المستويين على شكل فوتون.'),
+    mk('تقع سلسلة ليمان في طيف الهيدروجين (العودة إلى n = 1) في منطقة:', 'الأشعة فوق البنفسجية', ['الضوء المرئي', 'الأشعة تحت الحمراء', 'موجات الراديو'], 0, 'سلسلة ليمان فوق بنفسجية، وبالمر مرئية، وباشن تحت حمراء.'),
+    mk('من عيوب نموذج بور أنه افترض:', 'إمكان تحديد مكان الإلكترون وسرعته في وقت واحد', ['وجود مستويات طاقة رئيسية', 'أن النواة موجبة الشحنة', 'أن الإلكترون يدور حول النواة'], 2, 'هذا يخالف مبدأ هايزنبرج للشك، وهو من عيوب بور.'),
+    mk('ينص مبدأ هايزنبرج للشك على أنه:', 'لا يمكن معرفة مكان الإلكترون وسرعته في وقت واحد', ['يتحرك الإلكترون حركة موجية', 'لا يزيد المجال الفرعي عن إلكترونين', 'تتوزع الإلكترونات فرادى ثم تتزاوج'], 1, 'هذا نص مبدأ هايزنبرج؛ الخيار الثاني لدي برولي والثالث لباولي والرابع لهوند.'),
+    mk('العالم الذي وضع معادلة موجية تصف الحركة الموجية للإلكترون هو:', 'شرودنجر', ['بور', 'هايزنبرج', 'باولي'], 3, 'وضع شرودنجر معادلته الموجية التي أدت إلى النموذج الكمي للذرة.'),
+    mk('المجال (المستوى) في النموذج الكمي هو:', 'منطقة ثلاثية الأبعاد حول النواة يحتمل وجود الإلكترون فيها', ['مسار دائري ثابت حول النواة', 'مركز الذرة الذي يحوي النيوترونات', 'موجة كهرومغناطيسية تنبعث من الذرة'], 0, 'النموذج الكمي يتحدث عن احتمال وجود الإلكترون في السحابة الإلكترونية لا عن مسار دائري.'),
+    mk('أقصى عدد من الإلكترونات يستوعبه المستوى الرئيسي الرابع (n = 4) هو:', '32', ['16', '18', '8'], 2, 'e = 2n² = 2×(4)² = 32.'),
+    mk('بعد ملء المستوى الثانوي 4s وفق مبدأ أفباو يُملأ المستوى:', '3d', ['4p', '4d', '3p'], 1, 'ترتيب الملء: 1s 2s 2p 3s 3p 4s 3d 4p.'),
+    mk('عدد الإلكترونات المنفردة في ذرة النيتروجين N (Z = 7) في المستوى 2p وفق قاعدة هوند:', '3', ['1', '2', '0'], 3, '2p³: يوزع كل إلكترون في مجال مستقل بنفس الاتجاه فيكون 3 إلكترونات منفردة.'),
+    mk('عدد إلكترونات التكافؤ في ذرة المغنيسيوم Mg (Z = 12):', '2', ['12', '8', '10'], 0, '1s² 2s² 2p⁶ 3s² ← إلكترونا مجال الطاقة الرئيسي الأخير 3s².'),
+    mk('التوزيع الإلكتروني الصحيح للكبريت S (Z = 16) بالطريقة المختصرة:', '[Ne] 3s² 3p⁴', ['[Ne] 3s² 3p⁶', '[Ar] 3s² 3p⁴', '[Ne] 3s⁴ 3p²'], 2, 'الغاز النبيل Ne (10) ثم 6 إلكترونات: 3s² 3p⁴.')
+  ];
+  // الجواب الصحيح يتوزع بالتساوي: 0,1,2,3 ست مرات لكل منها (تم ضبط المواضع أعلاه)
+
+  var tf = [
+    { q: 'لكل عنصر طيف انبعاث ذري خطي يختلف عن العناصر الأخرى، لذلك يُستخدم للتعرف على العنصر.', a: true, why: 'طيف الانبعاث الذري خطوط ملونة منفصلة ومميزة لكل عنصر.' },
+    { q: 'الطول الموجي والتردد يؤثران في سعة الموجة.', a: false, why: 'الطول الموجي والتردد لا يؤثران في سعة الموجة.' },
+    { q: 'الفوتون جسيم عديم الكتلة.', a: true, why: 'الفوتون جسيم عديم الكتلة يحمل كمًّا من الطاقة.' },
+    { q: 'عودة الإلكترون من مستوى أعلى إلى مستوى أقل تنتج طيف امتصاص.', a: false, why: 'عودته تُطلق فوتونًا فتنتج طيف انبعاث؛ طيف الامتصاص ينتج عن انتقاله إلى مستوى أعلى.' },
+    { q: 'اقترح دي برولي أن الإلكترون يتحرك حركة موجية أثناء دورانه حول النواة.', a: true, why: 'هذا مبدأ دي برولي، وهو من أسس النموذج الكمي.' },
+    { q: 'يتعامل نموذج بور مع الإلكترونات على أن لها طبيعة مادية وموجية معًا.', a: false, why: 'نموذج بور اعتبرها جسيمات مادية فقط؛ الطبيعتان المادية والموجية في النموذج الكمي.' },
+    { q: 'ينص مبدأ باولي على أن المجال الفرعي الواحد لا يستوعب أكثر من إلكترونين يدوران في اتجاهين متعاكسين.', a: true, why: 'هذا نص مبدأ باولي.' },
+    { q: 'التوزيع الإلكتروني الفعلي للكروم Cr (Z = 24) هو [Ar] 4s² 3d⁴.', a: false, why: 'الفعلي [Ar] 4s¹ 3d⁵ لأن المستوى الفرعي 3d نصف الممتلئ أكثر استقرارًا.' },
+    { q: 'يُطبَّق القانون e = 2n² على المستويات الرئيسية من الأول إلى الرابع فقط.', a: true, why: 'هذه ملاحظة المنهج: القانون يطبق حتى المستوى الرئيسي الرابع.' },
+    { q: 'يتكون الطيف الخطي لذرة الهيدروجين من ألوان متصلة بلا فواصل.', a: false, why: 'طيف الهيدروجين خطوط منفصلة، لكل خط طاقة محددة.' }
+  ];
+
+  var qa = [
+    { q: 'علّل: يسمى طيف الهيدروجين بالطيف الخطي.', a: 'لأنه يتكون من خطوط (متسلسلات) لكل منها طاقة محددة؛ فعند عودة الإلكترون المثار إلى مستوى أقل يفقد فوتونًا طاقته تساوي الفرق بين المستويين فقط.' },
+    { q: 'عرّف كلًّا من: الفوتون، وطاقة الكم.', a: 'الفوتون: جسيم عديم الكتلة يحمل كمًّا من الطاقة. طاقة الكم: أقل كمية من الطاقة التي تفقدها الذرة أو تكسبها.' },
+    { q: 'علّل: تسمى ألوان الطيف المرئي بالطيف المستمر.', a: 'لأن كل نقطة فيه تتوافق مع طول موجي وتردد مميزين، فالألوان متصلة دون فواصل.' },
+    { q: 'ما التأثير الكهروضوئي؟ وماذا يثبت؟', a: 'ظاهرة انبعاث الإلكترونات من سطح الفلز عندما يسقط عليه ضوء بتردد معين، إذ تعمل فوتونات الضوء على إطلاق الإلكترونات من سطحه. ويثبت الخاصية المادية للضوء.' },
+    { q: 'قارن بين نموذج بور والنموذج الكمي للذرة.', a: 'بور: الإلكترونات لها طبيعة مادية فقط، لم يحدد طاقة الإلكترون بقيم معينة، والإلكترونات تتحرك في مسار دائري. النموذج الكمي: للإلكترونات طبيعة مادية وموجية، يحدد طاقة الإلكترون بقيم معينة، والإلكترونات تتحرك في السحابة الإلكترونية.' },
+    { q: 'اذكر أربعة عيوب لنظرية بور.', a: '1) لم تفسر أطياف الذرات الأكثر تعقيدًا من الهيدروجين. 2) افترضت إمكان تحديد مكان الإلكترون وسرعته في وقت واحد. 3) افترضت أن الإلكترون يتحرك في مسار دائري مستوٍ أي أن الذرة مسطحة. 4) اعتبرت الإلكترون جسيمًا سالب الشحنة ولم تأخذ بخاصيته الموجية.' },
+    { q: 'اذكر نص مبدأ باولي.', a: 'عدد الإلكترونات في المجال الفرعي الواحد لا يزيد عن إلكترونين يدوران في اتجاهين متعاكسين.' },
+    { q: 'اذكر قاعدة هوند، ثم وزّع إلكترونات المجال d⁸ حسبها.', a: 'المجالات المتساوية في الطاقة لا تُزاوج فيها الإلكترونات إلا بعد أن تمتلئ بإلكترونات مفردة لها نفس اتجاه الدوران، أي تتوزع فرادى ثم تتزاوج. توزيع d⁸ على خمسة مجالات: ↑↓ ↑↓ ↑↓ ↑ ↑ (ثلاثة مجالات مزدوجة ومجالان بإلكترون مفرد).' },
+    { q: 'علّل: التوزيع الإلكتروني للكروم Cr والنحاس Cu استثناء (Cr: [Ar] 4s¹ 3d⁵، وCu: [Ar] 4s¹ 3d¹⁰).', a: 'لأن الذرة تصبح أكثر استقرارًا إذا كان المستوى الفرعي (d) ممتلئًا كليًا أو نصف ممتلئ؛ فينتقل إلكترون من 4s إلى 3d.' },
+    { q: 'اشرح مبدأ أفباو (البناء التصاعدي) واذكر ترتيب ملء المستويات الثانوية حتى 4p.', a: 'كل إلكترون يسعى لأن يكون في المجال الأقل طاقة. الترتيب: 1s 2s 2p 3s 3p 4s 3d 4p.' },
+    { q: 'علّل: يستخدم طيف الانبعاث الذري واللهب في التعرف على العناصر.', a: 'لأن لكل عنصر طيف انبعاث ذريًا خطيًا مميزًا يختلف عن العناصر الأخرى، فإذا عُرّض للهب أعطى لونًا مميزًا (مثل الأحمر لكلوريد الليثيوم، والأصفر لكلوريد الصوديوم، والبنفسجي لكلوريد البوتاسيوم).' },
+    { q: 'عرّف إلكترونات التكافؤ وتمثيل لويس، ثم مثّل ذرة الألومنيوم Al (Z = 13) بطريقة لويس.', a: 'إلكترونات التكافؤ: إلكترونات مجال الطاقة الرئيسي الأخير في الذرة، وهي تحدد الخواص الكيميائية للعنصر. تمثيل لويس: تمثيل إلكترونات التكافؤ التي تشارك في تكوين الروابط على شكل نقط حول رمز العنصر. توزيع Al هو [Ne] 3s² 3p¹ فله 3 إلكترونات تكافؤ: ثلاث نقاط حول الرمز Al.' }
+  ];
+
+  var calc = [
+    { q: 'ما الطول الموجي لضوء تردده 7.50×10¹⁴ s⁻¹؟',
+      steps: '<ol class="steps"><li>القانون: ' + L('λ = c / ν') + '</li><li>التعويض: ' + L('λ = 3.00×10⁸ ÷ 7.50×10¹⁴') + '</li><li>الناتج: ' + L('4.00×10⁻⁷ m') + ' (أي 400 nm).</li></ol>',
+      a: '4.00×10⁻⁷ m' },
+    { q: 'ما تردد ضوء برتقالي طوله الموجي 650 nm؟',
+      steps: '<ol class="steps"><li>نحوّل: ' + L('650 nm = 6.50×10⁻⁷ m') + '</li><li>القانون: ' + L('ν = c / λ = 3.00×10⁸ ÷ 6.50×10⁻⁷') + '</li><li>الناتج: ' + L('4.62×10¹⁴ Hz') + '</li></ol>',
+      a: '4.62×10¹⁴ Hz' },
+    { q: 'ما طاقة فوتون واحد من ضوء أحمر تردده 4.57×10¹⁴ Hz؟ (h = 6.626×10⁻³⁴ J.s)',
+      steps: '<ol class="steps"><li>القانون: ' + L('E = hν') + '</li><li>التعويض: ' + L('6.626×10⁻³⁴ × 4.57×10¹⁴ = 3.03×10⁻¹⁹ J') + '</li></ol>',
+      a: '3.03×10⁻¹⁹ J' },
+    { q: 'ما طاقة فوتون واحد من ضوء طوله الموجي 5.00×10⁻⁷ m؟',
+      steps: '<ol class="steps"><li>نحسب التردد: ' + L('ν = c/λ = 3.00×10⁸ ÷ 5.00×10⁻⁷ = 6.00×10¹⁴ Hz') + '</li><li>نحسب الطاقة: ' + L('E = hν = 6.626×10⁻³⁴ × 6.00×10¹⁴') + '</li><li>الناتج: ' + L('3.98×10⁻¹⁹ J') + '</li></ol>',
+      a: '3.98×10⁻¹⁹ J' },
+    { q: 'محطة إذاعة FM ترددها 100.0 MHz (1 MHz = 10⁶ Hz). احسب طول موجتها وطاقة فوتون واحد منها.',
+      steps: '<ol class="steps"><li>التردد: ' + L('ν = 1.00×10⁸ Hz') + '</li><li>الطول الموجي: ' + L('λ = 3.00×10⁸ ÷ 1.00×10⁸ = 3.00 m') + '</li><li>الطاقة: ' + L('E = 6.626×10⁻³⁴ × 1.00×10⁸ = 6.63×10⁻²⁶ J') + '</li></ol>',
+      a: 'λ = 3.00 m ، E = 6.63×10⁻²⁶ J' },
+    { q: 'كم فوتونًا يلزم لتكوين طاقة مقدارها 1.00 J من ضوء طوله الموجي 6.00×10⁻⁷ m؟',
+      steps: '<ol class="steps"><li>ν = 3.00×10⁸ ÷ 6.00×10⁻⁷ = 5.00×10¹⁴ Hz</li><li>طاقة الفوتون: ' + L('E = 6.626×10⁻³⁴ × 5.00×10¹⁴ = 3.313×10⁻¹⁹ J') + '</li><li>عدد الفوتونات = الطاقة الكلية ÷ طاقة الفوتون: ' + L('1.00 ÷ 3.313×10⁻¹⁹') + '</li><li>الناتج: ' + L('3.02×10¹⁸') + ' فوتون.</li></ol>',
+      a: '3.02×10¹⁸ فوتون' },
+    { q: 'اكتب التوزيع الإلكتروني للحديد Fe (Z = 26) كاملًا ومختصرًا، وبيّن عدد الإلكترونات المنفردة، وتحقق أن n = 3 لا يتجاوز سعته 2n².',
+      steps: '<ol class="steps"><li>نملأ حسب أفباو: ' + L('1s² 2s² 2p⁶ 3s² 3p⁶ 4s² 3d⁶') + ' (المجموع 26).</li><li>المختصر: ' + L('[Ar] 4s² 3d⁶') + '</li><li>المجال 3d (5 مجالات) فيه 6 إلكترونات: ' + L('↑↓ ↑ ↑ ↑ ↑') + ' ← 4 إلكترونات منفردة.</li><li>إلكترونات n = 3: 2 + 6 + 6 = 14 وسعتها 2×3² = 18، فهي أقل من السعة.</li></ol>',
+      a: '[Ar] 4s² 3d⁶ ، 4 إلكترونات منفردة' },
+    { q: 'اكتب التوزيع الإلكتروني المتوقع للكروم Cr (Z = 24) حسب أفباو، ثم التوزيع الفعلي مع التفسير، واحسب عدد الإلكترونات المنفردة.',
+      steps: '<ol class="steps"><li>المتوقع: ' + L('[Ar] 4s² 3d⁴') + '</li><li>الفعلي: ينتقل إلكترون من 4s إلى 3d ليصبح 3d نصف ممتلئ (أكثر استقرارًا): ' + L('[Ar] 4s¹ 3d⁵') + '</li><li>الإلكترونات المنفردة: 1 في 4s و5 في 3d = 6.</li></ol>',
+      a: '[Ar] 4s¹ 3d⁵ ، وعدد الإلكترونات المنفردة 6' }
+  ];
+
+  addExam('ch1', { mcq: mcq, tf: tf, qa: qa, calc: calc });
+})();
+
+}catch(e){console.error("exams1",e)}
+
+/* ===== exams2 ===== */
+try{
+/* بنك أسئلة واختبارات الفصل الثاني: الجدول الدوري (exams2) */
+addExam('ch2', {
+mcq: [
+{q:'العالم الذي صنّف العناصر إلى غازات وفلزات ولافلزات وعناصر أرضية هو:',opts:['لافوازييه','نيولاندز','ماير','موزلي'],a:0,why:'لافوازييه صنّف العناصر إلى 4 فئات: غازات، فلزات، لافلزات، عناصر أرضية.'},
+{q:'العالم الذي لاحظ تكرار خواص العناصر لكل ثمانية عناصر (بعد ترتيبها حسب الكتل الذرية) هو:',opts:['مندليف','نيولاندز','ماير','لافوازييه'],a:1,why:'نيولاندز لاحظ ذلك ووضع قانون الثمانيات.'},
+{q:'العالم الذي ترك أماكن شاغرة في جدوله لعناصر لم تُكتشف بعد وحدّد خواصها هو:',opts:['نيولاندز','ماير','مندليف','موزلي'],a:2,why:'مندليف رتّب العناصر حسب الكتل الذرية وترك أماكن شاغرة لعناصر لم تكتشف.'},
+{q:'العالم الذي اكتشف أن ذرات العناصر تحتوي على عدد محدد من البروتونات سمّاه العدد الذري هو:',opts:['لافوازييه','مندليف','نيولاندز','موزلي'],a:3,why:'موزلي رتّب العناصر تصاعدياً حسب العدد الذري.'},
+{q:'عدد الدورات (الصفوف الأفقية) في الجدول الدوري الحديث:',opts:['7','18','8','10'],a:0,why:'الجدول الدوري فيه 7 دورات و18 مجموعة.'},
+{q:'العناصر المرتبة في أعمدة رأسية في الجدول الدوري تسمى:',opts:['الدورات','المجموعات','الفئات','المجالات'],a:1,why:'المجموعات أعمدة (18 مجموعة)، والدورات صفوف أفقية.'},
+{q:'عنصر ينتهي توزيعه الإلكتروني بـ <span class="ltr">4p<sup>4</sup></span> فإنه من الفئة:',opts:['s','d','p','f'],a:2,why:'التوزيع ينتهي بالمجال الفرعي p فالعنصر من الفئة p.'},
+{q:'عناصر المجموعات من 13 إلى 18 تنتمي إلى الفئة:',opts:['s','d','f','p'],a:3,why:'المجموعات 13–18 هي عناصر الفئة p.'},
+{q:'عنصر عدده الذري 15 يقع في المجموعة:',opts:['15','13','5','3'],a:0,why:'<span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>3</sup></span> ينتهي بـ p: المجموعة = 3 + 12 = 15.'},
+{q:'العنصر <span class="ltr"><sub>16</sub>S</span> يقع في:',opts:['الدورة 2 والمجموعة 16','الدورة 3 والمجموعة 16','الدورة 3 والمجموعة 14','الدورة 4 والمجموعة 6'],a:1,why:'توزيعه ينتهي بـ <span class="ltr">3s<sup>2</sup>3p<sup>4</sup></span>: الدورة 3، والمجموعة = 4 + 12 = 16.'},
+{q:'عنصر توزيعه ينتهي بـ <span class="ltr">4s<sup>2</sup>3d<sup>7</sup></span> يقع في المجموعة:',opts:['7','5','9','11'],a:2,why:'ينتهي بالمجال d: المجموعة = عدد إلكترونات d + 2 = 7 + 2 = 9.'},
+{q:'عدد إلكترونات التكافؤ لعناصر المجموعة 16 يساوي:',opts:['2','4','8','6'],a:3,why:'المجموعة 16 = إلكترونات التكافؤ + 10 ← 6 إلكترونات (<span class="ltr">ns<sup>2</sup>np<sup>4</sup></span>).'},
+{q:'الأكبر حجماً (نصف قطراً) بين العناصر: <span class="ltr">Na, Mg, Al, Cl</span>',opts:['Na','Mg','Al','Cl'],a:0,why:'جميعها في الدورة 3، ويقل نصف القطر من اليسار إلى اليمين، فالصوديوم (أقصى اليسار) الأكبر.'},
+{q:'الأصغر حجماً بين العناصر: <span class="ltr">Li, F, Na, K</span>',opts:['Li','F','Na','K'],a:1,why:'F في الدورة 2 وفي أقصى اليمين، وبقية الذرات إما في دورة أعلى أو أقرب إلى اليسار.'},
+{q:'أيّ الأيونات التالية أصغر حجماً من ذرته المتعادلة؟',opts:['<span class="ltr">O<sup>2−</sup></span>','<span class="ltr">Br<sup>−</sup></span>','<span class="ltr">Al<sup>3+</sup></span>','<span class="ltr">S<sup>2−</sup></span>'],a:2,why:'الأيون الموجب (فقد إلكترونات) أصغر من ذرته، أما الأيون السالب فأكبر من ذرته.'},
+{q:'العنصر الأقل طاقة تأين بين: <span class="ltr">Na, Mg, Ca, K</span>',opts:['Na','Mg','Ca','K'],a:3,why:'طاقة التأين تقل نزولاً في المجموعة وتزداد عبر الدورة، فالبوتاسيوم (المجموعة 1 والدورة 4) الأقل.'},
+{q:'العنصر الأعلى طاقة تأين بين: <span class="ltr">F, Cl, Br, I</span>',opts:['F','Cl','Br','I'],a:0,why:'كلها في المجموعة 17، وتقل طاقة التأين نزولاً في المجموعة، فالفلور (الأعلى) أعلاها.'},
+{q:'ترتيب الكهروسالبية للعناصر المهمة: <span class="ltr">F &gt; O &gt; N &gt; C</span>. أيّ العناصر التالية أكثر كهروسالبية؟',opts:['<span class="ltr">N</span>','<span class="ltr">O</span>','<span class="ltr">C</span>','<span class="ltr">H</span>'],a:1,why:'الأكسجين أكثر كهروسالبية من N وC وH حسب الترتيب المعطى.'},
+{q:'العنصر الأقل كهروسالبية بين: <span class="ltr">Cl, S, Na, Al</span>',opts:['Cl','S','Na','Al'],a:2,why:'كلها في الدورة 3، وتزداد الكهروسالبية من اليسار إلى اليمين، فالصوديوم (أقصى اليسار) الأقل.'},
+{q:'تسعى الذرات حسب قاعدة الثمانية للحصول على عدد من إلكترونات التكافؤ في مجال طاقتها الرئيسي الأخير يساوي:',opts:['2','4','6','8'],a:3,why:'قاعدة الثمانية: تفقد الذرة أو تكتسب أو تشارك بالإلكترونات لتحصل على 8 إلكترونات تكافؤ.'},
+{q:'لتحقق ذرة الكلور (<span class="ltr"><sub>17</sub>Cl</span>) قاعدة الثمانية فإنها:',opts:['تكتسب إلكتروناً واحداً','تفقد إلكتروناً واحداً','تفقد 7 إلكترونات','تكتسب 7 إلكترونات'],a:0,why:'تكافؤها <span class="ltr">3s<sup>2</sup>3p<sup>5</sup></span> (7 إلكترونات) فتكتسب إلكتروناً واحداً لتصل إلى 8.'},
+{q:'لتحقق ذرة المغنيسيوم (<span class="ltr"><sub>12</sub>Mg</span>) قاعدة الثمانية فإنها:',opts:['تكتسب إلكترونين','تفقد إلكترونين','تفقد 6 إلكترونات','تكتسب 6 إلكترونات'],a:1,why:'تكافؤها <span class="ltr">3s<sup>2</sup></span> فتفقد إلكترونين فيصبح مجالها الأخير <span class="ltr">2s<sup>2</sup>2p<sup>6</sup></span> (8 إلكترونات).'},
+{q:'العنصر الذي عدده الذري 34 يقع في:',opts:['الدورة 3 والمجموعة 16','الدورة 4 والمجموعة 14','الدورة 4 والمجموعة 16','الدورة 6 والمجموعة 4'],a:2,why:'توزيعه ينتهي بـ <span class="ltr">4s<sup>2</sup>3d<sup>10</sup>4p<sup>4</sup></span>: الدورة 4، والمجموعة = 4 + 12 = 16 (السيلينيوم).'},
+{q:'عدد الأكسدة المعتاد لعناصر المجموعة 17 (الهالوجينات) هو:',opts:['+1','−2','+7','−1'],a:3,why:'الهالوجينات تكتسب إلكتروناً واحداً فيكون عدد أكسدتها −1.'}
+],
+tf: [
+{q:'المجموعات هي عناصر مرتبة في أعمدة في الجدول الدوري وعددها 18 مجموعة.',a:true,why:'الجدول الدوري فيه 18 مجموعة (أعمدة) و7 دورات (صفوف).'},
+{q:'رتّب مندليف العناصر تصاعدياً حسب أعدادها الذرية.',a:false,why:'مندليف رتّب حسب الكتل الذرية، أما الترتيب حسب العدد الذري فهو لموزلي.'},
+{q:'نيولاندز هو من وضع قانون الثمانيات.',a:true,why:'لاحظ تكرار خواص العناصر لكل ثمانية عناصر فوضع قانون الثمانيات.'},
+{q:'العنصر الذي توزيعه <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>4</sup></span> يقع في المجموعة 14.',a:false,why:'ينتهي بـ p: المجموعة = 4 + 12 = 16 وليس 14.'},
+{q:'العنصر الذي عدده الذري 35 يقع في الدورة 4 والمجموعة 17.',a:true,why:'توزيعه ينتهي بـ <span class="ltr">4s<sup>2</sup>3d<sup>10</sup>4p<sup>5</sup></span>: الدورة 4 والمجموعة 5 + 12 = 17 (هالوجين).'},
+{q:'يزداد نصف قطر الذرة كلما اتجهنا من اليسار إلى اليمين في الدورة الواحدة.',a:false,why:'يقل نصف القطر عبر الدورة بسبب زيادة جذب النواة لإلكترونات التكافؤ.'},
+{q:'الأيون الموجب أصغر حجماً من ذرته المتعادلة.',a:true,why:'عندما تفقد الذرة إلكتروناً تتحول إلى أيون موجب صغير الحجم.'},
+{q:'تقل طاقة التأين كلما اتجهنا من أعلى إلى أسفل في المجموعة الواحدة.',a:true,why:'تزداد المستويات الرئيسية فتقل قوة جذب النواة، فتلزم طاقة قليلة لانتزاع الإلكترون.'},
+{q:'تزداد الكهروسالبية كلما اتجهنا من أعلى إلى أسفل في المجموعة الواحدة.',a:false,why:'تقل الكهروسالبية نزولاً في المجموعة وتزداد من اليسار إلى اليمين في الدورة.'},
+{q:'الأيون السالب أصغر حجماً من ذرته المتعادلة.',a:false,why:'عندما تكتسب الذرة إلكتروناً تتحول إلى أيون سالب كبير الحجم.'}
+],
+qa: [
+{q:'علل: عناصر المجموعة الواحدة متشابهة في خواصها الكيميائية.',a:'لأن لها نفس عدد إلكترونات التكافؤ.'},
+{q:'علل: الغازات النبيلة مستقرة كيميائياً.',a:'لأن مجال الطاقة الأخير ممتلئ تماماً بالإلكترونات.'},
+{q:'علل: يقل نصف قطر الذرة كلما اتجهنا من اليسار إلى اليمين في الدورة.',a:'بسبب زيادة عدد إلكترونات التكافؤ في مجال الطاقة الرئيسي الأخير، فتزداد قوة جذب النواة لهذه الإلكترونات فيقل نصف قطر الذرة.'},
+{q:'علل: يزداد نصف قطر الذرة كلما اتجهنا من أعلى إلى أسفل في المجموعة.',a:'بسبب زيادة عدد المجالات (المستويات) الرئيسية كلما اتجهنا إلى الأسفل.'},
+{q:'علل: تزداد طاقة التأين كلما اتجهنا من اليسار إلى اليمين في الدورة.',a:'يزداد العدد الذري فتزداد قوة جذب النواة للإلكترونات، فتحتاج إلى طاقة كبيرة لانتزاع الإلكترون.'},
+{q:'علل: تقل طاقة التأين كلما اتجهنا من أعلى إلى أسفل في المجموعة.',a:'يزداد العدد الذري فتزداد عدد مستويات الطاقة الرئيسية فتقل قوة جذب النواة، فتحتاج إلى طاقة قليلة لانتزاع الإلكترون.'},
+{q:'عرّف الكهروسالبية (السالبية الكهربائية)، وما اتجاهها في الدورة والمجموعة؟',a:'هي قابلية ذرات العنصر على جذب الإلكترونات في الرابطة الكيميائية. تزداد من اليسار إلى اليمين في الدورة، وتقل من أعلى إلى أسفل في المجموعة.'},
+{q:'عرّف طاقة التأين.',a:'الطاقة اللازمة لانتزاع أبعد إلكترون تكافؤ من ذرة العنصر في الحالة الغازية.'},
+{q:'عرّف الحجم الذري (نصف قطر الذرة) ونصف قطر الذرة للفلزات.',a:'الحجم الذري: مقدار اقتراب ذرة من ذرة أخرى مجاورة لها. ونصف قطر الذرة للفلزات: هو نصف المسافة بين نواتين متجاورتين في التركيب البلوري للعنصر.'},
+{q:'اشرح قاعدة الثمانية.',a:'الذرة تفقد أو تكتسب أو تشارك بالإلكترونات لتحصل على 8 إلكترونات تكافؤ في مجال طاقتها الرئيسي الأخير.'},
+{q:'ما الفرق بين حجم الأيون الموجب والأيون السالب مقارنةً بذرتيهما؟',a:'عندما تفقد الذرة إلكتروناً تتحول إلى أيون موجب صغير الحجم، وعندما تكتسب إلكتروناً تتحول إلى أيون سالب كبير الحجم.'},
+{q:'اذكر إسهام كل من لافوازييه وموزلي في تطور الجدول الدوري.',a:'لافوازييه: صنّف العناصر إلى 4 فئات هي غازات وفلزات ولافلزات وعناصر أرضية. موزلي: اكتشف أن ذرات العناصر تحتوي على عدد محدد من البروتونات سمّاه العدد الذري، ورتّب العناصر تصاعدياً حسب العدد الذري.'}
+],
+calc: [
+{q:'حدّد الدورة والمجموعة والفئة وإلكترونات التكافؤ للعنصر الذي عدده الذري Z = 11.',steps:'<ol class="steps"><li>التوزيع الإلكتروني: <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>1</sup></span></li><li>مجال الطاقة الرئيسي الأخير هو 3 فالدورة 3.</li><li>ينتهي التوزيع بالمجال s فالفئة s، والمجموعة = عدد إلكترونات s = 1.</li><li>إلكترونات التكافؤ: <span class="ltr">3s<sup>1</sup></span> (إلكترون واحد).</li></ol>',a:'الدورة 3، المجموعة 1، الفئة s، التكافؤ <span class="ltr">3s<sup>1</sup></span> (Na)'},
+{q:'حدّد الدورة والمجموعة والفئة وإلكترونات التكافؤ للعنصر الذي عدده الذري Z = 17.',steps:'<ol class="steps"><li>التوزيع الإلكتروني: <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>5</sup></span></li><li>مجال الطاقة الرئيسي الأخير هو 3 فالدورة 3.</li><li>ينتهي بالمجال p فالفئة p، والمجموعة = عدد إلكترونات p + 12 = 5 + 12 = 17.</li><li>إلكترونات التكافؤ: <span class="ltr">3s<sup>2</sup>3p<sup>5</sup></span> (7 إلكترونات).</li></ol>',a:'الدورة 3، المجموعة 17، الفئة p، التكافؤ <span class="ltr">3s<sup>2</sup>3p<sup>5</sup></span> (Cl)'},
+{q:'حدّد الدورة والمجموعة والفئة وإلكترونات التكافؤ للعنصر الذي عدده الذري Z = 33.',steps:'<ol class="steps"><li>التوزيع الإلكتروني: <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>6</sup>4s<sup>2</sup>3d<sup>10</sup>4p<sup>3</sup></span></li><li>مجال الطاقة الرئيسي الأخير هو 4 فالدورة 4.</li><li>ينتهي بالمجال p فالفئة p، والمجموعة = 3 + 12 = 15.</li><li>إلكترونات التكافؤ: <span class="ltr">4s<sup>2</sup>4p<sup>3</sup></span> (5 إلكترونات).</li></ol>',a:'الدورة 4، المجموعة 15، الفئة p، التكافؤ <span class="ltr">4s<sup>2</sup>4p<sup>3</sup></span> (As)'},
+{q:'حدّد الدورة والمجموعة والفئة وإلكترونات التكافؤ للعنصر الذي عدده الذري Z = 35، ثم اذكر اسم مجموعته.',steps:'<ol class="steps"><li>التوزيع الإلكتروني: <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>6</sup>4s<sup>2</sup>3d<sup>10</sup>4p<sup>5</sup></span></li><li>مجال الطاقة الرئيسي الأخير هو 4 فالدورة 4.</li><li>ينتهي بالمجال p فالفئة p، والمجموعة = 5 + 12 = 17.</li><li>إلكترونات التكافؤ: <span class="ltr">4s<sup>2</sup>4p<sup>5</sup></span> (7 إلكترونات)، والمجموعة 17 هي الهالوجينات.</li></ol>',a:'الدورة 4، المجموعة 17 (الهالوجينات)، الفئة p، التكافؤ <span class="ltr">4s<sup>2</sup>4p<sup>5</sup></span> (Br)'},
+{q:'حدّد الدورة والمجموعة والفئة للعنصر الذي عدده الذري Z = 21، واكتب مجالات تكافؤه.',steps:'<ol class="steps"><li>التوزيع الإلكتروني: <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>6</sup>4s<sup>2</sup>3d<sup>1</sup></span></li><li>أعلى مجال رئيسي هو 4 فالدورة 4.</li><li>ينتهي التوزيع بالمجال d فالفئة d، والمجموعة = عدد إلكترونات d + 2 = 1 + 2 = 3.</li><li>مجالات التكافؤ: <span class="ltr">4s<sup>2</sup>3d<sup>1</sup></span>.</li></ol>',a:'الدورة 4، المجموعة 3، الفئة d، التكافؤ <span class="ltr">4s<sup>2</sup>3d<sup>1</sup></span> (Sc)'},
+{q:'حدّد الدورة والمجموعة والفئة للعنصر الذي عدده الذري Z = 30، واكتب مجالات تكافؤه.',steps:'<ol class="steps"><li>التوزيع الإلكتروني: <span class="ltr">1s<sup>2</sup>2s<sup>2</sup>2p<sup>6</sup>3s<sup>2</sup>3p<sup>6</sup>4s<sup>2</sup>3d<sup>10</sup></span></li><li>أعلى مجال رئيسي هو 4 فالدورة 4.</li><li>ينتهي بالمجال d فالفئة d، والمجموعة = 10 + 2 = 12.</li><li>مجالات التكافؤ: <span class="ltr">4s<sup>2</sup>3d<sup>10</sup></span>.</li></ol>',a:'الدورة 4، المجموعة 12، الفئة d، التكافؤ <span class="ltr">4s<sup>2</sup>3d<sup>10</sup></span> (Zn)'},
+{q:'رتّب العناصر <span class="ltr"><sub>12</sub>Mg, <sub>16</sub>S, <sub>17</sub>Cl</span> تصاعدياً حسب: (أ) نصف القطر، (ب) طاقة التأين، (ج) الكهروسالبية.',steps:'<ol class="steps"><li>التوزيعات: Mg <span class="ltr">3s<sup>2</sup></span> (المجموعة 2)، S <span class="ltr">3s<sup>2</sup>3p<sup>4</sup></span> (المجموعة 16)، Cl <span class="ltr">3s<sup>2</sup>3p<sup>5</sup></span> (المجموعة 17).</li><li>الثلاثة في الدورة 3 وترتيبها من اليسار إلى اليمين: Mg ثم S ثم Cl.</li><li>عبر الدورة: يقل نصف القطر، وتزداد طاقة التأين والكهروسالبية.</li></ol>',a:'(أ) نصف القطر تصاعدياً: Cl &lt; S &lt; Mg. (ب) طاقة التأين تصاعدياً: Mg &lt; S &lt; Cl. (ج) الكهروسالبية تصاعدياً: Mg &lt; S &lt; Cl.'},
+{q:'رتّب العناصر <span class="ltr"><sub>4</sub>Be, <sub>12</sub>Mg, <sub>20</sub>Ca</span> تنازلياً حسب: (أ) نصف القطر، (ب) طاقة التأين، (ج) الكهروسالبية.',steps:'<ol class="steps"><li>التوزيعات: Be <span class="ltr">2s<sup>2</sup></span> (الدورة 2)، Mg <span class="ltr">3s<sup>2</sup></span> (الدورة 3)، Ca <span class="ltr">4s<sup>2</sup></span> (الدورة 4)؛ الثلاثة في المجموعة 2.</li><li>نزولاً في المجموعة: Be ثم Mg ثم Ca، ويزداد نصف القطر.</li><li>نزولاً في المجموعة: تقل طاقة التأين وتقل الكهروسالبية.</li></ol>',a:'(أ) نصف القطر تنازلياً: Ca &gt; Mg &gt; Be. (ب) طاقة التأين تنازلياً: Be &gt; Mg &gt; Ca. (ج) الكهروسالبية تنازلياً: Be &gt; Mg &gt; Ca.'}
+]
+});
+
+}catch(e){console.error("exams2",e)}
+
+/* ===== exams3 ===== */
+try{
+/* الفصل الثالث: بنك أسئلة واختبارات — ARAFAT ALRAJHI © 2026 */
+(function () {
+  'use strict';
+  var SUP = { 1: '', 2: '²', 3: '³', 4: '⁴' };
+  function X(f) { return '<span class="ltr">' + f.replace(/([A-Za-z)])(\d+)/g, '$1<sub>$2</sub>') + '</span>'; }
+  function I(s, c, sg) { var t = s.replace(/(\d+)/g, '<sub>$1</sub>'); return '<span class="ltr">' + t + '<sup>' + (c > 1 ? c : '') + (sg === '+' ? '+' : '−') + '</sup></span>'; }
+  function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+  /* أيونات: رمز، شحنة، اسم، جذر؟ */
+  var P = {
+    Na: [1, 'الصوديوم'], Li: [1, 'الليثيوم'], Ag: [1, 'الفضة'], NH4: [1, 'الأمونيوم', 1],
+    Mg: [2, 'المغنسيوم'], Ca: [2, 'الكالسيوم'], Ba: [2, 'الباريوم'], Zn: [2, 'الخارصين'], Al: [3, 'الألومنيوم'],
+    Fe2: [2, 'الحديد (II)', 0, 'Fe'], Fe3: [3, 'الحديد (III)', 0, 'Fe'], Pb2: [2, 'الرصاص (II)', 0, 'Pb'], Pb4: [4, 'الرصاص (IV)', 0, 'Pb'], Cu1: [1, 'النحاس (I)', 0, 'Cu'], Cu2: [2, 'النحاس (II)', 0, 'Cu']
+  };
+  var N = {
+    Cl: [1, 'كلوريد'], O: [2, 'أكسيد'], S: [2, 'كبريتيد'], N: [3, 'نيتريد'], OH: [1, 'هيدروكسيد', 1],
+    NO3: [1, 'نترات', 1], CO3: [2, 'كربونات', 1], SO4: [2, 'كبريتات', 1], PO4: [3, 'فوسفات', 1], HCO3: [1, 'بيكربونات', 1]
+  };
+  function sym(k) { return P[k][3] || k; }
+  function F(pk, nk) {
+    var p = P[pk], n = N[nk], g = gcd(p[0], n[0]), a = n[0] / g, b = p[0] / g;
+    function part(s, poly, c) { return (poly && c > 1 ? '(' + s + ')' : s) + (c > 1 ? c : ''); }
+    return part(sym(pk), p[2], a) + part(nk, n[2], b);
+  }
+  function NM(pk, nk) { return N[nk][1] + ' ' + P[pk][1]; }
+  function shuf(correct, wrong, pos) { var o = wrong.slice(); o.splice(pos, 0, correct); return { o: o, a: pos }; }
+  var mcq = [];
+  function M(q, correct, wrong, why) { var pos = mcq.length % 4, s = shuf(correct, wrong, pos); mcq.push({ q: q, opts: s.o, a: s.a, why: why }); }
+
+  M('ما صيغة كبريتات الألومنيوم؟', X(F('Al', 'SO4')), [X('AlSO4'), X('Al3(SO4)2'), X('Al2SO4')], 'Al³⁺ و SO₄²⁻: نبدّل الشحنتين فنحصل على Al₂(SO₄)₃ ( +6 و −6 ) ويوضع الجذر بين قوسين لتكراره.');
+  M('ما اسم المركب ' + X(F('Mg', 'PO4')) + '؟', NM('Mg', 'PO4'), ['فوسفيد المغنسيوم', 'مغنسيوم فوسفات', 'فوسفات المغنسيوم (III)'], 'الجذر السالب PO₄³⁻ اسمه فوسفات ويُسمّى أولاً ثم الفلز؛ والمغنسيوم له عدد تأكسد واحد فلا رقم روماني.');
+  M('ما صيغة نترات الباريوم؟', X(F('Ba', 'NO3')), [X('BaNO3'), X('Ba(NO3)3'), X('Ba2NO3')], 'Ba²⁺ و NO₃⁻ ⇒ نحتاج جذري نترات فيوضع الجذر بين قوسين: Ba(NO₃)₂.');
+  M('ما اسم المركب ' + X(F('Fe2', 'OH')) + '؟', NM('Fe2', 'OH'), ['هيدروكسيد الحديد (III)', 'أكسيد الحديد (II)', 'هيدريد الحديد'], 'جذران OH⁻ (−2) يوازنان Fe²⁺ فالحديد عدد تأكسده +2 ويُكتب (II).');
+  M('أي الأيونات التالية عديد الذرات؟', I('NH4', 1, '+'), [I('Mg', 2, '+'), I('Cl', 1, '-'), I('Al', 3, '+')], 'NH₄⁺ يتكون من أكثر من ذرة (N و H)، أما الباقي فأيونات أحادية الذرة.');
+  M('ما شحنة أيون الكبريت المتوقعة عند تكوينه (المجموعة 16)؟', '2−', ['2+', '1−', '6+'], 'يكتسب إلكترونين ليكمل ثمانية إلكترونات في مستوى الطاقة الأخير فيصبح S²⁻.');
+  M('كم إلكتروناً تفقد ذرة الألومنيوم ( العدد الذري 13 ) لتكوّن كاتيونها؟', '3', ['1', '2', '5'], 'تركيبه 1s²2s²2p⁶3s²3p¹ فتفقد 3 إلكترونات تكافؤ ويصبح Al³⁺ بتركيب النيون.');
+  M('أي الأيونات التالية له التركيب الإلكتروني نفسه للنيون Ne؟', I('Mg', 2, '+'), [I('K', 1, '+'), I('Cl', 1, '-'), I('Ca', 2, '+')], 'Mg (12 إلكتروناً) يفقد 2 فيبقى 10 إلكترونات مثل Ne. أما K⁺ و Cl⁻ و Ca²⁺ فلها تركيب الأرجون (18).');
+  M('ما اسم المركب ' + X(F('Ag', 'NO3')) + '؟', NM('Ag', 'NO3'), ['نيتريد الفضة', 'نترات الفضة (I)', 'نتريت الفضة'], 'الفضة لها عدد تأكسد واحد (+1) فلا يُكتب رقم روماني.');
+  M('ما صيغة بيكربونات الكالسيوم؟', X(F('Ca', 'HCO3')), [X('CaHCO3'), X('Ca(HCO3)3'), X('Ca2(HCO3)')], 'Ca²⁺ و HCO₃⁻ ⇒ جذران بيكربونات بين قوسين: Ca(HCO₃)₂.');
+  M('ما صيغة كبريتيد الحديد (III)؟', X(F('Fe3', 'S')), [X('FeS'), X('Fe3S2'), X('Fe2S')], 'Fe³⁺ و S²⁻ ⇒ بتبديل الشحنتين Fe₂S₃ ( +6 و −6 ).');
+  M('ما اسم المركب ' + X('Cu2O') + '؟', NM('Cu1', 'O'), ['أكسيد النحاس (II)', 'أكسيد النحاس (III)', 'أكسيد ثنائي النحاس'], 'ذرتا نحاس تعادلان O²⁻ فكل نحاس +1 ويُكتب (I).');
+  M('أي المركبات التالية أقل طاقة شبكة بلورية؟', X('KI'), [X('MgO'), X('CaF2'), X('NaCl')], 'شحنتا KI واحدة وأيوناته كبيرة الحجم، بينما MgO و CaF₂ شحناتها أكبر و NaCl أصغر حجماً.');
+  M('تتكون الرابطة الأيونية عادة بين:', 'فلز ولافلز', ['لافلز ولافلز', 'فلز وفلز', 'غاز خامل وفلز'], 'يفقد الفلز إلكترونات فيصير كاتيوناً ويكتسبها اللافلز فيصير أنيوناً ثم يتجاذبان كهروستاتيكياً.');
+  M('كم عدد البروتونات في أيون ' + I('Mg', 2, '+') + ' ( العدد الذري للمغنسيوم 12 )؟', '12', ['10', '14', '2'], 'عدد البروتونات في النواة ثابت أثناء تكوين الأيون، والتغير يحدث في الإلكترونات فقط.');
+  M('ما صيغة هيدروكسيد الحديد (III)؟', X(F('Fe3', 'OH')), [X('FeOH3'), X('Fe3OH'), X('Fe(OH)2')], 'Fe³⁺ و OH⁻ ⇒ ثلاثة جذور هيدروكسيد بين قوسين: Fe(OH)₃.');
+  M('ما صيغة فوسفات الأمونيوم؟', X(F('NH4', 'PO4')), [X('NH4PO4'), X('(NH4)2PO4'), X('NH4(PO4)3')], 'NH₄⁺ و PO₄³⁻ ⇒ ثلاثة أمونيوم لكل فوسفات: (NH₄)₃PO₄.');
+  M('الرابطة الفلزية هي:', 'قوة تجاذب بين الأيونات الموجبة للفلز والإلكترونات حرة الحركة', ['تجاذب بين كاتيون وأنيون', 'مشاركة إلكترونات بين ذرتي لافلز', 'تنافر بين الأيونات الموجبة'], 'تنتشر إلكترونات التكافؤ بحرية في الشبكة الفلزية وتشد الأيونات الموجبة.');
+  M('أي مما يلي يُعدّ سبيكة؟', 'البرونز', ['النحاس النقي', 'الحديد النقي', 'الألومنيوم النقي'], 'السبيكة خليط من عناصر فلزية؛ والبرونز يتكون أساساً من النحاس والقصدير.');
+  M('ما اسم المركب ' + X('NH4Cl') + '؟', NM('NH4', 'Cl'), ['أمونيا الكلور', 'كلورات الأمونيوم', 'كلوريد النيتروجين'], 'الأنيون البسيط Cl⁻ يضاف إليه «يد» فيصبح كلوريد ثم نسمّي الكاتيون الأمونيوم.');
+  M('ما صيغة نترات الخارصين؟', X(F('Zn', 'NO3')), [X('ZnNO3'), X('Zn2NO3'), X('Zn(NO3)3')], 'Zn²⁺ و NO₃⁻ ⇒ Zn(NO₃)₂.');
+  M('كم أيوناً في وحدة الصيغة الواحدة من ' + X('MgCl2') + '؟', '3', ['2', '4', '5'], 'أيون Mg²⁺ واحد وأيونا Cl⁻ اثنان، المجموع 3 أيونات.');
+  M('ما اسم المركب ' + X(F('Pb4', 'O')[0] + 'bO2') + '؟', NM('Pb4', 'O'), ['أكسيد الرصاص (II)', 'أكسيد الرصاص (I)', 'بيروكسيد الرصاص (II)'], 'O²⁻ اثنان (−4) على ذرة رصاص واحدة فعدد تأكسده +4 ويُكتب (IV).');
+  M('ما الذي يحدد نوع ذرة العنصر ولا يتغير عند تكوين الأيون؟', 'عدد البروتونات في النواة', ['عدد الإلكترونات', 'عدد مستويات الطاقة', 'عدد إلكترونات التكافؤ'], 'النواة (البروتونات) هي التي تحدد العنصر؛ لذلك لا يتحول Na⁺ إلى نيون.');
+
+  var tf = [
+    { q: 'عدد البروتونات في النواة يبقى ثابتاً أثناء تكوين الأيون.', a: true, why: 'يتغير عدد الإلكترونات فقط.' },
+    { q: 'عند تسمية المركب الأيوني يُسمّى الأيون الموجب أولاً.', a: false, why: 'يُسمّى الأيون السالب أولاً ثم الموجب (كلوريد الصوديوم).' },
+    { q: 'اسم المركب ' + X('Cu(NO3)2') + ' هو نترات النحاس (II).', a: true, why: 'جذران نترات (−2) يعادلهما Cu²⁺.' },
+    { q: 'ذرة الكلور تفقد إلكتروناً واحداً لتكوّن الأيون ' + I('Cl', 1, '-') + '.', a: false, why: 'ذرة الكلور تكتسب إلكتروناً فتصبح Cl⁻ بتركيب الأرجون.' },
+    { q: 'المركب الأيوني الصلب يوصل التيار الكهربائي.', a: false, why: 'أيوناته مقيدة الحركة في الشبكة الصلبة؛ يوصل مصهوراً أو محلولاً فقط.' },
+    { q: 'طاقة الشبكة البلورية لـ NaI أكبر منها لـ KI.', a: true, why: 'الشحنة واحدة، وأيون Na⁺ أصغر حجماً من K⁺ فطاقة الشبكة أكبر.' },
+    { q: 'الرابطة الفلزية تتكون بين فلز ولافلز.', a: false, why: 'توجد بين ذرات العنصر الفلزي نفسه (أيونات موجبة وإلكترونات حرة).' },
+    { q: 'عند كتابة الصيغة نبدّل أعداد الأكسدة بين الأيونين الموجب والسالب.', a: true, why: 'فتصبح شحنة كل أيون هي عدد الأيونات الآخر (مع الاختصار إن أمكن).' },
+    { q: 'صيغة كلوريد الحديد (III) هي ' + X('FeCl2') + '.', a: false, why: 'Fe³⁺ يحتاج 3 أيونات Cl⁻ فالصيغة FeCl₃.' },
+    { q: 'السبيكة خليط من العناصر الفلزية.', a: true, why: 'مثل البرونز والنيكو والفولاذ.' }
+  ];
+
+  var qa = [
+    { q: 'علل: درجة انصهار المركبات الأيونية عالية.', a: 'بسبب قوة الرابطة الأيونية وقوة جذب الأيونات في الشبكة البلورية، فتحتاج إلى كمية كبيرة من الطاقة لتفكيكها.' },
+    { q: 'علل: المركب الأيوني لا يوصل الكهرباء وهو صلب ويوصلها وهو مصهور (أو محلول).', a: 'في الحالة الصلبة تكون أيوناته مقيدة الحركة في أماكنها، أما في المصهور أو المحلول فتكون أيوناته حرة الحركة فتنقل التيار.' },
+    { q: 'علل: تكوّن المركبات الأيونية يوصف بأنه طارد للطاقة.', a: 'لأن الطاقة تنطلق عند تكوين المركب؛ فالمركب المتكون أقل طاقة وأكثر استقراراً من أيوناته المفردة الموجبة والسالبة.' },
+    { q: 'علل: المركبات الأيونية هشّة (تتحطم عند الطرق).', a: 'عند الطرق تنزاح طبقة من الأيونات فتتقابل أيونات متشابهة الشحنة فتتنافر وتنكسر البلورة.' },
+    { q: 'علل: لا يتحول الصوديوم إلى نيون رغم أن تركيب أيون الصوديوم يشبه تركيب النيون.', a: 'لأن عدد البروتونات في النواة ما زال ثابتاً (11)، وهو الذي يحدد نوع الذرة، فتحوّل إلى أيون صوديوم موجب وليس إلى نيون.' },
+    { q: 'علل: الفلزات موصلة جيدة للحرارة والكهرباء.', a: 'بسبب وجود الإلكترونات حرة الحركة في الشبكة الفلزية.' },
+    { q: 'علل: فلزات المجموعتين الأولى والثانية من أكثر الفلزات نشاطاً.', a: 'لأنها تفقد إلكتروناتها بسهولة.' },
+    { q: 'علل: طاقة الشبكة البلورية لـ MgCl₂ أعلى منها لـ NaCl.', a: 'لأن شحنة Mg²⁺ أكبر من شحنة Na⁺، وطاقة الشبكة تتناسب طردياً مع شحنة الأيون.' },
+    { q: 'علل: طاقة الشبكة البلورية لـ MgCl₂ أعلى منها لـ CaCl₂.', a: 'لأن حجم Mg²⁺ أصغر من حجم Ca²⁺، وطاقة الشبكة تتناسب عكسياً مع الحجم.' },
+    { q: 'عرّف السبيكة.', a: 'هي خليط من العناصر الفلزية، مثل البرونز (نحاس وقصدير).' },
+    { q: 'عرّف طاقة الشبكة البلورية، وما العاملان المؤثران فيها؟', a: 'هي الطاقة اللازمة لفصل أيونات 1 mol من المركب الأيوني. تتناسب طردياً مع شحنة الأيون وعكسياً مع حجمه.' },
+    { q: 'ما الفرق بين الأيون أحادي الذرة والأيون عديد الذرات؟ مثّل لكل منهما.', a: 'أحادي الذرة: ذرة واحدة مشحونة مثل Mg²⁺ و Cl⁻. عديد الذرات: أكثر من ذرة مشحونة معاً (جذر) مثل SO₄²⁻ و NH₄⁺.' }
+  ];
+
+  var calc = [];
+  function formulaQ(pk, nk) {
+    var p = P[pk], n = N[nk], g = gcd(p[0], n[0]), a = n[0] / g, b = p[0] / g;
+    var pS = sym(pk), steps = '<ol class="steps">' +
+      '<li>نكتب الأيونين: ' + I(pS, p[0], '+') + ' و ' + I(nk, n[0], '-') + '.</li>' +
+      '<li>نبدّل الأعداد: عدد ' + (p[2] ? 'الجذر ' : 'ذرات ') + pS + ' = ' + a + ' وعدد ' + nk + ' = ' + b + '.</li>' +
+      '<li>نتحقق: ' + (p[0] * a) + '+ مقابل ' + (n[0] * b) + '−.</li>' +
+      '<li>' + ((p[2] && a > 1) || (n[2] && b > 1) ? 'الجذر المتكرر يوضع بين قوسين، والعدد 1 لا يُكتب.' : 'العدد 1 لا يُكتب.') + '</li></ol>';
+    calc.push({ q: 'اكتب صيغة ' + NM(pk, nk) + '.', steps: steps, a: X(F(pk, nk)) });
+  }
+  function nameQ(f, pk, nk) {
+    var p = P[pk], n = N[nk], g = gcd(p[0], n[0]), a = n[0] / g, b = p[0] / g;
+    var roman = P[pk][1].indexOf('(') > -1, pS = sym(pk);
+    var tot = n[0] * b;
+    var s = '<ol class="steps"><li>نحدّد الأيون السالب: ' + n[1] + ' (' + I(nk, n[0], '-') + ').</li>' +
+      '<li>نحسب الشحنة الكلية السالبة = ' + tot + '−، وعدد الأيونات الموجبة ' + a + ' فشحنة ' + pS + ' = +' + (tot / a) + '.</li>' +
+      '<li>' + (roman ? 'للعنصر أكثر من عدد تأكسد فنكتب الرقم الروماني بعد اسمه.' : 'للعنصر عدد تأكسد واحد فلا نكتب رقماً رومانياً.') + '</li>' +
+      '<li>نسمّي الأيون السالب أولاً ثم الموجب.</li></ol>';
+    calc.push({ q: 'اكتب اسم المركب ' + X(f) + '.', steps: s, a: NM(pk, nk) });
+  }
+  nameQ('ZnCl2', 'Zn', 'Cl');
+  formulaQ('Al', 'O');
+  nameQ('Ag2SO4', 'Ag', 'SO4');
+  formulaQ('Mg', 'N');
+  nameQ('Fe2(CO3)3', 'Fe3', 'CO3');
+  formulaQ('NH4', 'SO4');
+  nameQ('Ca(OH)2', 'Ca', 'OH');
+  formulaQ('Zn', 'PO4');
+
+  addExam('ch3', { mcq: mcq, tf: tf, qa: qa, calc: calc });
+})();
+
+}catch(e){console.error("exams3",e)}
 </script>
 <script>App.start();</script>
 <script>if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}</script>
