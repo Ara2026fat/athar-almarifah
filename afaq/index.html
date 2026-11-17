@@ -3530,7 +3530,10 @@ function detSave(o){try{localStorage.setItem(DETK,JSON.stringify(o));}catch(e){}
 function detRM(){try{return window.matchMedia("(prefers-reduced-motion: reduce)").matches;}catch(e){return false;}}
 function detRnd(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function detNo(e){return String(100+stHash(e.id)%900);}
-function detCases(){var d=detLoad().done||{};return STORIES.filter(function(e){return e.kind!=="scifi"&&e.caveat&&e.sources&&e.sources.length>=2&&e.text.length>=2&&!d[e.id];});}
+/* قضية حقيقية = تحفظ يذكر اختلافًا فعليًا بين المصادر (اعتُمد 17 نوفمبر 2026) */
+var DETRX=/خلاف|اختلف|يختلف|تختلف|روايات|يُروى|قيل|ينسب|تتفاوت|لا يُعرف|لا يعرف/;
+function detDispute(e){return !!(e.caveat&&DETRX.test(e.caveat));}
+function detCases(){var d=detLoad().done||{};return STORIES.filter(function(e){return e.kind!=="scifi"&&detDispute(e)&&e.sources&&e.sources.length>=2&&e.text.length>=2&&!d[e.id];});}
 function detPortal(x,y,cb){
   if(detRM()){cb();return;}
   var o=h("div",{class:"detportal"});o.style.clipPath="circle(0px at "+x+"px "+y+"px)";document.body.appendChild(o);
