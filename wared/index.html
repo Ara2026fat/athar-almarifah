@@ -123,6 +123,13 @@ svg .gl{fill:none;stroke:#FFE9A8;stroke-width:3;stroke-linecap:round;stroke-line
 .search{display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:0 12px;margin-top:20px}
 .search input{flex:1;min-width:0;border:0;background:none;font:inherit;color:inherit;padding:11px 0}
 .search input:focus-visible{outline:none}
+.seg3{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;margin:14px 0 10px;background:var(--panel);border:1.5px solid var(--line);border-radius:18px}
+.seg3 button{border:0;background:none;border-radius:14px;padding:6px 4px;font-size:14px;font-weight:800;color:var(--mut)}
+.seg3 button.on{background:linear-gradient(180deg,var(--n1),var(--n2));color:#fff;box-shadow:0 6px 14px -8px var(--glow)}
+.scr{display:flex;gap:6px;overflow-x:auto;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:2px max(16px,env(safe-area-inset-left,0px)) 12px;scrollbar-width:none;margin-bottom:6px}
+.scr::-webkit-scrollbar{display:none}
+.scr .chip{flex:none;white-space:nowrap}
+.scr .sep{flex:none;width:1.5px;margin:5px 4px;background:var(--line)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
 .chip{border:1.5px solid var(--line);background:var(--paper);border-radius:99px;padding:3px 13px;font-size:13px;font-weight:700}
 .chip.on{background:linear-gradient(180deg,var(--n1),var(--n2));color:#fff;border-color:var(--gold)}
@@ -280,7 +287,7 @@ const U={
 const ico=n=>`<svg class="u" viewBox="0 0 24 24" aria-hidden="true">${U[n]}</svg>`;
 
 /* ---------- الحالة والتخزين ---------- */
-const S={cat:'',pcat:'',mode:'file',me:'me',pmap:{},ideas:[],marks:[],comments:[],people:[],names:{},tab:'home',open:null,q:'',flt:'all',sort:'new',ai:{},kind:'comment',db:null,sample:null,dict:null};
+const S={more:'',cat:'',pcat:'',mode:'file',me:'me',pmap:{},ideas:[],marks:[],comments:[],people:[],names:{},tab:'home',open:null,q:'',flt:'all',sort:'new',ai:{},kind:'comment',db:null,sample:null,dict:null};
 const now=()=>Date.now();
 const mine=i=>i.authorId===S.me;
 const mark=(id,uid)=>S.marks.find(m=>m.ideaId===id&&m.uid===uid);
@@ -393,21 +400,23 @@ function viewMemory(){
   return `<header class="hero" style="padding-bottom:30px">${Array.from({length:6},(_,k)=>`<i class="fl" style="--l:${12+k*15}%;--d:${(k*1.4).toFixed(1)}s"></i>`).join('')}
    <div class="wrap"><div class="top">${badge('gNavy','spark',46)}<div><h1>ذاكرتنا</h1><small>كل فكرة مرّت من هنا</small></div></div></div></header>
    <div class="wrap"><label class="search">${ico('search')}<input id="q" type="search" placeholder="ابحث في الأفكار والتعليقات" value="${esc(S.q)}" autocomplete="off"></label>
-   <div class="chips" id="flt" style="margin-bottom:4px"></div><div class="chips" id="cflt"></div><div id="mlist"></div>
+   <div class="seg3" id="flt"></div><div class="scr" id="cflt"></div><div id="mlist"></div>
    <p class="foot">ARAFAT ALRAJHI © 2026</p></div>`;
 }
-const FLT=[['all','الكل'],['mine','أفكاري'],['theirs','أفكار شريكي'],['talk','عليها نقاش'],['unrated','بلا انطباع'],['top','الأبرز']];
+const FLT=[['all','الكل'],['mine','أفكاري'],['theirs','أفكار شريكي']];
+const MORE=[['top','الأبرز'],['talk','عليها نقاش'],['unrated','بلا انطباع']];
 function memList(){
   const q=S.q.trim();let l=visible();
   if(S.flt==='mine')l=l.filter(mine);if(S.flt==='theirs')l=l.filter(i=>!mine(i));
-  if(S.flt==='talk')l=l.filter(i=>cmts(i.id).length);
-  if(S.flt==='unrated')l=l.filter(i=>!S.marks.some(m=>m.ideaId===i.id&&m.level));
-  if(S.flt==='top')l=l.filter(i=>score(i)>0);
+  if(S.more==='talk')l=l.filter(i=>cmts(i.id).length);
+  if(S.more==='unrated')l=l.filter(i=>!S.marks.some(m=>m.ideaId===i.id&&m.level));
+  if(S.more==='top')l=l.filter(i=>score(i)>0);
   if(S.cat)l=l.filter(i=>i.cat===S.cat);
   if(q)l=l.filter(i=>((i.title||'')+' '+i.text+' '+cmts(i.id).map(c=>c.text).join(' ')).includes(q));
-  l=l.sort((a,b)=>S.flt==='top'?score(b)-score(a):b.createdAt-a.createdAt);
-  $('#flt').innerHTML=FLT.map(f=>`<button class="chip${S.flt===f[0]?' on':''}" data-act="flt" data-v="${f[0]}">${f[1]}</button>`).join('');
-  $('#cflt').innerHTML=CATS.map(c=>`<button class="chip cat${S.cat===c[0]?' on':''}" style="--cc:${c[2]}" data-act="cat" data-v="${c[0]}"><i></i>${c[1]}</button>`).join('');
+  l=l.sort((a,b)=>S.more==='top'?score(b)-score(a):b.createdAt-a.createdAt);
+  $('#flt').innerHTML=FLT.map(f=>`<button class="${S.flt===f[0]?'on':''}" data-act="flt" data-v="${f[0]}">${f[1]}</button>`).join('');
+  $('#cflt').innerHTML=MORE.map(f=>`<button class="chip${S.more===f[0]?' on':''}" data-act="more" data-v="${f[0]}">${f[1]}</button>`).join('')+'<span class="sep"></span>'
+   +CATS.map(c=>`<button class="chip cat${S.cat===c[0]?' on':''}" style="--cc:${c[2]}" data-act="cat" data-v="${c[0]}"><i></i>${c[1]}</button>`).join('');
   $('#mlist').innerHTML=l.length?l.map(i=>ideaCard(i)).join(''):`<p class="none" style="text-align:center;margin-top:28px">${visible().length?'لا نتائج بهذا الاختيار.':'الذاكرة فارغة حتى الآن.'}</p>`;
 }
 function renderDock(){
@@ -527,6 +536,7 @@ document.addEventListener('click',e=>{
   else if(a==='open')openIdea(b.dataset.id);
   else if(a==='close'){S.open=null;$('#detail').classList.remove('on');render()}
   else if(a==='flt'){S.flt=v;memList()}
+  else if(a==='more'){S.more=S.more===v?'':v;memList()}
   else if(a==='cat'){S.cat=S.cat===v?'':v;memList()}
   else if(a==='pcat'){S.pcat=S.pcat===v?'':v;document.querySelectorAll('#pcats button').forEach(x=>x.classList.toggle('on',x.dataset.v===S.pcat))}
   else if(a==='rate')W.rate(S.open,+v).then(()=>toast(LV[+v].w)).catch(()=>toast('تعذّر الحفظ'));
