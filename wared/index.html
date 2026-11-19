@@ -104,6 +104,21 @@ svg .gl{fill:none;stroke:#FFE9A8;stroke-width:3;stroke-linecap:round;stroke-line
 .btn[disabled]{opacity:.5}
 .btn.sm{padding:6px 14px;font-size:13.5px;border-radius:12px}
 
+/* ---- number, title, category ---- */
+.no{display:inline-block;font-size:12px;font-weight:900;color:#3A2600;background:linear-gradient(180deg,#FFE98A,#E5AE1A);border-radius:8px;padding:0 8px;margin-inline-end:6px;line-height:1.7}
+.ttl{display:block;font-weight:800;font-size:15.5px;line-height:1.55;margin-bottom:1px}
+.cat{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;padding:0 9px;border-radius:99px;border:1.5px solid var(--cc);color:var(--ink)}
+.cat i{width:8px;height:8px;border-radius:50%;background:var(--cc)}
+.chip.cat{font-size:13px;font-weight:700;padding:3px 13px;background:var(--paper)}
+.chip.cat.on{background:var(--cc);color:#101a3a}
+.chip.cat.on i{background:#101a3a}
+.ti{border:1.5px solid var(--line);border-radius:16px;background:var(--paper);color:var(--ink);font:inherit;font-weight:800;font-size:17px;padding:11px 14px;margin-bottom:10px;width:100%}
+.pc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pc button{border:1.5px solid var(--cc);background:var(--paper);border-radius:99px;padding:2px 12px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.pc button i{width:9px;height:9px;border-radius:50%;background:var(--cc)}
+.pc button.on{background:var(--cc);color:#101a3a}
+.pc button.on i{background:#101a3a}
+.dt{margin:12px 0 0;font-size:21px;font-weight:900;line-height:1.5}
 /* ---- memory ---- */
 .search{display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:0 12px;margin-top:20px}
 .search input{flex:1;min-width:0;border:0;background:none;font:inherit;color:inherit;padding:11px 0}
@@ -265,7 +280,7 @@ const U={
 const ico=n=>`<svg class="u" viewBox="0 0 24 24" aria-hidden="true">${U[n]}</svg>`;
 
 /* ---------- الحالة والتخزين ---------- */
-const S={mode:'file',me:'me',pmap:{},ideas:[],marks:[],comments:[],people:[],names:{},tab:'home',open:null,q:'',flt:'all',sort:'new',ai:{},kind:'comment',db:null,sample:null,dict:null};
+const S={cat:'',pcat:'',mode:'file',me:'me',pmap:{},ideas:[],marks:[],comments:[],people:[],names:{},tab:'home',open:null,q:'',flt:'all',sort:'new',ai:{},kind:'comment',db:null,sample:null,dict:null};
 const now=()=>Date.now();
 const mine=i=>i.authorId===S.me;
 const mark=(id,uid)=>S.marks.find(m=>m.ideaId===id&&m.uid===uid);
@@ -274,6 +289,11 @@ const nm=id=>(S.pmap[id]&&S.pmap[id].name)||'';
 const nameOf=id=>id===S.me?'أنا':(nm(id)||'شريكك');
 const initial=id=>[...(nm(id)||'؟').trim()][0]||'؟';
 const person=(id,s=34)=>id===S.me?badge('gNavy',null,s,nm(S.me)?initial(S.me):'أنا'):badge('gGoldV',null,s,initial(id));
+const CATS=[['app','تطبيق وتقنية','#5b94ff'],['biz','مشروع وتجارة','#E5AE1A'],['work','العمل','#3fd09a'],['edu','التعليم','#3db6ff'],['life','الحياة اليومية','#ff9a62'],['content','محتوى وإبداع','#c46bff'],['other','أخرى','#9AA8D0']];
+const catOf=id=>CATS.find(c=>c[0]===id);
+const catChip=i=>{const c=catOf(i.cat);return c?`<span class="cat" style="--cc:${c[2]}"><i></i>${c[1]}</span>`:''};
+const numOf=i=>i.no||(S.ideas.filter(x=>x.authorId===i.authorId).sort((p,q)=>p.createdAt-q.createdAt).findIndex(x=>x.id===i.id)+1);
+const fmtNo=i=>'<bdi dir="ltr">#'+numOf(i).toLocaleString('ar-EG')+'</bdi>';
 const visible=()=>S.ideas.filter(i=>!i.archived);
 const cmts=id=>S.comments.filter(c=>c.ideaId===id).sort((a,b)=>a.createdAt-b.createdAt);
 const isNew=i=>!mine(i)&&!(mark(i.id,S.me)&&mark(i.id,S.me).readAt);
@@ -312,7 +332,7 @@ function doExport(){
   xInfo();
 }
 const W={
- async addIdea(text){const o={text,authorId:S.me,createdAt:now()};
+ async addIdea(text,title,cat){const no=Math.max(0,...S.ideas.filter(x=>x.authorId===S.me).map(numOf))+1;const o={text,authorId:S.me,createdAt:now(),no};if(title)o.title=title;if(cat)o.cat=cat;
   if(S.db){const r=await S.db.collection('ideas').add(o);return r.id}
   o.id=rid();S.ideas.push(o);saveLocal();render();return o.id},
  async archive(id){if(S.db){await S.db.doc('ideas/'+id).update({archived:true})}else{S.ideas.find(i=>i.id===id).archived=true;saveLocal();render()}},
@@ -331,17 +351,17 @@ function ideaCard(i,opts={}){
   const lvl=mine(i)?(pm&&pm.level):(mm&&mm.level);
   return `<button class="card${n?' new':''}${opts.fresh?' arrive':''}" data-act="open" data-id="${esc(i.id)}">
    <span style="position:relative;flex:none">${n?'<span class="ping">'+badge('gL4','spark',14)+'</span>':''}${person(i.authorId,40)}</span>
-   <span class="tx"><p>${esc(i.text)}</p>
+   <span class="tx"><span class="ttl"><span class="no">${fmtNo(i)}</span>${i.title?esc(i.title):''}</span><p>${esc(i.text)}</p>
    <span class="meta"><span class="m">${ico('clock')}${ago(i.createdAt)}</span>
     ${cm?`<span class="m">${ico('chat')}${cm}</span>`:''}
     ${lvl?`<span class="m">${lvBadge(lvl,20)}${LV[lvl].w}</span>`:''}
-    ${n?'<span class="tag">جديدة</span>':''}${i.demo?'<span class="tag ex">مثال</span>':''}
+    ${catChip(i)}${n?'<span class="tag">جديدة</span>':''}${i.demo?'<span class="tag ex">مثال</span>':''}
     ${mine(i)&&(S.marks.some(m=>m.ideaId===i.id&&m.uid!==S.me&&m.readAt))&&!lvl?`<span class="m">${ico('eye')}قُرئت</span>`:''}</span></span></button>`;
 }
 function hotCard(i){
   const lv=Math.max(0,...S.marks.filter(m=>m.ideaId===i.id).map(m=>m.level||0));
   return `<button class="hot" data-act="open" data-id="${esc(i.id)}"><span class="row">${person(i.authorId,34)}<b style="font-size:13px">${esc(nameOf(i.authorId))}</b>
-   ${lv?`<span class="lv">${lvBadge(lv,26)}${LV[lv].w}</span>`:''}</span><p>${esc(i.text)}</p></button>`;
+   ${lv?`<span class="lv">${lvBadge(lv,26)}${LV[lv].w}</span>`:''}</span><p><b>${fmtNo(i)}${i.title?' '+esc(i.title):''}</b><br>${esc(i.text)}</p></button>`;
 }
 function renderHeader(){
   const list=visible(),nw=list.filter(isNew).length,pid=partnerId();
@@ -373,7 +393,7 @@ function viewMemory(){
   return `<header class="hero" style="padding-bottom:30px">${Array.from({length:6},(_,k)=>`<i class="fl" style="--l:${12+k*15}%;--d:${(k*1.4).toFixed(1)}s"></i>`).join('')}
    <div class="wrap"><div class="top">${badge('gNavy','spark',46)}<div><h1>ذاكرتنا</h1><small>كل فكرة مرّت من هنا</small></div></div></div></header>
    <div class="wrap"><label class="search">${ico('search')}<input id="q" type="search" placeholder="ابحث في الأفكار والتعليقات" value="${esc(S.q)}" autocomplete="off"></label>
-   <div class="chips" id="flt"></div><div id="mlist"></div>
+   <div class="chips" id="flt" style="margin-bottom:4px"></div><div class="chips" id="cflt"></div><div id="mlist"></div>
    <p class="foot">ARAFAT ALRAJHI © 2026</p></div>`;
 }
 const FLT=[['all','الكل'],['mine','أفكاري'],['theirs','أفكار شريكي'],['talk','عليها نقاش'],['unrated','بلا انطباع'],['top','الأبرز']];
@@ -383,9 +403,11 @@ function memList(){
   if(S.flt==='talk')l=l.filter(i=>cmts(i.id).length);
   if(S.flt==='unrated')l=l.filter(i=>!S.marks.some(m=>m.ideaId===i.id&&m.level));
   if(S.flt==='top')l=l.filter(i=>score(i)>0);
-  if(q)l=l.filter(i=>(i.text+' '+cmts(i.id).map(c=>c.text).join(' ')).includes(q));
+  if(S.cat)l=l.filter(i=>i.cat===S.cat);
+  if(q)l=l.filter(i=>((i.title||'')+' '+i.text+' '+cmts(i.id).map(c=>c.text).join(' ')).includes(q));
   l=l.sort((a,b)=>S.flt==='top'?score(b)-score(a):b.createdAt-a.createdAt);
   $('#flt').innerHTML=FLT.map(f=>`<button class="chip${S.flt===f[0]?' on':''}" data-act="flt" data-v="${f[0]}">${f[1]}</button>`).join('');
+  $('#cflt').innerHTML=CATS.map(c=>`<button class="chip cat${S.cat===c[0]?' on':''}" style="--cc:${c[2]}" data-act="cat" data-v="${c[0]}"><i></i>${c[1]}</button>`).join('');
   $('#mlist').innerHTML=l.length?l.map(i=>ideaCard(i)).join(''):`<p class="none" style="text-align:center;margin-top:28px">${visible().length?'لا نتائج بهذا الاختيار.':'الذاكرة فارغة حتى الآن.'}</p>`;
 }
 function renderDock(){
@@ -424,6 +446,7 @@ function renderDetail(){
   const i=S.ideas.find(x=>x.id===S.open);if(!i||!$('#dOrig'))return;
   const readers=S.marks.filter(m=>m.ideaId===i.id&&m.uid!==S.me&&m.readAt);
   $('#dOrig').innerHTML=`<div class="who">${person(i.authorId,44)}<div><b>${esc(nameOf(i.authorId))}</b><small>${ago(i.createdAt)}</small></div>${i.demo?'<span class="tag ex" style="margin-inline-start:auto">مثال</span>':''}</div>
+   <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px"><span class="no">${fmtNo(i)}</span>${catChip(i)}</div>${i.title?`<h2 class="dt">${esc(i.title)}</h2>`:''}
    <div class="body">${esc(i.text)}</div>
    <div class="st"><span class="m">${ico('clock')}${full(i.createdAt)}</span>${mine(i)?`<span class="m">${ico('eye')}${readers.length?'قرأها شريكك '+ago(readers[0].readAt):'لم تصلك إشارة قراءة من شريكك بعد'}</span>`:''}</div>`;
   const mm=mark(i.id,S.me),th=S.marks.find(m=>m.ideaId===i.id&&m.uid!==S.me&&m.level);
@@ -466,9 +489,9 @@ function aiCopy(){
 /* ---------- فكرة جديدة ---------- */
 function openCompose(){
   $('#cmp').innerHTML=`<div class="sbar"><button class="ib" data-act="closeC" aria-label="إغلاق">${ico('x')}</button><b>ومضة جديدة</b></div>
-   <div class="sbody"><div><form id="cForm" style="display:flex;flex-direction:column;flex:1"><textarea id="cTa" placeholder="ما الذي خطر لك؟ اكتبها كما جاءت، دون ترتيب." maxlength="2000"></textarea>
+   <div class="sbody"><div><form id="cForm" style="display:flex;flex-direction:column;flex:1"><input class="ti" id="cTi" maxlength="80" autocomplete="off" placeholder="عنوان قصير للفكرة (اختياري)"><div class="pc" id="pcats">${CATS.map(c=>`<button type="button" style="--cc:${c[2]}" data-act="pcat" data-v="${c[0]}"><i></i>${c[1]}</button>`).join('')}</div><textarea id="cTa" placeholder="ما الذي خطر لك؟ اكتبها كما جاءت، دون ترتيب." maxlength="2000"></textarea>
    <div class="act">${micBtn()}<button class="btn" type="submit">${ico('send')}أرسلها إلى المساحة المشتركة</button></div></form></div></div>`;
-  $('#cmp').classList.add('on');setTimeout(()=>{const t=$('#cTa');t&&t.focus()},350);
+  S.pcat='';$('#cmp').classList.add('on');setTimeout(()=>{const t=$('#cTa');t&&t.focus()},350);
 }
 let toastT;function toast(m){const t=$('#toast');t.firstElementChild.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200)}
 
@@ -488,7 +511,7 @@ document.addEventListener('submit',async e=>{
   if(e.target.id==='onbForm'){const v=$('#onbIn').value.trim();if(!v)return;S.pmap[S.me]={name:v.slice(0,40)};saveLocal();$('#onb').classList.remove('on');render();toast('أهلاً '+v);return}
   if(e.target.id==='cForm'){
     const v=$('#cTa').value.trim();if(!v)return;const b=e.target.querySelector('.btn');b.disabled=true;
-    try{const id=await W.addIdea(v);S.justAdded=id;$('#cmp').classList.remove('on');S.tab='home';render();toast('وصلت إلى المساحة المشتركة');setTimeout(()=>{S.justAdded=null},1500)}
+    try{const id=await W.addIdea(v,($('#cTi').value||'').trim(),S.pcat);S.justAdded=id;$('#cmp').classList.remove('on');S.tab='home';render();toast('وصلت إلى المساحة المشتركة');setTimeout(()=>{S.justAdded=null},1500)}
     catch(er){b.disabled=false;toast('تعذّر الحفظ، حاول مجدداً')}
   }
   if(e.target.id==='dForm'){
@@ -504,6 +527,8 @@ document.addEventListener('click',e=>{
   else if(a==='open')openIdea(b.dataset.id);
   else if(a==='close'){S.open=null;$('#detail').classList.remove('on');render()}
   else if(a==='flt'){S.flt=v;memList()}
+  else if(a==='cat'){S.cat=S.cat===v?'':v;memList()}
+  else if(a==='pcat'){S.pcat=S.pcat===v?'':v;document.querySelectorAll('#pcats button').forEach(x=>x.classList.toggle('on',x.dataset.v===S.pcat))}
   else if(a==='rate')W.rate(S.open,+v).then(()=>toast(LV[+v].w)).catch(()=>toast('تعذّر الحفظ'));
   else if(a==='kind'){S.kind=v;renderDetail()}
   else if(a==='aiRun')aiRun();
