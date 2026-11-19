@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14307F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="وارد">
+<title>وارد</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap">
+<style>
+/* وارد: مساحة مشتركة لشخصين. هوية AIR Lab: أزرق ملكي + ذهب على ورق كريمي، شارات دائرية لامعة بحلقة ذهبية، دوك زجاجي عائم. */
+:root{
+  --n1:#2F55C8;--n2:#14307F;--n3:#0B1B52;--glow:rgba(52,96,224,.5);
+  --bg:#FBF6E7;--paper:#FFFDF5;--panel:#F0EEDD;--ink:#0B1B45;--mut:#5A6683;
+  --line:#E2C36B;--gold:#D9A21B;--goldd:#9C6A06;--goldl:#F0C23A;--ok:#0E8A5F;--bad:#C4271C;
+  --ring:rgba(20,48,127,.14);--dock:rgba(255,255,255,.78);--shadow:0 18px 40px -22px rgba(20,48,127,.55);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --n1:#5B8CFF;--n2:#3B6FEF;--n3:#1F3FB0;--glow:rgba(91,140,255,.45);
+  --bg:#0A1230;--paper:#131D48;--panel:#0F1840;--ink:#EEF2FF;--mut:#9AA8D0;
+  --line:rgba(240,194,58,.38);--ring:rgba(150,175,255,.2);--dock:rgba(18,28,70,.8);--shadow:0 18px 40px -22px #000;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --n1:#5B8CFF;--n2:#3B6FEF;--n3:#1F3FB0;--glow:rgba(91,140,255,.45);
+  --bg:#0A1230;--paper:#131D48;--panel:#0F1840;--ink:#EEF2FF;--mut:#9AA8D0;
+  --line:rgba(240,194,58,.38);--ring:rgba(150,175,255,.2);--dock:rgba(18,28,70,.8);--shadow:0 18px 40px -22px #000;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink)}
+body{margin:0;font-family:'Cairo','IBM Plex Sans Arabic',system-ui,sans-serif;font-size:15.5px;line-height:1.7;
+  padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:0 120px;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--n3);z-index:30}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--goldl);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto}
+svg .gl{fill:none;stroke:#FFE9A8;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.u{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---- splash ---- */
+#splash{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 42%,var(--n2),var(--n3) 70%);display:grid;place-content:center;justify-items:center;gap:6px;color:#fff;text-align:center;transition:opacity .5s .1s,visibility .5s .1s}
+#splash.out{opacity:0;visibility:hidden}
+#splash b{font-size:46px;font-weight:900;letter-spacing:.02em;line-height:1.1;margin-top:10px;opacity:0;animation:rise .6s 1.5s forwards}
+#splash small{font-size:14px;color:#C9D6FF;opacity:0;animation:rise .6s 1.75s forwards}
+#splash .bw{position:relative;width:120px;height:120px;display:grid;place-items:center}
+#splash .bw svg{animation:pop .5s 1.35s both cubic-bezier(.2,1.6,.4,1);filter:drop-shadow(0 0 22px rgba(240,194,58,.55))}
+#splash .sp{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px;border-radius:50%;background:radial-gradient(circle,#fff,var(--goldl));box-shadow:0 0 10px var(--goldl);opacity:0;animation:arrive 1.3s cubic-bezier(.5,0,.8,.6) forwards;animation-delay:var(--d)}
+@keyframes arrive{0%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.4)}15%{opacity:1}100%{opacity:.9;transform:translate(0,0) scale(.2)}}
+@keyframes pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---- header ---- */
+.hero{position:relative;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-left,0px)) 56px;
+  background:radial-gradient(120% 90% at 85% 0,var(--n1) 0,transparent 60%),linear-gradient(170deg,var(--n2),var(--n3));color:#fff;border-radius:0 0 34px 34px;overflow:hidden;box-shadow:0 22px 40px -26px var(--glow)}
+.hero .wrap{position:relative;z-index:2}
+.hero .fl{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--goldl);box-shadow:0 0 10px var(--goldl);opacity:0;animation:float 9s linear infinite;animation-delay:var(--d);left:var(--l);bottom:-10px}
+@keyframes float{0%{opacity:0;transform:translateY(0) scale(.6)}12%{opacity:.85}100%{opacity:0;transform:translateY(-190px) scale(1.2)}}
+.top{display:flex;align-items:center;gap:12px}
+.top h1{margin:0;font-size:30px;font-weight:900;line-height:1.1}
+.top small{display:block;color:#C9D6FF;font-size:12.5px;font-weight:600}
+.top .sp{flex:1}
+.pair{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:4px 12px 4px 4px;font-size:12.5px;font-weight:700}
+.pair .pn{max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pair i{width:8px;height:8px;border-radius:50%;background:#7CF0B8;box-shadow:0 0 8px #7CF0B8}
+.pair i.off{background:#8392C0;box-shadow:none}
+.sum{margin:18px 0 0;font-size:21px;font-weight:800;line-height:1.35;text-wrap:balance}
+.sum em{font-style:normal;color:var(--goldl)}
+.sub{margin:4px 0 0;color:#C9D6FF;font-size:13.5px}
+.theme{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;width:38px;height:38px;border-radius:50%;display:grid;place-items:center}
+
+/* ---- sections & cards ---- */
+.sec{margin-top:24px}
+.sec h2{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:16.5px;font-weight:800}
+.sec h2 .cnt{margin-inline-start:auto;font-size:12.5px;font-weight:700;color:var(--mut)}
+.demo{margin-top:16px;padding:10px 14px;border-radius:16px;background:var(--panel);border:1.5px dashed var(--line);font-size:13px;color:var(--mut)}
+.card{position:relative;display:flex;gap:12px;align-items:flex-start;width:100%;text-align:start;background:var(--paper);border:1.5px solid var(--line);border-radius:20px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow);transition:transform .15s}
+.card:active{transform:scale(.985)}
+.card.new{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,194,58,.22),var(--shadow)}
+.card .tx{flex:1;min-width:0}
+.card p{margin:0;font-size:15px;font-weight:600;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-top:6px;font-size:12px;color:var(--mut);font-weight:600}
+.meta .m{display:inline-flex;align-items:center;gap:4px}
+.meta .u{width:15px;height:15px}
+.tag{display:inline-block;font-size:11.5px;font-weight:800;padding:1px 9px;border-radius:99px;background:linear-gradient(180deg,#FFE98A,#E5AE1A);color:#3A2600}
+.tag.ex{background:var(--panel);color:var(--mut);border:1px solid var(--line)}
+.ping{position:absolute;inset-block-start:-5px;inset-inline-start:-5px}
+.ping::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--goldl);animation:ring 1.8s ease-out infinite}
+@keyframes ring{from{transform:scale(.7);opacity:.9}to{transform:scale(1.6);opacity:0}}
+.rail{display:flex;gap:12px;overflow-x:auto;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:6px max(16px,env(safe-area-inset-left,0px)) 14px;scroll-snap-type:x mandatory}
+.hot{flex:0 0 78%;max-width:300px;scroll-snap-align:start;text-align:start;position:relative;border-radius:24px;padding:16px;color:#fff;background:linear-gradient(160deg,var(--n1),var(--n3));border:2.5px solid transparent;
+  background-clip:padding-box;box-shadow:0 0 0 2.5px var(--gold),0 18px 34px -18px var(--glow)}
+.hot p{margin:10px 0 0;font-size:14.5px;font-weight:700;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.hot .row{display:flex;align-items:center;gap:8px}
+.hot .lv{margin-inline-start:auto;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--goldl)}
+.empty{text-align:center;padding:34px 18px;border:2px dashed var(--line);border-radius:26px;background:var(--paper)}
+.empty h3{margin:12px 0 4px;font-size:19px}
+.empty p{margin:0 auto 14px;max-width:30ch;color:var(--mut)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:15.5px;border:2px solid transparent;border-radius:16px;padding:11px 22px;color:#3A2600;background:linear-gradient(180deg,#FFE98A,#E5AE1A);box-shadow:0 8px 18px -8px rgba(160,100,0,.7),inset 0 1px 0 #fff8}
+.btn.navy{color:#fff;background:linear-gradient(180deg,var(--n1),var(--n2));box-shadow:0 8px 18px -8px var(--glow),inset 0 1px 0 #fff4}
+.btn.ghost{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:none}
+.btn[disabled]{opacity:.5}
+.btn.sm{padding:6px 14px;font-size:13.5px;border-radius:12px}
+
+/* ---- memory ---- */
+.search{display:flex;align-items:center;gap:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:0 12px;margin-top:20px}
+.search input{flex:1;min-width:0;border:0;background:none;font:inherit;color:inherit;padding:11px 0}
+.search input:focus-visible{outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px}
+.chip{border:1.5px solid var(--line);background:var(--paper);border-radius:99px;padding:3px 13px;font-size:13px;font-weight:700}
+.chip.on{background:linear-gradient(180deg,var(--n1),var(--n2));color:#fff;border-color:var(--gold)}
+.foot{margin:30px 0 0;text-align:center;font-size:12px;color:var(--mut);direction:ltr;letter-spacing:.04em}
+
+/* ---- dock ---- */
+.nav{position:fixed;inset-inline:0;bottom:0;z-index:20;display:flex;justify-content:center;padding:0 max(14px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
+.dock{pointer-events:auto;position:relative;display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;width:100%;max-width:420px;padding:8px 10px;border-radius:30px;background:var(--dock);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);box-shadow:0 22px 44px -18px var(--glow),0 4px 10px rgba(25,50,140,.1),inset 0 1px 0 #fff6}
+.dock::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.6px;background:linear-gradient(135deg,var(--n1),rgba(255,255,255,.15) 45%,var(--n2));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.nv{position:relative;display:flex;flex-direction:column;align-items:center;gap:1px;border:0;background:none;padding:6px 2px 4px;border-radius:16px;font-size:11.5px;font-weight:800;color:var(--mut)}
+.nv .u{width:26px;height:26px}
+.nv.on{color:var(--n2)}
+:root[data-theme="dark"] .nv.on{color:var(--goldl)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nv.on{color:var(--goldl)}}
+.nv.on::after{content:"";position:absolute;bottom:-3px;width:18px;height:3px;border-radius:3px;background:var(--gold)}
+.nv .bd{position:absolute;top:0;inset-inline-end:22%;min-width:19px;height:19px;border-radius:99px;background:var(--bad);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;padding:0 5px;border:2px solid var(--bg)}
+.nv-c{align-self:end}
+.nv-c .plus{width:62px;height:62px;margin:-30px auto 0;border-radius:50%;display:grid;place-items:center;color:#3A2600;background:linear-gradient(180deg,#FFE98A,#E5AE1A 60%,#B27A08);border:3px solid var(--bg);box-shadow:0 12px 24px -8px rgba(160,100,0,.8),inset 0 2px 0 #fff9;animation:breathe 3.2s ease-in-out infinite}
+.nv-c .plus .u{width:30px;height:30px;stroke-width:2.8}
+@keyframes breathe{0%,100%{box-shadow:0 12px 24px -8px rgba(160,100,0,.8),0 0 0 0 rgba(240,194,58,.5),inset 0 2px 0 #fff9}50%{box-shadow:0 12px 24px -8px rgba(160,100,0,.8),0 0 0 9px rgba(240,194,58,0),inset 0 2px 0 #fff9}}
+
+/* ---- sheets ---- */
+.sheet{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--bg);transform:translateY(100%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility .32s}
+.sheet.on{transform:none;visibility:visible}
+.sbar{flex:none;display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-left,0px)) 12px;background:linear-gradient(170deg,var(--n2),var(--n3));color:#fff}
+.sbar b{font-size:17px;font-weight:800;flex:1}
+.ib{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff}
+.sbody{flex:1;min-height:0;overflow-y:auto;padding:16px max(16px,env(safe-area-inset-left,0px)) 24px}
+.sbody>div{max-width:560px;margin:0 auto}
+.orig{position:relative;background:var(--paper);border:2px solid var(--gold);border-radius:26px;padding:18px 18px 14px;box-shadow:var(--shadow)}
+.orig .who{display:flex;align-items:center;gap:10px}
+.orig .who b{font-size:14.5px;display:block;line-height:1.3}
+.orig .who small{color:var(--mut);font-size:12px}
+.orig .body{margin:12px 0 4px;font-size:18px;font-weight:700;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}
+.orig .st{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;color:var(--mut);font-weight:700;border-top:1px dashed var(--line);margin-top:10px;padding-top:10px}
+.orig .st .m{display:inline-flex;align-items:center;gap:5px}
+.orig .st .u{width:16px;height:16px}
+.sec3{margin-top:22px}
+.sec3 h3{display:flex;align-items:center;gap:8px;margin:0 0 4px;font-size:16px;font-weight:800}
+.sec3 .hint{margin:0 0 10px;color:var(--mut);font-size:13px}
+.scale{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lvb{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 8px;border-radius:18px;background:var(--paper);border:2px solid var(--line);font-size:13px;font-weight:800;transition:transform .15s,box-shadow .2s}
+.lvb svg{filter:grayscale(.85) opacity(.7);transition:filter .2s,transform .2s}
+.lvb:active{transform:scale(.96)}
+.lvb.on{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,194,58,.28),0 12px 22px -14px var(--glow)}
+.lvb.on svg{filter:none;transform:scale(1.12)}
+.theirs{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:16px;background:var(--panel);border:1px solid var(--line);font-size:14px;font-weight:700}
+.theirs span{color:var(--mut);font-weight:600}
+.ai{border-radius:24px;padding:16px;background:linear-gradient(165deg,var(--n2),var(--n3));color:#fff;box-shadow:0 18px 34px -20px var(--glow);position:relative;overflow:hidden}
+.ai h3{color:#fff}
+.ai .hint{color:#C9D6FF}
+.ai .seg{display:flex;gap:6px;overflow-x:auto;margin:10px 0}
+.ai .seg button{white-space:nowrap;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;border-radius:99px;padding:3px 13px;font-size:13px;font-weight:700}
+.ai .seg button.on{background:linear-gradient(180deg,#FFE98A,#E5AE1A);color:#3A2600;border-color:transparent}
+.ait{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:10px 12px;margin-top:8px;font-size:14px}
+.ait .row{display:flex;gap:8px;margin-top:8px}
+.ait .row button{border:1.5px solid rgba(255,255,255,.35);background:none;color:#fff;border-radius:10px;padding:2px 12px;font-size:12.5px;font-weight:800;display:inline-flex;align-items:center;gap:5px}
+.ait .row button.k{background:linear-gradient(180deg,#FFE98A,#E5AE1A);color:#3A2600;border-color:transparent}
+.ait .row .u{width:15px;height:15px}
+.ait b{color:var(--goldl)}
+.note{font-size:12px;color:#C9D6FF;margin-top:10px}
+.note a{color:var(--goldl)}
+.dots i{display:inline-block;width:8px;height:8px;margin:0 3px;border-radius:50%;background:var(--goldl);animation:dot 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-6px);opacity:1}}
+.cm{display:flex;gap:10px;margin-top:12px}
+.cm .bub{flex:1;min-width:0;background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:8px 12px}
+.cm .bub small{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12px;font-weight:700}
+.cm .bub p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.cm.add .bub{border-color:var(--gold);background:linear-gradient(180deg,var(--paper),var(--panel))}
+.cm.ai .bub{border-style:dashed}
+.none{color:var(--mut);font-size:13.5px;margin:10px 0 0}
+.composer{flex:none;display:flex;align-items:flex-end;gap:8px;padding:8px max(12px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:1.5px solid var(--line)}
+.composer .box{flex:1;min-width:0}
+.kind{display:flex;gap:6px;margin-bottom:6px}
+.kind button{border:1.5px solid var(--line);background:var(--panel);border-radius:99px;padding:0 12px;font-size:12.5px;font-weight:800}
+.kind button.on{background:linear-gradient(180deg,#FFE98A,#E5AE1A);color:#3A2600;border-color:transparent}
+textarea{width:100%;resize:none;border:1.5px solid var(--line);border-radius:16px;background:var(--bg);color:var(--ink);font:inherit;padding:9px 12px;min-height:44px;max-height:130px}
+.mic{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--panel);display:grid;place-items:center}
+.mic.rec{background:var(--bad);color:#fff;border-color:transparent;animation:breathe 1.4s infinite}
+.send{flex:none;width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,var(--n1),var(--n2))}
+.send .u{transform:scaleX(-1)}
+#cmp .sbody{display:flex;flex-direction:column}
+#cmp .sbody>div{width:100%;flex:1;display:flex;flex-direction:column}
+#cmp textarea{flex:1;min-height:200px;max-height:none;font-size:20px;font-weight:700;line-height:1.7;border-radius:22px;padding:16px;background:var(--paper)}
+#cmp .act{display:flex;gap:10px;margin-top:12px;align-items:center}
+#cmp .act .btn{flex:1}
+.toast{position:fixed;inset-inline:0;bottom:calc(110px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;justify-content:center;pointer-events:none}
+.toast div{background:linear-gradient(180deg,var(--n2),var(--n3));color:#fff;border:2px solid var(--gold);border-radius:99px;padding:9px 20px;font-weight:800;font-size:14px;box-shadow:0 14px 30px -10px #000a;transform:translateY(20px);opacity:0;transition:.3s}
+.toast.on div{transform:none;opacity:1}
+.arrive{animation:arriveCard .7s cubic-bezier(.2,1.2,.4,1)}
+@keyframes arriveCard{0%{opacity:0;transform:translateY(-24px) scale(.94)}100%{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}#splash{display:none}}
+</style>
+</head>
+<body>
+
+<div id="splash" aria-hidden="true"></div>
+<div id="sprite"></div>
+<div class="wrap" id="app"></div>
+<div class="nav"><div class="dock" id="dock"></div></div>
+<section class="sheet" id="detail" aria-label="الفكرة"></section>
+<section class="sheet" id="cmp" aria-label="فكرة جديدة"></section>
+<section class="sheet" id="xch" aria-label="تبادل الأفكار"></section>
+<section class="sheet" id="onb" aria-label="اسمك"></section>
+<input type="file" id="impf" accept=".json,application/json" hidden>
+<div class="toast" id="toast" role="status"><div></div></div>
+
+<script>
+(()=>{
+"use strict";
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- الهوية: شارات ورموز ---------- */
+const LV=[null,{w:'جيدة',g:'thumb',c:['#5b94ff','#1a46c9']},{w:'جيدة جداً',g:'checks',c:['#3db6ff','#0b7bb0']},{w:'مميزة',g:'star',c:['#3fd09a','#0e8a5f']},
+ {w:'احترافية',g:'medal',c:['#ffd966','#c98a08']},{w:'إبداعية',g:'bulb',c:['#ff9a62','#d63a1c']},{w:'خرافية',g:'flame',c:['#c46bff','#5a14a8']}];
+const GLY={
+ thumb:'<path class="gl" d="M-13 -1H-7V13H-13Z"/><path class="gl" d="M-7 0L0 -14C4 -14 6 -9 4 -4H12C15 -4 15 1 13 4L11 11C10 13 9 13 7 13H-7"/>',
+ checks:'<path class="gl" d="M-15 1L-10 6L-2 -7M-3 1L2 6L14 -9"/>',
+ star:'<path class="gl" d="M0 -15L4.4 -5L15 -4.5L7 2.5L9.3 13L0 7.5L-9.3 13L-7 2.5L-15 -4.5L-4.4 -5Z"/>',
+ medal:'<circle class="gl" cx="0" cy="-4" r="9"/><path class="gl" d="M-6 4L-9 15L0 11L9 15L6 4"/>',
+ bulb:'<path class="gl" d="M-5 9H5M-3 14H3M0 -15C-9 -15 -12 -6 -7 0C-5 2 -5 5 -5 9H5C5 5 5 2 7 0C12 -6 9 -15 0 -15Z"/>',
+ flame:'<path class="gl" d="M0 -17C2 -9 11 -7 11 3C11 10 6 15 0 15C-6 15 -11 10 -11 3C-11 -2 -8 -4 -6 -8C-4 -5 -3 -4 -2 -3C-3 -9 -1 -13 0 -17Z"/><path class="gl" d="M0 4C3 6 4 9 0 11C-4 9 -3 6 0 4Z"/>',
+ spark:'<path class="gl" d="M0 -16L3.6 -4L16 0L3.6 4L0 16L-3.6 4L-16 0L-3.6 -4Z"/>'
+};
+const SPRITE=`<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="gNavy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3558C9"/><stop offset="1" stop-color="#12307F"/></linearGradient>
+<linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF1A8"/><stop offset=".35" stop-color="#E8B923"/><stop offset=".65" stop-color="#A06B06"/><stop offset="1" stop-color="#F5D36A"/></linearGradient>
+<linearGradient id="gGoldV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE98A"/><stop offset=".5" stop-color="#E5AE1A"/><stop offset="1" stop-color="#B27A08"/></linearGradient>
+<linearGradient id="gGloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+${LV.slice(1).map((l,i)=>`<linearGradient id="gL${i+1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${l.c[0]}"/><stop offset="1" stop-color="${l.c[1]}"/></linearGradient>`).join('')}
+</defs></svg>`;
+const badge=(fill,glyph,s=34,txt)=>`<svg class="bdg" width="${s}" height="${s}" viewBox="-26 -26 52 52" aria-hidden="true" style="flex:none"><circle r="23" fill="url(#${fill})" stroke="url(#gGold)" stroke-width="3.5"/><circle r="23" fill="url(#gGloss)"/>${txt?`<text y="8" text-anchor="middle" font-size="${[...txt].length>1?17:23}" font-weight="900" font-family="Cairo,sans-serif" fill="${fill==='gGoldV'?'#0B1B45':'#F0C23A'}">${esc(txt)}</text>`:GLY[glyph]||''}</svg>`;
+const lvBadge=(n,s=28)=>badge('gL'+n,LV[n].g,s);
+const U={
+ swap:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
+ home:'<path d="M4 13l2.2-7h11.6L20 13v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 13h4.5l1 2.2h5l1-2.2H20"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ mem:'<path d="M5 4h14v4H5zM6 8v11a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8M10 12h4"/>',
+ back:'<path d="M9 5l7 7-7 7"/>',
+ mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/>',
+ send:'<path d="M4 12l16-8-6 16-3-7z"/>',
+ chat:'<path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H11l-5 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/>',
+ search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ ai:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18 16l.8 2.2L21 19l-2.2.8L18 22l-.8-2.2L15 19l2.2-.8z"/>',
+ box:'<path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/>',
+ moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+ clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'
+};
+const ico=n=>`<svg class="u" viewBox="0 0 24 24" aria-hidden="true">${U[n]}</svg>`;
+
+/* ---------- الحالة والتخزين ---------- */
+const S={mode:'file',me:'me',pmap:{},ideas:[],marks:[],comments:[],people:[],names:{},tab:'home',open:null,q:'',flt:'all',sort:'new',ai:{},kind:'comment',db:null,sample:null,dict:null};
+const now=()=>Date.now();
+const mine=i=>i.authorId===S.me;
+const mark=(id,uid)=>S.marks.find(m=>m.ideaId===id&&m.uid===uid);
+const partnerId=()=>{const ids=new Set([...Object.keys(S.pmap),...S.ideas.map(i=>i.authorId),...S.marks.map(m=>m.uid),...S.comments.map(c=>c.authorId)]);ids.delete(S.me);return [...ids][0]||null};
+const nm=id=>(S.pmap[id]&&S.pmap[id].name)||'';
+const nameOf=id=>id===S.me?'أنا':(nm(id)||'شريكك');
+const initial=id=>[...(nm(id)||'؟').trim()][0]||'؟';
+const person=(id,s=34)=>id===S.me?badge('gNavy',null,s,nm(S.me)?initial(S.me):'أنا'):badge('gGoldV',null,s,initial(id));
+const visible=()=>S.ideas.filter(i=>!i.archived);
+const cmts=id=>S.comments.filter(c=>c.ideaId===id).sort((a,b)=>a.createdAt-b.createdAt);
+const isNew=i=>!mine(i)&&!(mark(i.id,S.me)&&mark(i.id,S.me).readAt);
+const score=i=>S.marks.filter(m=>m.ideaId===i.id).reduce((a,m)=>a+(m.level||0),0)+1.5*cmts(i.id).length;
+const lastTouch=i=>Math.max(i.createdAt,...cmts(i.id).map(c=>c.createdAt),...S.marks.filter(m=>m.ideaId===i.id).map(m=>m.ratedAt||0));
+const rtf=(()=>{try{return new Intl.RelativeTimeFormat('ar',{numeric:'auto'})}catch(e){return null}})();
+function ago(ts){const d=(ts-now())/1000,a=Math.abs(d);if(!rtf)return new Date(ts).toLocaleDateString('ar');
+ if(a<45)return 'الآن';if(a<3600)return rtf.format(Math.round(d/60),'minute');if(a<86400)return rtf.format(Math.round(d/3600),'hour');
+ if(a<2592000)return rtf.format(Math.round(d/86400),'day');return new Date(ts).toLocaleDateString('ar',{day:'numeric',month:'long'})}
+const full=ts=>new Date(ts).toLocaleString('ar',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'numeric',minute:'2-digit'});
+const rid=()=>Math.random().toString(36).slice(2,10)+now().toString(36).slice(-3);
+
+const saveLocal=()=>LS.set('wared.data.v2',{ideas:S.ideas,marks:S.marks,comments:S.comments,pmap:S.pmap});
+function load(){
+  let me=LS.get('wared.me');if(!me){me='u'+rid();LS.set('wared.me',me)}S.me=me;
+  const d=LS.get('wared.data.v2');
+  if(d){S.ideas=d.ideas||[];S.marks=d.marks||[];S.comments=d.comments||[];S.pmap=d.pmap||{}}
+}
+function importData(d){
+  if(!d||d.app!=='wared'||!Array.isArray(d.ideas))throw new Error('bad');
+  let added=0;const hi=new Set(S.ideas.map(i=>i.id)),hc=new Set(S.comments.map(c=>c.id));
+  d.ideas.forEach(i=>{if(!i||!i.id||!i.text)return;if(!hi.has(i.id)){S.ideas.push(i);hi.add(i.id);added++}else if(i.archived){S.ideas.find(x=>x.id===i.id).archived=true}});
+  (d.comments||[]).forEach(c=>{if(c&&c.id&&!hc.has(c.id)){S.comments.push(c);hc.add(c.id);added++}});
+  (d.marks||[]).forEach(m=>{if(!m||!m.ideaId||!m.uid)return;const l=S.marks.find(x=>x.ideaId===m.ideaId&&x.uid===m.uid);
+    if(!l)S.marks.push(m);else{if((m.ratedAt||0)>(l.ratedAt||0)){l.level=m.level;l.ratedAt=m.ratedAt}if((m.readAt||0)>(l.readAt||0))l.readAt=m.readAt}});
+  Object.keys(d.people||{}).forEach(u=>{if(u!==S.me&&d.people[u]&&d.people[u].name)S.pmap[u]={name:String(d.people[u].name).slice(0,40)}});
+  saveLocal();LS.set('wared.lastIn',now());return added;
+}
+function doExport(){
+  const d={app:'wared',v:2,at:now(),from:S.me,ideas:S.ideas,marks:S.marks,comments:S.comments,people:S.pmap};
+  const name='wared-'+new Date().toISOString().slice(0,10)+'.json';
+  const f=new File([JSON.stringify(d)],name,{type:'application/json'});
+  LS.set('wared.lastOut',now());
+  if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'أفكار وارد'}).catch(()=>{})}
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(f);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+  xInfo();
+}
+const W={
+ async addIdea(text){const o={text,authorId:S.me,createdAt:now()};
+  if(S.db){const r=await S.db.collection('ideas').add(o);return r.id}
+  o.id=rid();S.ideas.push(o);saveLocal();render();return o.id},
+ async archive(id){if(S.db){await S.db.doc('ideas/'+id).update({archived:true})}else{S.ideas.find(i=>i.id===id).archived=true;saveLocal();render()}},
+ async comment(ideaId,text,kind){const o={ideaId,authorId:S.me,text,kind,createdAt:now()};
+  if(S.db){await S.db.collection('comments').add(o)}else{o.id=rid();S.comments.push(o);saveLocal();renderDetail();render()}},
+ async rate(ideaId,level){const old=mark(ideaId,S.me)||{};const o={ideaId,uid:S.me,level,ratedAt:now(),readAt:old.readAt||now()};
+  if(S.db){await S.db.doc('marks/'+ideaId+'_'+S.me).set(o)}else{const i=S.marks.findIndex(m=>m.ideaId===ideaId&&m.uid===S.me);if(i<0)S.marks.push(o);else S.marks[i]=o;saveLocal();renderDetail();render()}},
+ async read(ideaId){const old=mark(ideaId,S.me);if(old&&old.readAt)return;const o=Object.assign({},old,{ideaId,uid:S.me,readAt:now()});
+  if(S.db){await S.db.doc('marks/'+ideaId+'_'+S.me).set(o)}else{const i=S.marks.findIndex(m=>m.ideaId===ideaId&&m.uid===S.me);if(i<0)S.marks.push(o);else S.marks[i]=o;saveLocal();render()}},
+ async here(){if(S.db)await S.db.doc('people/'+S.me).set({uid:S.me,seenAt:now()})}
+};
+
+/* ---------- العرض الرئيسي ---------- */
+function ideaCard(i,opts={}){
+  const n=isNew(i),mm=mark(i.id,S.me),pm=S.marks.find(m=>m.ideaId===i.id&&m.uid!==S.me&&m.level),cm=cmts(i.id).length;
+  const lvl=mine(i)?(pm&&pm.level):(mm&&mm.level);
+  return `<button class="card${n?' new':''}${opts.fresh?' arrive':''}" data-act="open" data-id="${esc(i.id)}">
+   <span style="position:relative;flex:none">${n?'<span class="ping">'+badge('gL4','spark',14)+'</span>':''}${person(i.authorId,40)}</span>
+   <span class="tx"><p>${esc(i.text)}</p>
+   <span class="meta"><span class="m">${ico('clock')}${ago(i.createdAt)}</span>
+    ${cm?`<span class="m">${ico('chat')}${cm}</span>`:''}
+    ${lvl?`<span class="m">${lvBadge(lvl,20)}${LV[lvl].w}</span>`:''}
+    ${n?'<span class="tag">جديدة</span>':''}${i.demo?'<span class="tag ex">مثال</span>':''}
+    ${mine(i)&&(S.marks.some(m=>m.ideaId===i.id&&m.uid!==S.me&&m.readAt))&&!lvl?`<span class="m">${ico('eye')}قُرئت</span>`:''}</span></span></button>`;
+}
+function hotCard(i){
+  const lv=Math.max(0,...S.marks.filter(m=>m.ideaId===i.id).map(m=>m.level||0));
+  return `<button class="hot" data-act="open" data-id="${esc(i.id)}"><span class="row">${person(i.authorId,34)}<b style="font-size:13px">${esc(nameOf(i.authorId))}</b>
+   ${lv?`<span class="lv">${lvBadge(lv,26)}${LV[lv].w}</span>`:''}</span><p>${esc(i.text)}</p></button>`;
+}
+function renderHeader(){
+  const list=visible(),nw=list.filter(isNew).length,pid=partnerId();
+  const on=pid&&S.people.some(p=>p.uid===pid&&now()-p.seenAt<5*60e3);
+  const sum=!list.length?'مساحتكما جاهزة، بانتظار أول فكرة'
+    :nw?`وصلتك <em>${nw===1?'فكرة جديدة':nw+' أفكار جديدة'}</em>`:`<em>${list.length}</em> ${list.length===1?'فكرة':'أفكار'} محفوظة بينكما`;
+  const sub=!pid?'تبادلا الملف ليظهر شريكك هنا':nw?'لم تقرأها بعد، افتحها وأبدِ انطباعك':'كل ما وصل إليك مقروء';
+  return `<header class="hero">${Array.from({length:9},(_,k)=>`<i class="fl" style="--l:${8+k*11}%;--d:${(k*1.1).toFixed(1)}s"></i>`).join('')}
+   <div class="wrap"><div class="top">${badge('gNavy','spark',46)}<div><h1>وارد</h1>${pid?'':'<small>مساحة مشتركة للأفكار</small>'}</div><span class="sp"></span>
+   ${pid?`<span class="pair">${person(pid,28)}<span class="pn">${esc(nameOf(pid))}</span></span>`:''}
+   <button class="theme" data-act="xch" aria-label="تبادل الأفكار">${ico('swap')}</button>
+   <button class="theme" data-act="theme" aria-label="تبديل الوضع">${ico('moon')}</button></div>
+   <p class="sum">${sum}</p><p class="sub">${sub}</p></div></header>`;
+}
+function viewHome(){
+  const list=visible();
+  const fresh=list.filter(isNew).sort((a,b)=>b.createdAt-a.createdAt);
+  const hot=list.map(i=>({i,s:score(i)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,4).map(x=>x.i);
+  const rest=list.filter(i=>!isNew(i)).sort((a,b)=>lastTouch(b)-lastTouch(a)).slice(0,12);
+  let h=renderHeader()+'<div class="wrap">';
+  if(!partnerId())h+=`<div class="demo">لم يصلك ملف شريكك بعد. حين يرسله لك اضغط «تبادل» واستورده لتظهر أفكاره هنا، وأرسل له ملفك ليقرأ أفكارك.<br><button class="btn sm ghost" data-act="xch" style="margin-top:8px">${ico('swap')}تبادل الملفات</button></div>`;
+  if(!list.length)h+=`<div class="empty sec">${badge('gNavy','spark',64)}<h3>لا أفكار بعد</h3><p>سجّل أول ومضة تخطر لك، حتى لو كانت ناقصة. ستصل إلى شريكك مباشرة.</p><button class="btn" data-act="compose">${ico('plus')}سجّل فكرة</button></div>`;
+  if(fresh.length)h+=`<section class="sec"><h2>${badge('gL4','spark',26)}وصلت حديثاً<span class="cnt">${fresh.length}</span></h2>${fresh.map(i=>ideaCard(i)).join('')}</section>`;
+  if(hot.length)h+=`<section class="sec"><h2>${badge('gL6','flame',26)}الأبرز بينكما</h2><div class="rail">${hot.map(hotCard).join('')}</div></section>`;
+  if(rest.length)h+=`<section class="sec"><h2>${badge('gNavy','spark',26)}آخر ما جرى</h2>${rest.map(i=>ideaCard(i,{fresh:i.id===S.justAdded})).join('')}</section>`;
+  return h+'</div>';
+}
+function viewMemory(){
+  return `<header class="hero" style="padding-bottom:30px">${Array.from({length:6},(_,k)=>`<i class="fl" style="--l:${12+k*15}%;--d:${(k*1.4).toFixed(1)}s"></i>`).join('')}
+   <div class="wrap"><div class="top">${badge('gNavy','spark',46)}<div><h1>ذاكرتنا</h1><small>كل فكرة مرّت من هنا</small></div></div></div></header>
+   <div class="wrap"><label class="search">${ico('search')}<input id="q" type="search" placeholder="ابحث في الأفكار والتعليقات" value="${esc(S.q)}" autocomplete="off"></label>
+   <div class="chips" id="flt"></div><div id="mlist"></div>
+   <p class="foot">ARAFAT ALRAJHI © 2026</p></div>`;
+}
+const FLT=[['all','الكل'],['mine','أفكاري'],['theirs','أفكار شريكي'],['talk','عليها نقاش'],['unrated','بلا انطباع'],['top','الأبرز']];
+function memList(){
+  const q=S.q.trim();let l=visible();
+  if(S.flt==='mine')l=l.filter(mine);if(S.flt==='theirs')l=l.filter(i=>!mine(i));
+  if(S.flt==='talk')l=l.filter(i=>cmts(i.id).length);
+  if(S.flt==='unrated')l=l.filter(i=>!S.marks.some(m=>m.ideaId===i.id&&m.level));
+  if(S.flt==='top')l=l.filter(i=>score(i)>0);
+  if(q)l=l.filter(i=>(i.text+' '+cmts(i.id).map(c=>c.text).join(' ')).includes(q));
+  l=l.sort((a,b)=>S.flt==='top'?score(b)-score(a):b.createdAt-a.createdAt);
+  $('#flt').innerHTML=FLT.map(f=>`<button class="chip${S.flt===f[0]?' on':''}" data-act="flt" data-v="${f[0]}">${f[1]}</button>`).join('');
+  $('#mlist').innerHTML=l.length?l.map(i=>ideaCard(i)).join(''):`<p class="none" style="text-align:center;margin-top:28px">${visible().length?'لا نتائج بهذا الاختيار.':'الذاكرة فارغة حتى الآن.'}</p>`;
+}
+function renderDock(){
+  const nw=visible().filter(isNew).length;
+  $('#dock').innerHTML=`<button class="nv${S.tab==='home'?' on':''}" data-act="tab" data-v="home">${ico('home')}<span>الوارد</span>${nw?`<span class="bd">${nw}</span>`:''}</button>
+   <button class="nv nv-c" data-act="compose" aria-label="فكرة جديدة"><span class="plus">${ico('plus')}</span><span style="color:var(--mut)">فكرة</span></button>
+   <button class="nv${S.tab==='mem'?' on':''}" data-act="tab" data-v="mem">${ico('mem')}<span>ذاكرتنا</span></button>`;
+}
+function render(){
+  renderDock();
+  const a=$('#app');
+  if(S.tab==='home'){a.innerHTML=viewHome();}
+  else{ if(!$('#mlist')){a.innerHTML=viewMemory();} memList(); }
+  document.title=(visible().filter(isNew).length?'('+visible().filter(isNew).length+') ':'')+'وارد';
+  if(S.open)renderDetail();
+}
+
+/* ---------- تفاصيل الفكرة ---------- */
+function openIdea(id){
+  const i=S.ideas.find(x=>x.id===id);if(!i)return;
+  S.open=id;S.kind='comment';
+  const sh=$('#detail');
+  sh.innerHTML=`<div class="sbar"><button class="ib" data-act="close" aria-label="رجوع">${ico('back')}</button><b>الفكرة</b>
+   <button class="ib" id="dArc" data-act="arc" aria-label="إخفاء الفكرة" hidden>${ico('box')}</button></div>
+   <div class="sbody"><div><article class="orig" id="dOrig"></article><section class="sec3" id="dRate"></section><section class="sec3" id="dAI"></section>
+   <section class="sec3"><h3>${ico('chat')}المحادثة حول الفكرة</h3><div id="dThread"></div></section></div></div>
+   <form class="composer" id="dForm"><div class="box"><div class="kind" id="dKind"></div><textarea id="dTa" rows="1" placeholder="اكتب رأيك أو إضافتك" maxlength="2000"></textarea></div>${micBtn()}
+   <button class="send" type="submit" aria-label="إرسال">${ico('send')}</button></form>`;
+  sh.classList.add('on');
+  renderDetail();renderAI();
+  if(!mine(i))W.read(id);
+  $('#dArc').hidden=!mine(i);
+}
+function micBtn(){return S.dict?`<button class="mic" type="button" data-act="mic" aria-label="إملاء صوتي">${ico('mic')}</button>`:''}
+function renderDetail(){
+  const i=S.ideas.find(x=>x.id===S.open);if(!i||!$('#dOrig'))return;
+  const readers=S.marks.filter(m=>m.ideaId===i.id&&m.uid!==S.me&&m.readAt);
+  $('#dOrig').innerHTML=`<div class="who">${person(i.authorId,44)}<div><b>${esc(nameOf(i.authorId))}</b><small>${ago(i.createdAt)}</small></div>${i.demo?'<span class="tag ex" style="margin-inline-start:auto">مثال</span>':''}</div>
+   <div class="body">${esc(i.text)}</div>
+   <div class="st"><span class="m">${ico('clock')}${full(i.createdAt)}</span>${mine(i)?`<span class="m">${ico('eye')}${readers.length?'قرأها شريكك '+ago(readers[0].readAt):'لم تصلك إشارة قراءة من شريكك بعد'}</span>`:''}</div>`;
+  const mm=mark(i.id,S.me),th=S.marks.find(m=>m.ideaId===i.id&&m.uid!==S.me&&m.level);
+  let r='';
+  if(!mine(i)){
+    r=`<h3>${badge('gL4','medal',26)}انطباعك</h3><p class="hint">كلمة تصف شعورك تجاه الفكرة، لا درجة ولا رقم. يمكنك تغييرها لاحقاً.</p><div class="scale">${LV.slice(1).map((l,k)=>`<button class="lvb${mm&&mm.level===k+1?' on':''}" data-act="rate" data-v="${k+1}" aria-pressed="${!!(mm&&mm.level===k+1)}">${lvBadge(k+1,44)}${l.w}</button>`).join('')}</div>`;
+  }else{
+    r=`<h3>${badge('gL4','medal',26)}انطباعات شريكك</h3>`;
+    if(!th)r+='<p class="none">لم يُبدِ انطباعاً بعد.</p>';
+  }
+  if(th&&mine(i)||th&&!mine(i))r+=`<div class="theirs">${lvBadge(th.level,36)}<div><span>انطباع ${esc(nameOf(th.uid))}:</span> ${LV[th.level].w}</div></div>`;
+  $('#dRate').innerHTML=r;
+  const cs=cmts(i.id);
+  $('#dThread').innerHTML=cs.length?cs.map(c=>`<div class="cm ${c.kind==='addition'?'add':c.kind==='ai'?'ai':''}">${person(c.authorId,34)}<div class="bub"><small><b>${esc(nameOf(c.authorId))}</b><span class="tag${c.kind==='comment'?' ex':''}">${c.kind==='addition'?'إضافة للفكرة':c.kind==='ai'?'من المساعد':'تعليق'}</span>${ago(c.createdAt)}</small><p>${esc(c.text)}</p></div></div>`).join(''):'<p class="none">لا تعليقات بعد. الفكرة الأصلية تبقى كما هي، وكل ما يُقال حولها يُجمع هنا.</p>';
+  $('#dKind').innerHTML=[['comment','تعليق'],['addition','إضافة للفكرة'],['ai','من المساعد']].map(k=>`<button type="button" class="${S.kind===k[0]?'on':''}" data-act="kind" data-v="${k[0]}">${k[1]}</button>`).join('');
+}
+
+/* ---------- مساعد القارئ ---------- */
+function aiPrompt(i){return `اقرأ هذه الفكرة كقارئ يقيّمها، دون حكم على صاحبها، ثم أجبني بالعربية وبإيجاز:
+1) نقاط القوة المحتملة.
+2) التحديات ونقاط الضعف المحتملة.
+3) أسئلة تساعدني على فهمها بعمق أكبر.
+4) هل توجد تطبيقات أو منتجات أو مشاريع مشابهة تعرفها فعلاً؟ اذكر وجوه التشابه والاختلاف، ولا تخترع أسماء.
+
+الفكرة:
+${i.text}`}
+function renderAI(){
+  const box=$('#dAI');if(!box)return;const i=S.ideas.find(x=>x.id===S.open);if(!i)return;
+  if(mine(i)){box.innerHTML='';return}
+  box.innerHTML=`<div class="ai"><h3>${ico('ai')}مساعد القارئ</h3><p class="hint">انسخ سؤالاً جاهزاً واسأل به أي مساعد ذكاء اصطناعي تستخدمه، ثم ألصق ما يناسبك من إجابته في خانة التعليق واختر «من المساعد». القرار لك دائماً.</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="aiCopy">${ico('ai')}انسخ السؤال الجاهز</button>
+   <a class="btn ghost sm" href="https://chatgpt.com" target="_blank" rel="noopener">ChatGPT</a><a class="btn ghost sm" href="https://gemini.google.com" target="_blank" rel="noopener">Gemini</a></div>
+   <p class="note">تنبّه: لصق الفكرة في أي خدمة خارجية يشاركها معها. والمشابهات تأتي من معرفة المساعد لا من بحث مباشر في السوق، فتحقق منها.</p></div>`;
+}
+function aiCopy(){
+  const i=S.ideas.find(x=>x.id===S.open),t=aiPrompt(i);
+  const fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();toast('نُسخ السؤال، ألصقه في المساعد')};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('نُسخ السؤال، ألصقه في المساعد')).catch(fb);else fb();
+}
+/* ---------- فكرة جديدة ---------- */
+function openCompose(){
+  $('#cmp').innerHTML=`<div class="sbar"><button class="ib" data-act="closeC" aria-label="إغلاق">${ico('x')}</button><b>ومضة جديدة</b></div>
+   <div class="sbody"><div><form id="cForm" style="display:flex;flex-direction:column;flex:1"><textarea id="cTa" placeholder="ما الذي خطر لك؟ اكتبها كما جاءت، دون ترتيب." maxlength="2000"></textarea>
+   <div class="act">${micBtn()}<button class="btn" type="submit">${ico('send')}أرسلها إلى المساحة المشتركة</button></div></form></div></div>`;
+  $('#cmp').classList.add('on');setTimeout(()=>{const t=$('#cTa');t&&t.focus()},350);
+}
+let toastT;function toast(m){const t=$('#toast');t.firstElementChild.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200)}
+
+/* ---------- الأحداث ---------- */
+let activeTa=null;
+document.addEventListener('focusin',e=>{if(e.target.tagName==='TEXTAREA')activeTa=e.target});
+document.addEventListener('input',e=>{
+  if(e.target.id==='q'){S.q=e.target.value;memList()}
+  if(e.target.tagName==='TEXTAREA'){e.target.style.height='auto';if(e.target.closest('#detail'))e.target.style.height=Math.min(130,e.target.scrollHeight+2)+'px'}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id!=='impf')return;const f=e.target.files&&e.target.files[0];if(!f)return;
+  f.text().then(t=>{const n=importData(JSON.parse(t));toast(n?('أُضيف '+n+' من ملف شريكك'):'لا جديد في هذا الملف');render();xInfo()}).catch(()=>toast('هذا الملف غير صالح'));e.target.value='';
+});
+document.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(e.target.id==='onbForm'){const v=$('#onbIn').value.trim();if(!v)return;S.pmap[S.me]={name:v.slice(0,40)};saveLocal();$('#onb').classList.remove('on');render();toast('أهلاً '+v);return}
+  if(e.target.id==='cForm'){
+    const v=$('#cTa').value.trim();if(!v)return;const b=e.target.querySelector('.btn');b.disabled=true;
+    try{const id=await W.addIdea(v);S.justAdded=id;$('#cmp').classList.remove('on');S.tab='home';render();toast('وصلت إلى المساحة المشتركة');setTimeout(()=>{S.justAdded=null},1500)}
+    catch(er){b.disabled=false;toast('تعذّر الحفظ، حاول مجدداً')}
+  }
+  if(e.target.id==='dForm'){
+    const ta=$('#dTa'),v=ta.value.trim();if(!v)return;
+    try{await W.comment(S.open,v,S.kind);ta.value='';ta.style.height='auto'}catch(er){toast('تعذّر الإرسال')}
+  }
+});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,v=b.dataset.v;
+  if(a==='tab'){S.tab=v;$('#app').innerHTML='';render();window.scrollTo(0,0)}
+  else if(a==='compose')openCompose();
+  else if(a==='closeC')$('#cmp').classList.remove('on');
+  else if(a==='open')openIdea(b.dataset.id);
+  else if(a==='close'){S.open=null;$('#detail').classList.remove('on');render()}
+  else if(a==='flt'){S.flt=v;memList()}
+  else if(a==='rate')W.rate(S.open,+v).then(()=>toast(LV[+v].w)).catch(()=>toast('تعذّر الحفظ'));
+  else if(a==='kind'){S.kind=v;renderDetail()}
+  else if(a==='aiRun')aiRun();
+  else if(a==='aiTab'){S.ai[S.open].tab=v;renderAI()}
+  else if(a==='aiKeep')aiKeep(+b.dataset.k);
+  else if(a==='aiDrop'){const st=S.ai[S.open];st.gone[st.tab+b.dataset.k]=1;renderAI()}
+  else if(a==='aiWeb'){const st=S.ai[S.open],x=st.data.similar[+b.dataset.k];window.open('https://www.google.com/search?q='+encodeURIComponent(x.name),'_blank','noopener')}
+  else if(a==='arc'){if(b.dataset.sure){W.archive(S.open).then(()=>{S.open=null;$('#detail').classList.remove('on');render();toast('أُخفيت الفكرة')})}else{b.dataset.sure=1;toast('اضغط مرة أخرى لإخفاء الفكرة');setTimeout(()=>delete b.dataset.sure,3000)}}
+  else if(a==='mic'&&S.dict&&activeTa){S.dict.start().catch(()=>{})}
+  else if(a==='xch')openX();
+  else if(a==='closeX')$('#xch').classList.remove('on');
+  else if(a==='export')doExport();
+  else if(a==='import')$('#impf').click();
+  else if(a==='aiCopy')aiCopy();
+  else if(a==='theme'){const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'}
+});
+
+/* ---------- الإقلاع ---------- */
+function splash(){
+  const s=$('#splash');
+  s.innerHTML=`<div class="bw">${Array.from({length:12},(_,k)=>{const a=k*30*Math.PI/180,r=190;return `<i class="sp" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px;--d:${(k*.09).toFixed(2)}s"></i>`}).join('')}${badge('gNavy','spark',104)}</div><b>وارد</b><small>مساحة مشتركة للأفكار</small>`;
+  const out=()=>s.classList.add('out');setTimeout(out,2500);s.addEventListener('click',out);
+}
+function boot(){
+  $('#sprite').innerHTML=SPRITE;splash();render();
+}
+function openX(){
+  $('#xch').innerHTML=`<div class="sbar"><button class="ib" data-act="closeX" aria-label="إغلاق">${ico('x')}</button><b>تبادل الأفكار</b></div>
+   <div class="sbody"><div><div class="orig"><div class="body" style="font-size:16.5px;font-weight:600">كلٌّ منكما يحتفظ بأفكاره في جهازه، وتتبادلان ملفاً صغيراً كل فترة، فتجتمع الأفكار والتعليقات والانطباعات عند الاثنين.</div>
+   <ol style="margin:8px 0 0;padding-inline-start:20px;font-size:14.5px"><li>اضغط «تصدير» وأرسل الملف لشريكك (واتساب أو بريد).</li><li>حين يصلك ملفه اضغط «استيراد» واختره.</li><li>الدمج يضيف الجديد فقط، ولا يحذف ولا يكرر.</li></ol></div>
+   <div style="display:flex;gap:10px;margin-top:16px"><button class="btn" style="flex:1" data-act="export">${ico('send')}تصدير ملفي</button><button class="btn navy" style="flex:1" data-act="import">${ico('mem')}استيراد ملف شريكي</button></div>
+   <p class="none" id="xInfo"></p><p class="none">يُحفظ كل شيء في متصفح هذا الجهاز. صدّر ملفاً من وقت لآخر نسخةً احتياطية، فمسح بيانات المتصفح يمسح الأفكار.</p></div></div>`;
+  xInfo();$('#xch').classList.add('on');
+}
+function xInfo(){const e=$('#xInfo');if(!e)return;const o=LS.get('wared.lastOut'),i=LS.get('wared.lastIn');
+  e.textContent='آخر تصدير: '+(o?ago(o):'لم يحدث بعد')+' · آخر استيراد: '+(i?ago(i):'لم يحدث بعد')}
+function ensureName(){
+  if(nm(S.me))return;
+  $('#onb').innerHTML=`<div class="sbar"><b>أهلاً بك في وارد</b></div><div class="sbody"><div><form id="onbForm" style="display:flex;flex-direction:column;gap:14px;margin-top:20px">
+   <div style="text-align:center">${badge('gNavy','spark',72)}</div><h2 style="margin:0;text-align:center">ما اسمك؟</h2><p class="none" style="text-align:center;margin:0">يظهر لشريكك بجانب أفكارك وتعليقاتك.</p>
+   <input id="onbIn" maxlength="40" autocomplete="off" style="border:1.5px solid var(--line);border-radius:16px;background:var(--paper);color:var(--ink);font:inherit;font-size:18px;padding:12px 16px;text-align:center">
+   <button class="btn" type="submit">ابدأ</button></form></div></div>`;
+  $('#onb').classList.add('on');
+}
+function extras(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;
+  S.dict={start(){return new Promise(res=>{const r=new SR();r.lang='ar-SA';r.interimResults=false;
+    const rec=on=>document.querySelectorAll('.mic').forEach(m=>m.classList.toggle('rec',on));
+    r.onresult=ev=>{const t=[...ev.results].map(x=>x[0].transcript).join(' ');if(activeTa){activeTa.value+=(activeTa.value&&!/\s$/.test(activeTa.value)?' ':'')+t;activeTa.dispatchEvent(new Event('input',{bubbles:true}))}};
+    r.onstart=()=>rec(true);r.onend=()=>{rec(false);res()};r.onerror=()=>{rec(false);res()};try{r.start()}catch(e){res()}})}};
+}
+load();extras();boot();ensureName();
+})();
+</script>
+
+</body>
+</html>
